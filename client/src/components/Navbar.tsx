@@ -4,9 +4,11 @@ import { GrInstallOption } from "react-icons/gr";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoHomeFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const isLoggedIn = false;
+  const navigate = useNavigate();
 
   return (
     <div className="w-full flex justify-between items-center font-semibold px-4 py-2 bg-black">
@@ -61,28 +63,34 @@ function Navbar() {
               <GrInstallOption color="white" />
               Install App
             </p>
+            <img
+              className="w-5 cursor-pointer"
+              src={assets.bell_icon}
+              alt="bell_icon"
+              onClick={() => alert("Bell icon clicked!")}
+            />
+            <Avatar className="w-12 h-12 rounded-full cursor-pointer">
+              <AvatarFallback className="bg-green-500 text-white text-lg flex items-center justify-center w-full h-full rounded-full">
+                CN
+              </AvatarFallback>
+            </Avatar>
           </>
         ) : (
           <>
-            <button className="bg-transparent text-white text-[15px] px-4 py-1 rounded-2xl cursor-pointer">
+            <button
+              className="bg-transparent text-white text-[15px] px-4 py-1 rounded-2xl cursor-pointer"
+              onClick={() => navigate("/signup")}
+            >
               Signup
             </button>
-            <button className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl cursor-pointer">
+            <button
+              className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
               Login
             </button>
           </>
         )}
-        <img
-          className="w-5 cursor-pointer"
-          src={assets.bell_icon}
-          alt="bell_icon"
-          onClick={() => alert("Bell icon clicked!")}
-        />
-        <Avatar className="w-12 h-12 rounded-full cursor-pointer">
-          <AvatarFallback className="bg-green-500 text-white text-lg flex items-center justify-center w-full h-full rounded-full">
-            CN
-          </AvatarFallback>
-        </Avatar>
       </div>
     </div>
   );
