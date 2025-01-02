@@ -1,17 +1,18 @@
 import Navbar from "./components/Navbar";
 import Player from "./components/Player";
-import { Sidebar } from "./components/Sidebar";
+import Main from "./pages/Main";
 
 const App = () => {
   return (
     <>
       <div className="h-screen bg-black">
-        {/*אולי flex*/}
         <div className="h-[90%]">
           <Navbar />
-          <Sidebar />
+          <Main />
         </div>
-        <Player />
+        <div className="h-[10%]">
+          <Player />
+        </div>
       </div>
     </>
   );
