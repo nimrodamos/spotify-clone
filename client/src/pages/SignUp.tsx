@@ -7,9 +7,6 @@ import { useNavigate } from "react-router-dom";
 const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate("/Login");
-  };
 
   const handleSignUp = () => {
     console.log("Email:", email);
@@ -74,7 +71,7 @@ const SignUpPage: React.FC = () => {
         <a
           href="#"
           className="text-sm text-[#E4E4E4] hover:text-green-500 underline"
-          onClick={handleNavigate}
+          onClick={() => navigate("/login", { replace: true })}
         >
           Log in here.
         </a>
