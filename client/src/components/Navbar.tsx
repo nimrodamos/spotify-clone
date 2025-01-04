@@ -87,7 +87,7 @@ function Navbar() {
               className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl cursor-pointer"
               onClick={() => navigate("/login")}
             >
-              Login
+              Log in
             </button>
           </>
         )}

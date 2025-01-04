@@ -25,7 +25,7 @@ const App = () => {
 
       <div className={isFullPage ? "h-full" : "h-[80%]"}>
         <Routes>
-          <Route path="/" element={<Main />} />
+          <Route path="*" element={<Main />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/password-reset" element={<PasswordRecoveryPage />} />
