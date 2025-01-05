@@ -4,7 +4,7 @@ import { GrInstallOption } from "react-icons/gr";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoHomeFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function Navbar() {
@@ -20,13 +20,21 @@ function Navbar() {
       </div>
       <div className="flex items-center gap-4 w-full max-w-xl">
         {isBrowseOn ? (
-          <img
-            className="w-8 cursor-pointer"
-            src={assets.home_icon}
-            alt="Home Icon"
-          />
+          <Link to="/">
+            <img
+              className="w-8 cursor-pointer"
+              src={assets.home_icon}
+              alt="Home Icon"
+            />
+          </Link>
         ) : (
-          <GoHomeFill color="white" size={"50px"} className="cursor-pointer" />
+          <Link to="/">
+            <GoHomeFill
+              color="white"
+              size={"50px"}
+              className="cursor-pointer"
+            />
+          </Link>
         )}
 
         <div className="flex items-center bg-[#121212] text-white rounded-full px-6 py-3 flex-grow gap-4">
