@@ -77,6 +77,44 @@ const addTrackToPlaylist = async (req, res) => {
 	}
 };
 
+const deleteTrackFromPlaylist = async (req, res) => {
+	try {
+		const { id, trackId } = req.params;
+
+		if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(trackId)) {
+			return res.status(400).json({ error: "Invalid playlist or track ID" });
+		}
+
+		const playlist = await Playlist.findById(id);
+		if (!playlist) {
+			return res.status(404).json({ error: "Playlist not found" });
+		}
+
+		if (playlist.owner.toString() !== req.user._id.toString()) {
+			return res.status(403).json({ error: "You are not authorized to delete tracks from this playlist" });
+		}
+
+		const trackIndex = playlist.tracks.findIndex(track => track.toString() === trackId);
+		if (trackIndex === -1) {
+			return res.status(404).json({ error: "Track not found in playlist" });
+		}
+
+		const track = await Track.findById(trackId);
+		if (!track) {
+			return res.status(404).json({ error: "Track not found" });
+		}
+
+		playlist.tracks.splice(trackIndex, 1);
+		playlist.totalDuration -= track.duration;
+
+		await playlist.save();
+		res.status(200).json(playlist);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+		console.log("Error in deleteTrackFromPlaylist: ", err.message);
+	}
+};
+
 const updatePlaylist = async (req, res) => {
 	try {
 		const { id } = req.params;
@@ -152,5 +190,6 @@ export {
 	updatePlaylist,
 	addTrackToPlaylist,
 	deletePlaylist,
+	deleteTrackFromPlaylist,
 	getPublicPlaylists,
 };
