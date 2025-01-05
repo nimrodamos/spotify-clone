@@ -7,11 +7,11 @@ const PlaylistSchema = new mongoose.Schema({
     tracks: [
     {
         spotifyTrackId: { type: String, required: true }, // ID of the song in Spotify's API
-        title: { type: String, required: true }, // Song title for convenience
+        name: { type: String, required: true },
         artist: { type: String, required: true }, // Artist name
-        albumName: { type: String, required: true }, // Album name
-        albumCover: { type: String, required: true }, // URL for the album cover image
-        duration: { type: Number, required: true }, // Song duration in seconds
+        album: { type: String, required: true },
+        albumCoverUrl: { type: String, required: true },
+        durationMs: { type: Number, required: true }, // Song duration in seconds
         addedAt: { type: Date, default: Date.now }, // When the song was added
         },
     ],

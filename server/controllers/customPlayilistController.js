@@ -1,4 +1,5 @@
 import Playlist from "../models/customPlaylistModel.js";
+import { Track } from "../models/trackModel.js";
 import mongoose from "mongoose";
 
 const createPlaylist = async (req, res) => {
@@ -46,10 +47,10 @@ const getPlaylistById = async (req, res) => {
 
 const addTrackToPlaylist = async (req, res) => {
 	try {
-		const { id, trackId } = req.params;
+		const { id, spotifyTrackId } = req.params;
 
-		if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(trackId)) {
-			return res.status(400).json({ error: "Invalid playlist or track ID" });
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ error: "Invalid playlist ID" });
 		}
 
 		const playlist = await Playlist.findById(id);
@@ -61,13 +62,28 @@ const addTrackToPlaylist = async (req, res) => {
 			return res.status(403).json({ error: "You are not authorized to add tracks to this playlist" });
 		}
 
-		const track = await Track.findById(trackId);
+		if (playlist.tracks.some(track => track.spotifyTrackId === spotifyTrackId)) {
+			return res.status(400).json({ error: "Track already exists in the playlist" });
+		}
+
+		const track = await Track.findOne({ spotifyTrackId }).select("durationMs albumCoverUrl album name artist spotifyTrackId");
 		if (!track) {
 			return res.status(404).json({ error: "Track not found" });
 		}
 
-		playlist.tracks.push(track);
-		playlist.totalDuration += track.duration;
+		if (!track.durationMs || !track.albumCoverUrl || !track.album || !track.name) {
+			return res.status(400).json({ error: "Track is missing required fields" });
+		}
+
+		playlist.tracks.push({
+			durationMs: track.durationMs,
+			albumCoverUrl: track.albumCoverUrl,
+			album: track.album,
+			name: track.name,
+			artist: track.artist,
+			spotifyTrackId: track.spotifyTrackId
+		});
+		playlist.totalDuration += track.durationMs;
 
 		await playlist.save();
 		res.status(200).json(playlist);
@@ -79,10 +95,10 @@ const addTrackToPlaylist = async (req, res) => {
 
 const deleteTrackFromPlaylist = async (req, res) => {
 	try {
-		const { id, trackId } = req.params;
+		const { id, spotifyTrackId } = req.params;
 
-		if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(trackId)) {
-			return res.status(400).json({ error: "Invalid playlist or track ID" });
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ error: "Invalid playlist ID" });
 		}
 
 		const playlist = await Playlist.findById(id);
@@ -94,18 +110,14 @@ const deleteTrackFromPlaylist = async (req, res) => {
 			return res.status(403).json({ error: "You are not authorized to delete tracks from this playlist" });
 		}
 
-		const trackIndex = playlist.tracks.findIndex(track => track.toString() === trackId);
+		const trackIndex = playlist.tracks.findIndex(track => track.spotifyTrackId === spotifyTrackId);
 		if (trackIndex === -1) {
 			return res.status(404).json({ error: "Track not found in playlist" });
 		}
 
-		const track = await Track.findById(trackId);
-		if (!track) {
-			return res.status(404).json({ error: "Track not found" });
-		}
-
+		const track = playlist.tracks[trackIndex];
 		playlist.tracks.splice(trackIndex, 1);
-		playlist.totalDuration -= track.duration;
+		playlist.totalDuration -= track.durationMs;
 
 		await playlist.save();
 		res.status(200).json(playlist);
@@ -165,7 +177,7 @@ const deletePlaylist = async (req, res) => {
 			return res.status(403).json({ error: "You are not authorized to delete this playlist" });
 		}
 
-		await playlist.remove();
+		await playlist.deleteOne();
 		res.status(200).json({ message: "Playlist deleted successfully" });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
