@@ -5,9 +5,12 @@ import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoHomeFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Navbar() {
-  const isLoggedIn = false;
+  const [isBrowseOn, setIsBrowseOn] = useState(false);
+  const isLoggedIn = true;
+
   const navigate = useNavigate();
 
   return (
@@ -15,14 +18,16 @@ function Navbar() {
       <div className="flex items-center gap-2">
         <RiSpotifyFill color="white" size={"50px"} className="cursor-pointer" />
       </div>
-
       <div className="flex items-center gap-4 w-full max-w-xl">
-        <GoHomeFill color="white" size={"50px"} className="cursor-pointer" />
-        <img
-          className="w-8 cursor-pointer"
-          src={assets.home_icon}
-          alt="Home Icon"
-        />
+        {isBrowseOn ? (
+          <img
+            className="w-8 cursor-pointer"
+            src={assets.home_icon}
+            alt="Home Icon"
+          />
+        ) : (
+          <GoHomeFill color="white" size={"50px"} className="cursor-pointer" />
+        )}
 
         <div className="flex items-center bg-[#121212] text-white rounded-full px-6 py-3 flex-grow gap-4">
           <CiSearch
@@ -43,6 +48,7 @@ function Navbar() {
             aria-hidden="true"
             viewBox="0 0 24 24"
             className="w-7 h-7 text-gray-400 hover:text-white cursor-pointer"
+            onClick={() => setIsBrowseOn(true)}
           >
             <path
               d="M4 2a1 1 0 0 1 1-1h14a1 1 0 1 1 1 1v4H4V2zM1.513 9.37A1 1 0 0 1 2.291 9H21.71a1 1 0 0 1 .978 1.208l-2.17 10.208A2 2 0 0 1 18.562 22H5.438a2 2 0 0 1-1.956-1.584l-2.17-10.208a1 1 0 0 1 .201-.837zM12 17.834c1.933 0 3.5-1.044 3.5-2.333 0-1.289-1.567-2.333-3.5-2.333S8.5 14.21 8.5 15.5c0 1.289 1.567 2.333 3.5 2.333z"
