@@ -79,6 +79,7 @@ const signupUser = async (req, res) => {
             accessToken, // Use the appAccessToken from the client credentials flow
             refreshToken: null, // Optional: null for client credentials flow
             expiresIn, // Store expiresIn to know when the token expires
+            premium, // Optional: set to true if the user has a premium account
             profilePicture: null, // You can store the profile picture URL if you want
         });
 
@@ -209,6 +210,25 @@ const updateUser = async (req, res) => {
     }
 };
 
+const upgradeToPremium = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        user.premium = true;
+        await user.save();
+
+        res.status(200).json({ message: "User upgraded to premium successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+        console.log("Error in upgradeToPremium: ", err.message);
+    }
+};
+
 export {
     signupUser,
     loginUser,
@@ -216,4 +236,5 @@ export {
     followUnFollowUser,
     updateUser,
     getUserProfile,
+    upgradeToPremium,
 };

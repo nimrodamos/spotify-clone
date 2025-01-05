@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
     accessToken: { type: String, required: true }, // Spotify API access token
     refreshToken: { type: String, required: false }, // Spotify API refresh token
     expiresIn: { type: Number, required: true }, // Token expiry time in seconds
+    premium: { type: Boolean, default: false }, // User's Spotify premium
     profilePicture: { type: String }, // URL of user's Spotify profile picture
     followers: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // References users who follow this user

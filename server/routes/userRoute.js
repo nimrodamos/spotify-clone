@@ -7,12 +7,14 @@ import {
     followUnFollowUser,
     updateUser,
     getUserProfile,
+    upgradeToPremium,
 } from '../controllers/userController.js';
 
 const router = express.Router();
 
 router.post('/signup', signupUser);
 router.post('/login', loginUser);
+router.post('/premiun', upgradeToPremium);
 router.post('/logout', logoutUser);
 router.post('/:id/follow', protectRoute, followUnFollowUser);
 router.put('/:id',protectRoute ,updateUser);
