@@ -8,10 +8,12 @@ import PlaylistRoutes from './routes/playlistRoute.js';
 import apiCallsRoutes from './routes/apiCallsRoute.js';
 import dbAlbumRoutes from './routes/dbAlbumRoute.js';
 import dbTrackRoutes from './routes/dbTrackRoute.js';
+import dbArtistRoutes from './routes/dbartistRoute.js';
 import path from 'path';
 import cloudinary from 'cloudinary';
 import User from './models/userModel.js';
 import jwt from 'jsonwebtoken';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -37,11 +39,13 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(frontendPath));
+app.use(cors());
 
 app.use('/api/users', userRoutes);
 app.use('/api/playlists', PlaylistRoutes);
 app.use('/api/albums', dbAlbumRoutes);
 app.use('/api/tracks', dbTrackRoutes);
+app.use('/api/artists', dbArtistRoutes);
 app.use('/api/', apiCallsRoutes);
 
 app.use('/spotify/callback', async (req, res) => {
