@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaApple, FaSpotify } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SiFacebook } from "react-icons/si";
-import { useUserContext } from "../Context/UserContext.tsx"; // Import UserContext
+import { useUserContext } from "../Context/UserContext"; // Import UserContext
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("/api/users/login", {
+      const response = await fetch("http://localhost:5000/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,10 +30,10 @@ const LoginPage: React.FC = () => {
       const userData = await response.json();
       console.log("Logged in successfully:", userData);
 
-      // Store user in context
+      // Store the logged-in user in UserContext
       setUser(userData);
 
-      // Redirect to main page
+      // Redirect to the main page or dashboard
       navigate("/");
     } catch (error) {
       console.error("Error logging in:", error.message);

@@ -30,7 +30,8 @@ const getUserProfile = async (req, res) => {
 const signupUser = async (req, res) => {
     try {
         const { displayName, email, password, gender, dateOfBirth } = req.body;
-
+        
+        const premium = req.body.premium || false;
         // Check if the user already exists
         let existingUser;
         try {

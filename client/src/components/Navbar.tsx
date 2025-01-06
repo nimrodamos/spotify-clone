@@ -5,35 +5,34 @@ import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoHomeFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
 import { Link, useNavigate } from "react-router-dom";
+import { useUserContext } from "../Context/UserContext";
 import { useState } from "react";
 
 function Navbar() {
+  const { user, setUser } = useUserContext(); // Access UserContext
   const [isBrowseOn, setIsBrowseOn] = useState(false);
-  const isLoggedIn = true;
-
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Dropdown toggle state
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear the user state on logout
+    setUser(null);
+    navigate("/");
+  };
 
   return (
     <div className="w-full flex justify-between items-center font-semibold px-4 py-2 bg-black">
       <div className="flex items-center gap-2">
-        <RiSpotifyFill color="white" size={"50px"} className="cursor-pointer" />
+        <RiSpotifyFill color="white" size={"50px"} className="cursor-pointer" onClick={() => navigate("/")} />
       </div>
       <div className="flex items-center gap-4 w-full max-w-xl">
         {isBrowseOn ? (
           <Link to="/">
-            <img
-              className="w-8 cursor-pointer"
-              src={assets.home_icon}
-              alt="Home Icon"
-            />
+            <img className="w-8 cursor-pointer" src={assets.home_icon} alt="Home Icon" />
           </Link>
         ) : (
           <Link to="/">
-            <GoHomeFill
-              color="white"
-              size={"50px"}
-              className="cursor-pointer"
-            />
+            <GoHomeFill color="white" size={"50px"} className="cursor-pointer" />
           </Link>
         )}
 
@@ -66,13 +65,9 @@ function Navbar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* בדיקה אם המשתמש מחובר */}
-        {isLoggedIn ? (
+      <div className="flex items-center gap-4 relative">
+        {user ? (
           <>
-            <p className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer">
-              Explore Premium
-            </p>
             <p className="flex items-center bg-black text-white text-[15px] px-3 py-1 rounded-2xl cursor-pointer gap-2">
               <GrInstallOption color="white" />
               Install App
@@ -83,11 +78,46 @@ function Navbar() {
               alt="bell_icon"
               onClick={() => alert("Bell icon clicked!")}
             />
-            <Avatar className="w-12 h-12 rounded-full cursor-pointer">
-              <AvatarFallback className="bg-green-500 text-white text-lg flex items-center justify-center w-full h-full rounded-full">
-                CN
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar
+                className="w-12 h-12 rounded-full cursor-pointer"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                <AvatarFallback className="bg-[#5c5858] text-[#EDEDED] text-lg flex items-center justify-center w-10 h-10 rounded-full">
+                  {user.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
+                </AvatarFallback>
+              </Avatar>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#282828] text-[#EDEDED] rounded-lg shadow-lg z-10">
+                  <ul className="flex flex-col">
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => console.log("Account clicked!")}
+                    >
+                      Account
+                    </li>
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => console.log("Profile clicked!")}
+                    >
+                      Profile
+                    </li>
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => console.log("Settings clicked!")}
+                    >
+                      Settings
+                    </li>
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-500 font-semibold"
+                      onClick={handleLogout}
+                    >
+                      Log out
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <>
