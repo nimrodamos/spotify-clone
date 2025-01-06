@@ -3,7 +3,7 @@ import AlbumItem from "./AlbumItem";
 import SongItem from "./SongItem";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 import { api } from "@/api";
 
 function DisplayHome() {
