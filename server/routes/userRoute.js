@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post('/signup', signupUser);
 router.post('/login', loginUser);
-router.post('/premiun', upgradeToPremium);
+router.post('/premium', upgradeToPremium);
 router.post('/logout', logoutUser);
 router.post('/:id/follow', protectRoute, followUnFollowUser);
 router.put('/:id',protectRoute ,updateUser);
