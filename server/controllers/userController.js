@@ -232,6 +232,28 @@ const upgradeToPremium = async (req, res) => {
         console.log("Error in upgradeToPremium: ", err.message);
     }
 };
+const validateEmail = async (req, res) => {
+    const email = req.query.email;
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+    }
+
+    try {
+        // Example: Check if the email exists in the database
+        const user = await User.findOne({ email });
+        if (user) {
+            return res.status(200).json({ valid: false, message: 'Email is already in use' });
+        } else {
+            return res.status(200).json({ valid: true });
+        }
+    } catch (error) {
+        console.error('Error validating email:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+
 
 export {
     signupUser,
@@ -241,4 +263,5 @@ export {
     updateUser,
     getUserProfile,
     upgradeToPremium,
+    validateEmail,
 };
