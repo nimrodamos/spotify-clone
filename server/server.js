@@ -8,6 +8,7 @@ import PlaylistRoutes from './routes/playlistRoute.js';
 import apiCallsRoutes from './routes/apiCallsRoute.js';
 import dbAlbumRoutes from './routes/dbAlbumRoute.js';
 import dbTrackRoutes from './routes/dbTrackRoute.js';
+import dbArtistRoutes from './routes/dbartistRoute.js';
 import path from 'path';
 import cloudinary from 'cloudinary';
 import User from './models/userModel.js';
@@ -47,6 +48,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/playlists', PlaylistRoutes);
 app.use('/api/albums', dbAlbumRoutes);
 app.use('/api/tracks', dbTrackRoutes);
+app.use('/api/artists', dbArtistRoutes);
 app.use('/api/', apiCallsRoutes);
 
 app.use('/spotify/callback', async (req, res) => {
