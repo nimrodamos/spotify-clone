@@ -29,7 +29,7 @@ const getUserProfile = async (req, res) => {
 
 const signupUser = async (req, res) => {
     try {
-        const { displayName, email, password } = req.body;
+        const { displayName, email, password, gender, dateOfBirth } = req.body;
 
         // Check if the user already exists
         let existingUser;
@@ -76,6 +76,8 @@ const signupUser = async (req, res) => {
             displayName,
             email,
             password: hashedPassword,
+            gender,
+            dateOfBirth,
             accessToken, // Use the appAccessToken from the client credentials flow
             refreshToken: null, // Optional: null for client credentials flow
             expiresIn, // Store expiresIn to know when the token expires
@@ -94,6 +96,8 @@ const signupUser = async (req, res) => {
             _id: savedUser._id,
             displayName: savedUser.displayName,
             email: savedUser.email,
+            gender: savedUser.gender,
+            dateOfBirth: savedUser.dateOfBirth,
             accessToken: savedUser.accessToken, // Optional: send the access token in response
         });
     } catch (err) {
