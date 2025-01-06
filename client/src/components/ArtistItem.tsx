@@ -1,10 +1,11 @@
+// Refactored ArtistItem.tsx
 interface ArtistItemProps {
   name: string;
   desc: string;
   image: string;
 }
 
-function ArtistItem({ name, desc, image }: ArtistItemProps) {
+const ArtistItem: React.FC<ArtistItemProps> = ({ name, desc, image }) => {
   return (
     <div className="artist-item flex flex-col items-center p-4">
       <img
@@ -16,6 +17,6 @@ function ArtistItem({ name, desc, image }: ArtistItemProps) {
       <p className="text-sm text-gray-500">{desc}</p>
     </div>
   );
-}
+};
 
 export default ArtistItem;

@@ -1,18 +1,19 @@
+// Refactored AlbumItem.tsx
 import { useNavigate } from "react-router-dom";
 
 interface AlbumItemProps {
   image: string;
   name: string;
   desc: string;
-  id: string | number; // ניתן להתאים את הטיפוס לפי הצורך
+  id: string;
 }
 
 const AlbumItem: React.FC<AlbumItemProps> = ({ image, name, desc, id }) => {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log("Navigating to album:", id); // Log the navigation action
-    Navigate(`/album/${id}`);
+    console.log("Navigating to album:", id);
+    navigate(`/album/${id}`);
   };
 
   return (

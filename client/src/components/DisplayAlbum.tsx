@@ -1,67 +1,77 @@
-import { albumsData, assets, songsData } from "@/assets/assets";
+// Refactored DisplayAlbum.tsx
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { api } from "@/api";
+import { IAlbum, ITrack } from "../types/types";
 
-function DisplayAlbum() {
+const DisplayAlbum: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  console.log("Album ID:", id); // Log the album ID
+  const [album, setAlbum] = useState<(IAlbum & { tracks: ITrack[] }) | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const albumData = albumsData[Number(id)];
-  console.log("Album Data:", albumData); // Log the album data
+  useEffect(() => {
+    async function fetchAlbum() {
+      try {
+        const response = await api.get(`/api/albums/${id}`);
+        setAlbum(response.data);
+      } catch (error) {
+        console.error("Error fetching album:", error);
+        setError("Album not found. Please check the ID.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAlbum();
+  }, [id]);
 
-  if (!albumData) {
-    return <p>Album not found</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  if (!album) return <p>Album not found</p>;
 
   return (
     <>
       <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-end">
         <img
           className="w-48 rounded"
-          src={albumData.image}
-          alt={albumData.name}
+          src={album.albumCoverUrl}
+          alt={album.name}
         />
         <div className="flex flex-col">
-          <p className="text-slate-200 text-lg">{albumData.desc}</p>
-          <h2 className="font-bold text-5xl mb-4 md:text-7xl">
-            {albumData.name}
-          </h2>
-          <h4>{albumData.desc}</h4>
+          <p className="text-slate-200 text-lg">
+            Released: {album.releaseDate}
+          </p>
+          <h2 className="font-bold text-5xl mb-4 md:text-7xl">{album.name}</h2>
           <p className="mt-1">
-            <img
-              className="inline-block w-5"
-              src={assets.spotify_logo}
-              alt="Spotify logo"
-            />
-            <b>Spotify</b>• 1,323,154 likes • <b>50 songs,</b> about 2 hr 30 min
+            <b>{album.artist}</b> • {album.totalTracks} tracks
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-3 sm:grid-cols-4 mt-10 mb-4 pl-2 text-[#a7a7a7]">
-        <p>
-          <b className="mr-4">#</b>Title
-        </p>
-        <p>Album</p>
-        <p className="hidden sm:block">Date added</p>
-        <img className="m-auto w-4" src={assets.clock_icon} alt="" />
-      </div>
       <hr />
-      {songsData.map((song, index) => (
+      {album.tracks.map((track) => (
         <div
-          key={index}
-          className="grid grid-cols-3 sm:grid-cols-4 gap-4 sm:gap-0 py-4 pl-2 hover:bg-[#282828] text-sm"
+          key={track._id}
+          className="grid grid-cols-3 sm:grid-cols-4 gap-4 py-4 hover:bg-[#282828] text-sm"
         >
           <p className="flex items-center">
-            <span className="mr-4">{index + 1}</span>
-            <img className="w-8 h-8 rounded" src={song.image} alt={song.name} />
-            <span className="ml-4">{song.name}</span>
+            <span className="mr-4">{track.name}</span>
+            <img
+              className="w-8 h-8 rounded"
+              src={track.albumCoverUrl}
+              alt={track.name}
+            />
           </p>
-          <p>{albumData.name}</p>
-          <p className="hidden sm:block">Today</p>
-          <p className="text-center">{song.duration}</p>
+          <p>{track.artist}</p>
+          <p className="hidden sm:block">
+            {Math.floor(track.durationMs / 60000)}:
+            {((track.durationMs % 60000) / 1000).toFixed(0).padStart(2, "0")}
+          </p>
         </div>
       ))}
     </>
   );
-}
+};
 
 export default DisplayAlbum;
