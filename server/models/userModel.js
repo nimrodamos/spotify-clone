@@ -1,9 +1,15 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    email: { type: String }, // Optional: for additional app features
+    email: { type: String, unique: true }, // Optional: for additional app features
     password: { type: String }, // Optional: for additional app features
-    displayName: { type: String }, // User's name on Spotify
+    // User's name on Spotify
+    gender: { 
+      type: String,
+      enum: ['Man', 'Woman', 'Non-binary', 'Undefined', 'Something-Else', 'Prefer-Not-To-Say'],
+      required: true
+    },
+    dateOfBirth: { type: Date, required: true }, // User's date of birth
     accessToken: { type: String, required: true }, // Spotify API access token
     refreshToken: { type: String, required: false }, // Spotify API refresh token
     expiresIn: { type: Number, required: true }, // Token expiry time in seconds
