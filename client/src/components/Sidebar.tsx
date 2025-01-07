@@ -2,7 +2,7 @@ import { assets } from "../assets/assets";
 
 export const Sidebar = () => {
   return (
-    <div className="w-[25%] h-full p-2 flex-col gap-2 text-white hidden lg:flex">
+    <div className="w-[25%] h-full flex-col mr-2 gap-2 text-white hidden lg:flex">
       <div className="bg-[#121212] h-[100%] rounded">
         <div className="p-4 flex items-center justify-between">
           <div className="flex item-center gap-3">
