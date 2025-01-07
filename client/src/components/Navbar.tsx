@@ -21,7 +21,7 @@ function Navbar() {
   };
 
   return (
-    <div className="w-full flex justify-between items-center font-semibold px-4 py-1 bg-black">
+    <div className="w-full flex justify-between items-center font-semibold px-4 py-1">
       {/* Left: Spotify Logo */}
       <div className="flex items-center gap-2">
         <RiSpotifyFill
@@ -33,47 +33,48 @@ function Navbar() {
       </div>
 
       {/* Center: Search Bar and Navigation */}
-      <div className="flex items-center gap-2 w-full mt-2 max-w-xl ml-36">
-        <div className="bg-backgroundElevatedHighlight rounded-full p-2">
+      <div className="flex items-center gap-2 w-full p-1 max-w-xl ml-36">
+        <div className="bg-backgroundElevatedBase rounded-full p-[0.7rem] ml-6 hover:scale-[1.04]">
           <Link to="/">
             <GoHomeFill color="white" size={"27px"} className="cursor-pointer" />
           </Link>
         </div>
 
-        <div className="flex items-center bg-[#121212] text-white rounded-full px-2 py-1 flex-grow gap-4">
+        <div className="flex items-center bg-backgroundElevatedBase hover:bg-backgroundElevatedHighlight text-textBase rounded-full px-2 py-2 flex-grow mr-[1.1rem]  focus-within:outline focus-within:outline-white focus-within:outline-3 focus-within:text-textBase  transition-all ease-in-out duration-150">
           <FiSearch
-            color="white"
+            color="rgb(179, 179, 179)"
             size={"27px"}
-            className="cursor-pointer mr-1"
+            className="cursor-pointer mr-1 hover:text-white"
             onClick={() => console.log("Search icon clicked!")}
           />
           <input
             type="text"
             placeholder="What do you want to play?"
-            className="bg-transparent text-white font-normal text-base flex-grow outline-none placeholder:text-gray-400"
+            className="bg-transparent px-2 py-1 rounded text-white text-base flex-grow outline-none placeholder:text-[#b3b3b3] font-normal transition-all duration-200 ease-in-out"
           />
 
           {/* Vertical Line and Browse Button */}
           <div className="flex items-center gap-2">
             {/* Vertical Line */}
-            <div className="h-6 w-[2px] bg-gray-400"></div>
+            <div className="h-6 w-[0.1px] bg-currentColor"></div>
 
             {/* Browse Button */}
             <button
               data-testid="browse-button"
-              className="bg-[#121212] hover:scale-[1.04] ml-1 text-white rounded-full py-1 flex items-center gap-6 transition-colors duration-200 ease-in-out"
+              className="hover:scale-[1.04] ml-1 text-white rounded-full py-1 flex items-center gap-2 transition-all duration-200 ease-in-out"
               aria-label="Browse"
               data-encore-id="buttonTertiary"
+              style={{ paddingRight: '0.5rem' }} // Added padding to the right
             >
               <svg
-                data-encore-id="icon"
-                role="img"
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="icon-svg w-6 h-6 mr-8 mt-[2px] fill-current"
+              data-encore-id="icon"
+              role="img"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="icon-svg w-6 h-6 fill-currentColor"
               >
-                <path d="M15 15.5c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path>
-                <path d="M1.513 9.37A1 1 0 0 1 2.291 9h19.418a1 1 0 0 1 .979 1.208l-2.339 11a1 1 0 0 1-.978.792H4.63a1 1 0 0 1-.978-.792l-2.339-11a1 1 0 0 1 .201-.837zM3.525 11l1.913 9h13.123l1.913-9H3.525zM4 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4h-2V3H6v3H4V2z"></path>
+              <path d="M15 15.5c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path>
+              <path d="M1.513 9.37A1 1 0 0 1 2.291 9h19.418a1 1 0 0 1 .979 1.208l-2.339 11a1 1 0 0 1-.978.792H4.63a1 1 0 0 1-.978-.792l-2.339-11a1 1 0 0 1 .201-.837zM3.525 11l1.913 9h13.123l1.913-9H3.525zM4 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4h-2V3H6v3H4V2z"></path>
               </svg>
             </button>
           </div>
@@ -146,13 +147,13 @@ function Navbar() {
         ) : (
           <>
             <button
-              className="bg-transparent text-white text-[15px] rounded-2xl mr-3 mt-1 cursor-pointer"
+              className="bg-transparent text-[16px] font-bold rounded-2xl mr-3 mt-1 cursor-pointer hover:scale-[1.05] text-textSubdued hover:text-textBase transition-all ease-in-out"
               onClick={() => navigate("/signup")}
             >
               Sign up
             </button>
             <button
-              className="bg-white text-black text-[15px] px-8 py-3 mt-1 rounded-3xl cursor-pointer font-bold"
+              className="bg-white text-black text-[15px] px-8 py-3 mt-1 rounded-3xl cursor-pointer font-bold hover:scale-[1.05] transition-all ease-in-out"
               onClick={() => navigate("/login")}
             >
               Log in

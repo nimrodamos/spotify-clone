@@ -59,7 +59,7 @@ export default {
         backgroundTintedBase: 'hsla(0, 0%, 100%, .1)', // white with opacity
         backgroundTintedHighlight: 'hsla(0, 0%, 100%, .14)', // white with opacity
         backgroundTintedPress: 'hsla(0, 0%, 100%, .21)', // white with opacity
-        textBase: '#fff', // white
+        textBase: '#ffff', // white
         textSubdued: '#b3b3b3', // light grey
         textBrightAccent: '#1ed760', // green
         textNegative: '#f3727f', // red
@@ -75,6 +75,7 @@ export default {
         essentialAnnouncement: '#4cb3ff', // blue
         decorativeBase: '#fff', // white
         decorativeSubdued: '#292929', // dark grey
+        currentColor: "rgb(179, 179, 179)", // light grey
       },
     },
   },
