@@ -24,13 +24,11 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
-    // טען את המשתמש מ-localStorage אם קיים
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
   useEffect(() => {
-    // שמירת המשתמש ב-localStorage בכל פעם שמשתנה
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
     } else {

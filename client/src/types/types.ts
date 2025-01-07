@@ -65,6 +65,7 @@ interface IPlaylist {
   totalDuration: number;
   isPublic: boolean;
   createdAt: Date;
+  type: "music" | "podcast";
 }
 
 interface IArtistImage {
