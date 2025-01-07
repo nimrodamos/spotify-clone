@@ -1,11 +1,11 @@
-// Refactored ArtistItem.tsx
-interface ArtistItemProps {
+// Refactored DisplayArtist.tsx
+interface DisplayArtistProps {
   name: string;
   desc: string;
   image: string;
 }
 
-const ArtistItem: React.FC<ArtistItemProps> = ({ name, desc, image }) => {
+const DisplayArtist: React.FC<DisplayArtistProps> = ({ name, desc, image }) => {
   return (
     <div className="artist-item flex flex-col items-center p-4">
       <img
@@ -19,4 +19,4 @@ const ArtistItem: React.FC<ArtistItemProps> = ({ name, desc, image }) => {
   );
 };
 
-export default ArtistItem;
+export default DisplayArtist;

@@ -1,8 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import DisplayHome from "./DisplayHome";
 import DisplayAlbum from "./DisplayAlbum";
-import ArtistItem from "./ArtistItem";
+
 import DisplayPlaylist from "./DisplayPlaylist";
+import DisplayArtist from "./DisplayArtist";
 
 const Display = () => {
   return (
@@ -13,7 +14,7 @@ const Display = () => {
         <Route
           path="/artist/:id"
           element={
-            <ArtistItem
+            <DisplayArtist
               name="Artist Name"
               desc="Artist Description"
               image="Artist Image URL"
