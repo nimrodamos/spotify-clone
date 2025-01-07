@@ -23,7 +23,9 @@ const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
       className="min-w-[180px] p-2 px-3 rounded cursor-pointer hover:bg-[#ffffff26] "
     >
       <img
-        className={`rounded ${type === "artist" ? "rounded-full" : ""}`}
+        className={`rounded ${
+          type === "artist" ? "rounded-full" : ""
+        } w-[150px] h-[150px] object-cover`}
         src={image}
         alt={name}
       />
