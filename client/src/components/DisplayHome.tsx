@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import CardItem from "./CardItem";
 import { api } from "@/api";
 import { IAlbum, IPlaylist, IArtist } from "../types/types";
+import { Button } from "./ui/button";
 
 const DisplayHome: React.FC = () => {
   const [albums, setAlbums] = useState<IAlbum[]>([]);
@@ -42,6 +43,7 @@ const DisplayHome: React.FC = () => {
   return (
     <div className="mb-4">
       <h1 className="my-5 font-bold text-2xl">Playlists</h1>
+
       <button
         className="ml-4 text-blue-500"
         onClick={() => (window.location.href = "/playlists")}
