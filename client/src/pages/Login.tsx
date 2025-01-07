@@ -30,11 +30,10 @@ const LoginPage: React.FC = () => {
       const userData = await response.json();
       console.log("Logged in successfully:", userData);
 
-      // שמירת המשתמש ב-Context וב-localStorage
+      // Store the logged-in user in UserContext
       setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
 
-      // ניתוב לעמוד הבית
+      // Redirect to the main page or dashboard
       navigate("/");
     } catch (error) {
       if (error instanceof Error) {
