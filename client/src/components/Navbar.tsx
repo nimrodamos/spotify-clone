@@ -23,16 +23,29 @@ function Navbar() {
   return (
     <div className="w-full flex justify-between items-center font-semibold px-4 py-2 bg-black">
       <div className="flex items-center gap-2">
-        <RiSpotifyFill color="white" size={"50px"} className="cursor-pointer" onClick={() => navigate("/")} />
+        <RiSpotifyFill
+          color="white"
+          size={"50px"}
+          className="cursor-pointer"
+          onClick={() => navigate("/")}
+        />
       </div>
       <div className="flex items-center gap-4 w-full max-w-xl">
         {isBrowseOn ? (
           <Link to="/">
-            <img className="w-8 cursor-pointer" src={assets.home_icon} alt="Home Icon" />
+            <img
+              className="w-8 cursor-pointer"
+              src={assets.home_icon}
+              alt="Home Icon"
+            />
           </Link>
         ) : (
           <Link to="/">
-            <GoHomeFill color="white" size={"50px"} className="cursor-pointer" />
+            <GoHomeFill
+              color="white"
+              size={"50px"}
+              className="cursor-pointer"
+            />
           </Link>
         )}
 
@@ -84,7 +97,9 @@ function Navbar() {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 <AvatarFallback className="bg-[#5c5858] text-[#EDEDED] text-lg flex items-center justify-center w-10 h-10 rounded-full">
-                  {user.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
+                  {user.displayName
+                    ? user.displayName.charAt(0).toUpperCase()
+                    : "U"}
                 </AvatarFallback>
               </Avatar>
               {dropdownOpen && (
