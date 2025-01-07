@@ -4,6 +4,11 @@ import { api } from "@/api";
 import { IAlbum, IPlaylist, IArtist } from "../types/types";
 import { useUserContext } from "@/Context/UserContext";
 
+// Utility function to shuffle an array
+const shuffleArray = (array: any[]) => {
+  return array.sort(() => Math.random() - 0.5);
+};
+
 const DisplayHome: React.FC = () => {
   const { user, setUser } = useUserContext(); // Access UserContext
   const [albums, setAlbums] = useState<IAlbum[]>([]);
@@ -26,12 +31,13 @@ const DisplayHome: React.FC = () => {
             api.get("/api/artists"),
           ]);
 
-        setAlbums(albumsResponse.data.slice(0, 7)); // Limit to 7 albums
+        const shuffledAlbums = shuffleArray(albumsResponse.data).slice(0, 7); // Shuffle and limit to 7 albums
+        setAlbums(shuffledAlbums);
         setPlaylists(playlistsResponse.data.slice(0, 7)); // Limit to 7 playlists
-        setArtists(artistsResponse.data.slice(0, 7)); // Limit to 7 artists
-        setFilteredAlbums(albumsResponse.data.slice(0, 7));
+        setArtists(shuffleArray(artistsResponse.data.slice(0, 7))); // Shuffle and limit to 7 artists
+        setFilteredAlbums(shuffledAlbums);
         setFilteredPlaylists(playlistsResponse.data.slice(0, 7));
-        setFilteredArtists(artistsResponse.data.slice(0, 7));
+        setFilteredArtists(shuffleArray(artistsResponse.data.slice(0, 7))); // Shuffle and limit to 7 artists
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch data. Please try again later.");
