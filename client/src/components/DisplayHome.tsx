@@ -71,27 +71,6 @@ const DisplayHome: React.FC = () => {
 
   return (
     <div className="mb-4">
-      {/* Show personalized section if user is logged in */}
-      {user && (
-        <>
-          <h1 className="my-5 font-bold text-2xl">
-            Made for {user.displayName}
-          </h1>
-          <div className="flex overflow-auto">
-            {filteredPlaylists.map((playlist) => (
-              <CardItem
-                key={playlist._id}
-                name={playlist.PlaylistTitle}
-                desc={playlist.description}
-                id={playlist._id}
-                image={playlist.customAlbumCover || ""}
-                type="playlist"
-              />
-            ))}
-          </div>
-        </>
-      )}
-
       {/* Filter Buttons */}
       <div className="flex gap-4 my-4">
         <button
@@ -125,6 +104,26 @@ const DisplayHome: React.FC = () => {
           Podcasts
         </button>
       </div>
+      {/* Show personalized section if user is logged in */}
+      {user && (
+        <>
+          <h1 className="my-5 font-bold text-2xl">
+            Made for {user.displayName}
+          </h1>
+          <div className="flex overflow-auto">
+            {filteredPlaylists.map((playlist) => (
+              <CardItem
+                key={playlist._id}
+                name={playlist.PlaylistTitle}
+                desc={playlist.description}
+                id={playlist._id}
+                image={playlist.customAlbumCover || ""}
+                type="playlist"
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Artists Section */}
       <h1 className="my-5 font-bold text-2xl">Popular Artists</h1>
