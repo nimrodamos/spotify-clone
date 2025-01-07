@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema({
     email: { type: String, unique: true }, // Optional: for additional app features
     password: { type: String }, // Optional: for additional app features
-    // User's name on Spotify
+    displayName: { type: String, required: true }, // User's name on Spotify
     gender: { 
       type: String,
       enum: ['Man', 'Woman', 'Non-binary', 'Undefined', 'Something-Else', 'Prefer-Not-To-Say'],
