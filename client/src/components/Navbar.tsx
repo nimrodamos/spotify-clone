@@ -23,7 +23,7 @@ function Navbar() {
   return (
     <div className="w-full flex justify-between items-center font-semibold px-4 py-1 bg-black">
       {/* Left: Spotify Logo */}
-      <div className="flex items-center rotate-2 gap-2">
+      <div className="flex items-center gap-2">
         <RiSpotifyFill
           color="white"
           size={"38px"}
@@ -33,34 +33,14 @@ function Navbar() {
       </div>
 
       {/* Center: Search Bar and Navigation */}
-      <div className="flex items-center gap-2 w-full mt-2 max-w-xl ml-36 ">
+      <div className="flex items-center gap-2 w-full mt-2 max-w-xl ml-36">
         <div className="bg-backgroundElevatedHighlight rounded-full p-2">
-        {isBrowseOn ? (
           <Link to="/">
-            <img
-              className="w-8 cursor-pointer"
-              src={assets.home_icon}
-              alt="Home Icon"
-            />
-            <img
-              className="w-6 cursor-pointer"
-              src={assets.home_icon}
-              alt="Home Icon"
-              />
-          </Link>
-        ) : (
-          <Link to="/">
-            <GoHomeFill
-              color="white"
-              size={"50px"}
-              className="cursor-pointer"
-            />
             <GoHomeFill color="white" size={"27px"} className="cursor-pointer" />
           </Link>
-        )}
         </div>
 
-        <div className="flex items-center  bg-[#121212] text-white rounded-full  px-2 py-1 flex-grow gap-4">
+        <div className="flex items-center bg-[#121212] text-white rounded-full px-2 py-1 flex-grow gap-4">
           <FiSearch
             color="white"
             size={"27px"}
@@ -129,9 +109,6 @@ function Navbar() {
                   {user.displayName
                     ? user.displayName.charAt(0).toUpperCase()
                     : "U"}
-                  {user.displayName
-                    ? user.displayName.charAt(0).toUpperCase()
-                    : "U"}
                 </AvatarFallback>
               </Avatar>
               {dropdownOpen && (
@@ -175,7 +152,7 @@ function Navbar() {
               Sign up
             </button>
             <button
-              className="bg-white text-black text-[15px] px-8 py-3  mt-1 rounded-3xl cursor-pointer font-bold"
+              className="bg-white text-black text-[15px] px-8 py-3 mt-1 rounded-3xl cursor-pointer font-bold"
               onClick={() => navigate("/login")}
             >
               Log in
