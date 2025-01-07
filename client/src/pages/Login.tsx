@@ -30,13 +30,18 @@ const LoginPage: React.FC = () => {
       const userData = await response.json();
       console.log("Logged in successfully:", userData);
 
-      // Store the logged-in user in UserContext
+      // שמירת המשתמש ב-Context וב-localStorage
       setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
 
-      // Redirect to the main page or dashboard
+      // ניתוב לעמוד הבית
       navigate("/");
     } catch (error) {
-      console.error("Error logging in:", error.message);
+      if (error instanceof Error) {
+        console.error("Error logging in:", error.message);
+      } else {
+        console.error("Error logging in:", error);
+      }
       alert("Login failed. Please check your credentials.");
     }
   };
@@ -63,7 +68,9 @@ const LoginPage: React.FC = () => {
             <FaSpotify className="text-4xl text-green-500" />
           </div>
 
-          <h1 className="text-2xl font-bold text-center mb-8">Log in to Spotify</h1>
+          <h1 className="text-2xl font-bold text-center mb-8">
+            Log in to Spotify
+          </h1>
 
           <button className="w-[105%] py-[0.73rem] mb-2 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
             <FcGoogle className="ml-6 size-6" />
@@ -81,7 +88,9 @@ const LoginPage: React.FC = () => {
           <div className="w-[175%] h-[3px] bg-[#1C1C1C] mx-auto my-8 shadow-lg font-bold -ml-[40%] -mr-[25%]"></div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Email or username</label>
+            <label className="block text-sm font-medium mb-2">
+              Email or username
+            </label>
             <input
               type="email"
               className="w-[105%] px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
@@ -129,7 +138,9 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="text-center mt-4">
-            <span className="text-sm text-gray-400">Don't have an account?</span>{" "}
+            <span className="text-sm text-gray-400">
+              Don't have an account?
+            </span>{" "}
             <a
               className="text-sm text-[#E4E4E4] hover:text-green-500 cursor-pointer"
               onClick={handleNavSignUp}
