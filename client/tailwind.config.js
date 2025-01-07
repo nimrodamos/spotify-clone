@@ -50,12 +50,33 @@ export default {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
+        backgroundBase: '#121212', // black
+        backgroundHighlight: '#1f1f1f', // dark grey
+        backgroundPress: '#000', // black
+        backgroundElevatedBase: '#1f1f1f', // dark grey
+        backgroundElevatedHighlight: '#2a2a2a', // grey
+        backgroundElevatedPress: '#191919', // very dark grey
+        backgroundTintedBase: 'hsla(0, 0%, 100%, .1)', // white with opacity
+        backgroundTintedHighlight: 'hsla(0, 0%, 100%, .14)', // white with opacity
+        backgroundTintedPress: 'hsla(0, 0%, 100%, .21)', // white with opacity
+        textBase: '#fff', // white
+        textSubdued: '#b3b3b3', // light grey
+        textBrightAccent: '#1ed760', // green
+        textNegative: '#f3727f', // red
+        textWarning: '#ffa42b', // orange
+        textPositive: '#1ed760', // green
+        textAnnouncement: '#4cb3ff', // blue
+        essentialBase: '#fff', // white
+        essentialSubdued: '#7c7c7c', // grey
+        essentialBrightAccent: '#1ed760', // green
+        essentialNegative: '#ed2c3f', // red
+        essentialWarning: '#ffa42b', // orange
+        essentialPositive: '#1ed760', // green
+        essentialAnnouncement: '#4cb3ff', // blue
+        decorativeBase: '#fff', // white
+        decorativeSubdued: '#292929', // dark grey
       },
     },
-    textBase: "fff",
-    textSecondary: "#b3b3b3",
-    backgroundBase: "#121212",
-    backgroundSecondary: "#1f1f1f",
   },
   plugins: [require("tailwindcss-animate")],
 };

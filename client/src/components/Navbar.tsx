@@ -3,10 +3,10 @@ import { assets } from "../assets/assets";
 import { GrInstallOption } from "react-icons/gr";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoHomeFill } from "react-icons/go";
-import { CiSearch } from "react-icons/ci";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../Context/UserContext";
 import { useState } from "react";
+import { IoSearch } from "react-icons/io5";
 
 function Navbar() {
   const { user, setUser } = useUserContext(); // Access UserContext
@@ -37,7 +37,7 @@ function Navbar() {
         )}
 
         <div className="flex items-center bg-[#121212] text-white rounded-full px-6 py-3 flex-grow gap-4">
-          <CiSearch
+          <IoSearch
             color="white"
             size={"30px"}
             className="cursor-pointer"
@@ -46,7 +46,7 @@ function Navbar() {
           <input
             type="text"
             placeholder="What do you want to play?"
-            className="bg-transparent text-white text-lg flex-grow outline-none placeholder:text-gray-400"
+            className="bg-transparent text-white font-normal text-base flex-grow outline-none placeholder:text-gray-400"
           />
 
           <svg
