@@ -1,4 +1,3 @@
-// Refactored DisplayAlbum.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "@/api";
@@ -50,26 +49,30 @@ const DisplayAlbum: React.FC = () => {
         </div>
       </div>
       <hr />
-      {album.tracks.map((track) => (
-        <div
-          key={track._id}
-          className="grid grid-cols-3 sm:grid-cols-4 gap-4 py-4 hover:bg-[#282828] text-sm"
-        >
-          <p className="flex items-center">
-            <span className="mr-4">{track.name}</span>
-            <img
-              className="w-8 h-8 rounded"
-              src={track.albumCoverUrl}
-              alt={track.name}
-            />
-          </p>
-          <p>{track.artist}</p>
-          <p className="hidden sm:block">
-            {Math.floor(track.durationMs / 60000)}:
-            {((track.durationMs % 60000) / 1000).toFixed(0).padStart(2, "0")}
-          </p>
-        </div>
-      ))}
+      {album?.tracks?.length > 0 ? (
+        album.tracks.map((track) => (
+          <div
+            key={track._id}
+            className="grid grid-cols-3 sm:grid-cols-4 gap-4 py-4 hover:bg-[#282828] text-sm"
+          >
+            <p className="flex items-center">
+              <span className="mr-4">{track.name}</span>
+              <img
+                className="w-8 h-8 rounded"
+                src={track.albumCoverUrl}
+                alt={track.name}
+              />
+            </p>
+            <p>{track.artist}</p>
+            <p className="hidden sm:block">
+              {Math.floor(track.durationMs / 60000)}:
+              {((track.durationMs % 60000) / 1000).toFixed(0).padStart(2, "0")}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p>No tracks available for this album.</p>
+      )}
     </>
   );
 };

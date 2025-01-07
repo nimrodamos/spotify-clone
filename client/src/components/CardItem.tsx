@@ -1,19 +1,21 @@
-// Refactored AlbumItem.tsx
+// Updated CardItem.tsx to support dynamic navigation
 import { useNavigate } from "react-router-dom";
 
-interface AlbumItemProps {
+interface CardItemProps {
   image: string;
   name: string;
   desc: string;
   id: string;
+  type: "album" | "artist" | "playlist";
 }
 
-const AlbumItem: React.FC<AlbumItemProps> = ({ image, name, desc, id }) => {
+const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log("Navigating to album:", id);
-    navigate(`/album/${id}`);
+    if (type === "album") navigate(`/album/${id}`);
+    else if (type === "artist") navigate(`/artist/${id}`);
+    else if (type === "playlist") navigate(`/playlist/${id}`);
   };
 
   return (
@@ -28,4 +30,4 @@ const AlbumItem: React.FC<AlbumItemProps> = ({ image, name, desc, id }) => {
   );
 };
 
-export default AlbumItem;
+export default CardItem;
