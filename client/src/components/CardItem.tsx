@@ -1,4 +1,3 @@
-// Updated CardItem.tsx to support dynamic navigation
 import { useNavigate } from "react-router-dom";
 
 interface CardItemProps {
@@ -21,9 +20,13 @@ const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
   return (
     <div
       onClick={handleClick}
-      className="min-w-[180px] p-2 px-3 rounded cursor-pointer hover:bg-[#ffffff26]"
+      className="min-w-[180px] p-2 px-3 rounded cursor-pointer hover:bg-[#ffffff26] "
     >
-      <img className="rounded" src={image} alt={name} />
+      <img
+        className={`rounded ${type === "artist" ? "rounded-full" : ""}`}
+        src={image}
+        alt={name}
+      />
       <p className="font-bold mt-2 mb-1">{name}</p>
       <p className="text-slate-200 text-sm">{desc}</p>
     </div>
