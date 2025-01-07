@@ -3,7 +3,7 @@ import { Sidebar } from "@/components/Sidebar";
 
 function Main() {
   return (
-    <div className="flex overflow-hidden h-[90%] ">
+    <div className="flex overflow-hidden mx-2 h-[98%] ">
       <Sidebar />
       <Display />
     </div>

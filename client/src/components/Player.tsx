@@ -8,7 +8,7 @@ function Player() {
 
   if (!user) {
     return (
-    <div className="bg-black">
+    <div className="bg-black mx-2">
       <div className="text-textBase bg-gradient-to-r from-[#af2896] to-[#509bf5] p-2 flex w-full h-full flex-row items-center justify-between cursor-pointer gap-6 mt-[-0.25rem] relative z-10" data-testid="signup-bar">
         <div className="flex flex-col">
           <p className="text-sm font-bold" data-encore-id="text">Preview of Spotify</p>
