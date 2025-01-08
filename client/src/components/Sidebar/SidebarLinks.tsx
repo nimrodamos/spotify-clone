@@ -10,7 +10,7 @@ export const SidebarLinks = () => (
             <Link to="/privacy-policy">About Ads</Link>
             <Link to="/accessibility">Accessibility</Link>
         </div>
-        <div className="ml-6 mt-2 text-xs font-medium text-currentColor">
+        <div className="ml-6 mt-2 text-xs font-medium text-textBase hover:underline">
             <Link to="/cookies-policy">Cookies</Link>
         </div>
     </div>

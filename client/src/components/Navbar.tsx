@@ -106,7 +106,7 @@ function Navbar() {
                 className="w-12 h-12 rounded-full cursor-pointer"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
-                <AvatarFallback className="bg-[#5c5858] text-[#EDEDED] text-lg flex items-center justify-center w-10 h-10 rounded-full">
+                <AvatarFallback className="bg-essentialPositive text-[#EDEDED] text-lg flex items-center justify-center w-10 h-10 rounded-full">
                   {user.displayName
                     ? user.displayName.charAt(0).toUpperCase()
                     : "U"}

@@ -2,9 +2,23 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Playlist {
-    id: string;
-    name: string;
-    images: { url: string }[];
+    _id: string;
+    PlaylistTitle: string;
+    description: string;
+    owner: string;
+    tracks: {
+        spotifyTrackId: string;
+        name: string;
+        artist: string;
+        album: string;
+        albumCoverUrl: string;
+        durationMs: number;
+        addedAt: Date;
+    }[];
+    customAlbumCover?: string;
+    totalDuration: number;
+    isPublic: boolean;
+    createdAt: Date;
 }
 
 const SidebarPlaylistAndArtists: React.FC = () => {
@@ -13,7 +27,7 @@ const SidebarPlaylistAndArtists: React.FC = () => {
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {
-                const response = await axios.get('/api/playlists'); // Adjust the endpoint as needed
+                const response = await axios.get('/api/playlists');
                 setPlaylists(response.data.items);
             } catch (error) {
                 console.error('Error fetching playlists', error);
@@ -26,11 +40,11 @@ const SidebarPlaylistAndArtists: React.FC = () => {
     return (
         <div className="sidebar-playlists">
             {playlists.map((playlist) => (
-                <div key={playlist.id} className="playlist-item">
-                    {playlist.images.length > 0 && (
-                        <img src={playlist.images[0].url} alt={playlist.name} className="playlist-cover" />
+                <div key={playlist._id} className="playlist-item">
+                    {playlist.tracks.length > 0 && (
+                        <img src={playlist.customAlbumCover} alt={playlist.PlaylistTitle} className="playlist-cover" />
                     )}
-                    <p>{playlist.name}</p>
+                    <p>{playlist.PlaylistTitle}</p>
                 </div>
             ))}
         </div>
