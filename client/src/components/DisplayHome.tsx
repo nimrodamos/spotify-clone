@@ -3,6 +3,7 @@ import CardItem from "./CardItem";
 import { api } from "@/api";
 import { IAlbum, IPlaylist, IArtist } from "../types/types";
 import { useUserContext } from "@/Context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 // Utility function to shuffle an array
 const shuffleArray = (array: any[]) => {
@@ -10,7 +11,8 @@ const shuffleArray = (array: any[]) => {
 };
 
 const DisplayHome: React.FC = () => {
-  const { user, setUser } = useUserContext(); // Access UserContext
+  const { user } = useUserContext(); // Access UserContext
+  const navigate = useNavigate(); // Get navigate function
   const [albums, setAlbums] = useState<IAlbum[]>([]);
   const [playlists, setPlaylists] = useState<IPlaylist[]>([]);
   const [artists, setArtists] = useState<IArtist[]>([]);
@@ -133,12 +135,7 @@ const DisplayHome: React.FC = () => {
 
       {/* Artists Section */}
       <h1 className="my-5 font-bold text-2xl">Popular Artists</h1>
-      <button
-        className="ml-4 text-blue-500"
-        onClick={() => (window.location.href = "/artists")}
-      >
-        Show All
-      </button>
+      <button onClick={() => navigate("/artists")}>Show All</button>
       <div className="flex overflow-auto">
         {filteredArtists.map((artist) => (
           <CardItem
@@ -154,12 +151,7 @@ const DisplayHome: React.FC = () => {
 
       {/* Albums Section */}
       <h1 className="my-5 font-bold text-2xl">Featured Albums</h1>
-      <button
-        className="ml-4 text-blue-500"
-        onClick={() => (window.location.href = "/albums")}
-      >
-        Show All
-      </button>
+      <button onClick={() => navigate("/albums")}>Show All</button>
       <div className="flex overflow-auto">
         {filteredAlbums.map((album) => (
           <CardItem

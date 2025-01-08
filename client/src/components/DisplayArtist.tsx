@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useUserContext } from "../Context/UserContext";
+import { IArtist } from "@/types/types";
 
 interface Track {
   id: string;
@@ -18,37 +19,33 @@ const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useUserContext(); // קבלת המשתמש מה-Context
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [artist, setArtist] = useState<IArtist | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchTopTracks() {
+    async function fetchArtist() {
       try {
-        if (!user || !user.accessToken) {
-          throw new Error("No access token available");
+        const response = await axios.get(`/api/artists/${id}`);
+
+        if (response.data) {
+          setArtist(response.data.artist); // קבלת נתוני האמן
+          setTracks(response.data.tracks); // קבלת רשימת השירים של האמן
         }
-
-        const response = await axios.get(
-          `https://api.spotify.com/v1/artists/${id}/top-tracks?market=US`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`, // שימוש בטוקן מה-Context
-            },
-          }
-        );
-
-        setTracks(response.data.tracks);
+        console.log("Artist data:", response.data); // הדפסת נתוני האמן
+        console.log("Artist tracks:", response.data.tracks); // הדפסת השירים
       } catch (err) {
-        console.error("Error fetching top tracks:", err);
-        setError("Failed to load top tracks. Please try again.");
+        console.error("Error fetching artist:", err);
+        setError("Failed to load artist. Please try again.");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchTopTracks();
-  }, [id, user]);
+    fetchArtist();
+  }, [id]);
 
+  if (!user) return <p>Please log in to view this content.</p>;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
