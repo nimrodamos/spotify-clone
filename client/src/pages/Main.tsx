@@ -1,5 +1,5 @@
 import Display from "@/components/Display";
-import { Sidebar } from "@/components/Sidebar";
+import { Sidebar } from "@/components/Sidebar/Sidebar";
 
 function Main() {
   return (
