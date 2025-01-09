@@ -81,16 +81,16 @@ const DisplayArtist: React.FC = () => {
           <ul>
             {/* ניתן להוסיף את השירים הפופולריים כאן */}
             <li className="flex items-center mb-2">
-              <p className="font-bold flex-1">Easy On Me</p>
-              <p className="text-sm">1,994,247,318</p>
+              <p className="font-bold flex-1">name of song</p>
+              <p className="text-sm">views</p>
             </li>
             <li className="flex items-center mb-2">
-              <p className="font-bold flex-1">Set Fire to the Rain</p>
-              <p className="text-sm">1,850,362,313</p>
+              <p className="font-bold flex-1">name of song</p>
+              <p className="text-sm">views</p>
             </li>
             <li className="flex items-center mb-2">
-              <p className="font-bold flex-1">Someone Like You</p>
-              <p className="text-sm">2,163,624,874</p>
+              <p className="font-bold flex-1">name of song</p>
+              <p className="text-sm">views</p>
             </li>
           </ul>
         </div>
