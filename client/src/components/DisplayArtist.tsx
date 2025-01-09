@@ -18,7 +18,7 @@ const DisplayArtist: React.FC = () => {
         const artistResponse = await api.get(`/api/artists/${id}`);
         setArtist(artistResponse.data);
 
-        // שליפת השירים על פי שם האמן
+        // Fetching the artist's tracks
         const tracksResponse = await api.get(
           `/api/tracks/artist/${artistResponse.data.name}`
         );
@@ -39,62 +39,48 @@ const DisplayArtist: React.FC = () => {
 
   return (
     <div className="bg-black text-white">
-      {/* Header Section */}
+      {/* Header Section with background image */}
       <div
         className="relative h-[300px] bg-cover bg-center"
         style={{ backgroundImage: `url(${artist?.images?.[0]?.url})` }}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
+          <h2 className="text-7xl font-bold text-white">{artist?.name}</h2>
+          <p className="text-xl text-white pt-5">
+            {artist?.followers?.total} monthly listeners
+          </p>
+          <a
+            href={artist?.external_urls?.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 text-green-500 hover:underline"
+          >
+            Listen on Spotify
+          </a>
+        </div>
       </div>
 
-      {/* Artist Info Section */}
+      {/* Tracks Section */}
       <div className="p-6">
-        <div className="flex items-center mb-6">
-          <img
-            src={artist?.images?.[0]?.url}
-            alt={artist?.name}
-            className="w-32 h-32 object-cover border-4 border-white rounded-full"
-          />
-          <div className="ml-6">
-            <h2 className="text-4xl font-bold">{artist?.name}</h2>
-            <p className="text-xl">
-              {artist?.followers?.total} monthly listeners
-            </p>
-            <a
-              href={artist?.external_urls?.spotify}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 text-green-500 hover:underline"
-            >
-              Listen on Spotify
-            </a>
-          </div>
-        </div>
-
-        {/* Tracks Section */}
-        <div>
-          <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
-          <ul>
-            {tracks.length > 0 ? (
-              tracks.map((track) => (
-                <li
-                  key={track.spotifyTrackId}
-                  className="flex items-center mb-2"
-                >
-                  <p className="font-bold flex-1">{track.name}</p>
-                  <p className="text-sm">{track.album}</p>
-                  <img
-                    src={track.albumCoverUrl}
-                    alt={track.name}
-                    className="w-12 h-12 ml-2"
-                  />
-                </li>
-              ))
-            ) : (
-              <p>No tracks found for this artist.</p>
-            )}
-          </ul>
-        </div>
+        <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
+        <ul>
+          {tracks.length > 0 ? (
+            tracks.map((track) => (
+              <li key={track.spotifyTrackId} className="flex items-center mb-2">
+                <p className="font-bold flex-1">{track.name}</p>
+                <p className="text-sm">{track.album}</p>
+                <img
+                  src={track.albumCoverUrl}
+                  alt={track.name}
+                  className="w-12 h-12 ml-2"
+                />
+              </li>
+            ))
+          ) : (
+            <p>No tracks found for this artist.</p>
+          )}
+        </ul>
       </div>
     </div>
   );
