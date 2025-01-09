@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export const SidebarLinks = () => (
     <div>
-        <div className="flex flex-wrap gap-6 text-xs mt-12 ml-6 font-medium text-currentColor">
+        <div className="flex flex-wrap gap-6 text-xs mt-12 ml-6  font-medium text-currentColor">
             <Link to="/legal">Legal</Link>
             <Link to="/safetyandprivacy">Safety & Privacy Center</Link>
             <Link to="/privacy-policy">Privacy Policy</Link>

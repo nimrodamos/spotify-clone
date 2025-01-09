@@ -47,27 +47,27 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full text-textBase">
-      <div>
-        {hasPlaylists ? (
-          <div className="bg-backgroundBase h-full rounded">
-            <SidebarHeader />
-            {user && user.playlists ? (
-              <SidebarPlaylistAndArtists />
-            ) : (
-              <>
-                <SidebarPlaylistPrompt />
-                <SidebarPodcastPrompt />
-              </>
-            )}
-            <SidebarLinks />
-            <SidebarLanguageSelector />
-          </div>
-        ) : null}
+    <div className="flex h-full min-w-[30rem] text-textBase">
+      <div className="flex-grow">
+      {hasPlaylists ? (
+        <div className="bg-backgroundBase h-full rounded">
+        <SidebarHeader />
+        {user && user.playlists ? (
+          <SidebarPlaylistAndArtists />
+        ) : (
+          <>
+          <SidebarPlaylistPrompt />
+          <SidebarPodcastPrompt />
+          <SidebarLinks />
+          <SidebarLanguageSelector />
+          </>
+        )}
+        </div>
+      ) : null}
       </div>
       <div
-        className="w-[1%] h-full rounded cursor-col-resize hover:bg-essentialSubdued transition-all duration-300 ml-2 mr-2"
-        onMouseDown={handleMouseDown}
+      className="w-[0.1rem] h-full rounded cursor-col-resize hover:bg-essentialSubdued transition-all ml-1 mr-1 duration-300"
+      onMouseDown={handleMouseDown}
       ></div>
     </div>
   );
