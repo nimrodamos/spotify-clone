@@ -5,7 +5,7 @@ import { SidebarLinks } from "./SidebarLinks";
 import { SidebarLanguageSelector } from "./SidebarLanguageSelector";
 import { useState, useEffect } from "react";
 import { useUserContext } from "../../Context/UserContext.tsx";
-import SidebarPlaylistAndArtists from "./SidebarPlaylistAndArtists";
+import SidebarPlaylistAndArtists from "./SidebarPlaylistAndArtists.tsx";
 
 const Sidebar: React.FC = () => {
   const [width, setWidth] = useState<number>(100);
@@ -49,27 +49,25 @@ const Sidebar: React.FC = () => {
   return (
     <div className="flex h-full min-w-[30rem] text-textBase">
       <div className="flex-grow">
-      {hasPlaylists ? (
         <div className="bg-backgroundBase h-full rounded">
-        <SidebarHeader />
-        <div className="h-fit overflow-auto bg-backgroundBase">
-        {user && user.playlists ? (
-          <SidebarPlaylistAndArtists />
-        ) : (
-          <>
-          <SidebarPlaylistPrompt />
-          <SidebarPodcastPrompt />
-          <SidebarLinks />
-          <SidebarLanguageSelector />
-          </>
-        )}
+          <SidebarHeader />
+          <div className="h-fit overflow-auto bg-backgroundBase">
+            {user ? (
+              <SidebarPlaylistAndArtists />
+            ) : (
+              <>
+                <SidebarPlaylistPrompt />
+                <SidebarPodcastPrompt />
+                <SidebarLinks />
+                <SidebarLanguageSelector />
+              </>
+            )}
+          </div>
         </div>
       </div>
-      ) : null}
-      </div>
       <div
-      className="w-[0.1rem] h-full rounded cursor-col-resize hover:bg-essentialSubdued transition-all ml-1 mr-1 duration-300"
-      onMouseDown={handleMouseDown}
+        className="w-[0.1rem] h-full rounded cursor-col-resize hover:bg-essentialSubdued transition-all ml-1 mr-1 duration-300"
+        onMouseDown={handleMouseDown}
       ></div>
     </div>
   );

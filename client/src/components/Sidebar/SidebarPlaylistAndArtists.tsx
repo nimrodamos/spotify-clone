@@ -74,7 +74,9 @@ const SidebarPlaylistAndArtists: React.FC = () => {
             }
         };
 
-        fetchPlaylists();
+        if (user) {
+            fetchPlaylists();
+        }
     }, [user]);
 
     const navigate = useNavigate();
