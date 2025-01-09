@@ -1,33 +1,36 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUserContext } from "../Context/UserContext";
-import { IArtist } from "@/types/types";
+import { IArtist, ITrack } from "@/types/types";
 import { api } from "@/api";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useUserContext(); // קבלת המשתמש מה-Context
+  const { user } = useUserContext();
   const [artist, setArtist] = useState<IArtist | null>(null);
+  const [tracks, setTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchArtist() {
+    async function fetchArtistAndTracks() {
       try {
-        const response = await api.get(`/api/artists/${id}`);
-        if (response.data) {
-          setArtist(response.data); // קבלת נתוני האמן
-        }
-        console.log("Artist data:", response.data); // הדפסת נתוני האמן
+        const artistResponse = await api.get(`/api/artists/${id}`);
+        setArtist(artistResponse.data);
+
+        // שליפת השירים על פי שם האמן
+        const tracksResponse = await api.get(
+          `/api/tracks/artist/${artistResponse.data.name}`
+        );
+        setTracks(tracksResponse.data);
       } catch (err) {
-        console.error("Error fetching artist:", err);
-        setError("Failed to load artist. Please try again.");
+        setError("Failed to load artist or tracks.");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchArtist();
+    fetchArtistAndTracks();
   }, [id]);
 
   if (!user) return <p>Please log in to view this content.</p>;
@@ -47,7 +50,6 @@ const DisplayArtist: React.FC = () => {
       {/* Artist Info Section */}
       <div className="p-6">
         <div className="flex items-center mb-6">
-          {/* Artist Image */}
           <img
             src={artist?.images?.[0]?.url}
             alt={artist?.name}
@@ -69,29 +71,28 @@ const DisplayArtist: React.FC = () => {
           </div>
         </div>
 
-        {/* Genres Section */}
-        <div className="mb-6">
-          <h3 className="text-2xl font-semibold">Genres</h3>
-          <p className="text-lg">{artist?.genres?.join(", ")}</p>
-        </div>
-
-        {/* Popular Tracks Section */}
+        {/* Tracks Section */}
         <div>
           <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
           <ul>
-            {/* ניתן להוסיף את השירים הפופולריים כאן */}
-            <li className="flex items-center mb-2">
-              <p className="font-bold flex-1">name of song</p>
-              <p className="text-sm">views</p>
-            </li>
-            <li className="flex items-center mb-2">
-              <p className="font-bold flex-1">name of song</p>
-              <p className="text-sm">views</p>
-            </li>
-            <li className="flex items-center mb-2">
-              <p className="font-bold flex-1">name of song</p>
-              <p className="text-sm">views</p>
-            </li>
+            {tracks.length > 0 ? (
+              tracks.map((track) => (
+                <li
+                  key={track.spotifyTrackId}
+                  className="flex items-center mb-2"
+                >
+                  <p className="font-bold flex-1">{track.name}</p>
+                  <p className="text-sm">{track.album}</p>
+                  <img
+                    src={track.albumCoverUrl}
+                    alt={track.name}
+                    className="w-12 h-12 ml-2"
+                  />
+                </li>
+              ))
+            ) : (
+              <p>No tracks found for this artist.</p>
+            )}
           </ul>
         </div>
       </div>
