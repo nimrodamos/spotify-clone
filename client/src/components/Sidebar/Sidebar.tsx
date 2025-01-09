@@ -57,6 +57,7 @@ const Sidebar: React.FC = () => {
               <SidebarPodcastPrompt />
             </>
           )}
+          <SidebarPlaylistAndArtists />
           <SidebarLinks />
           <SidebarLanguageSelector />
         </div>

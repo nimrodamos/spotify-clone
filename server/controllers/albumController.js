@@ -30,7 +30,26 @@ const getAlbumById = async (req, res) => {
 }
 };
 
+// @desc    Get album by name
+// @route   GET /api/albums/name/:name
+const getAlbumByName = async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        const album = await Album.findOne({ name: name }).select('-_id');
+        if (!album) {
+            return res.status(404).json({ error: "Album not found" });
+        }
+
+        res.status(200).json(album);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+        console.log("Error in getAlbumByName:", err.message);
+    }
+};
+
 export {
     getAlbums,
-    getAlbumById
+    getAlbumById,
+    getAlbumByName,
 };
