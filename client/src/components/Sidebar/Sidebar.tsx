@@ -3,13 +3,23 @@ import { SidebarPlaylistPrompt } from "./SidebarPlaylistPrompt";
 import { SidebarPodcastPrompt } from "./SidebarPodcastPrompt";
 import { SidebarLinks } from "./SidebarLinks";
 import { SidebarLanguageSelector } from "./SidebarLanguageSelector";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUserContext } from "../../Context/UserContext.tsx";
-import SidebarPlaylistAndArtists from "./SidebarPlaylistAndArtists";
+import SidebarPlaylistAndArtists from "./SidebarPlaylistAndArtists.tsx";
 
 const Sidebar: React.FC = () => {
   const [width, setWidth] = useState<number>(100);
   const { user } = useUserContext();
+  const [hasPlaylists, setHasPlaylists] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (user && user.playlists) {
+      setHasPlaylists(true);
+    } else {
+      setHasPlaylists(false);
+    }
+  }, [user]);
+
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
     let lastX = startX;
@@ -37,33 +47,26 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full">
-      <div
-        className="h-full rounded flex-col mr-2 gap-2 text-textBase hidden lg:flex"
-        style={{
-          width: `${width}%`,
-          backgroundColor: "#1e1e1e",
-          minWidth: "300px",
-          maxWidth: "100%",
-        }}
-      >
+    <div className="flex h-full min-w-[30rem] text-textBase">
+      <div className="flex-grow">
         <div className="bg-backgroundBase h-full rounded">
           <SidebarHeader />
-          {user && user.playlists && user.playlists.length > 0 ? (
-            <SidebarPlaylistAndArtists />
-          ) : (
-            <>
-              <SidebarPlaylistPrompt />
-              <SidebarPodcastPrompt />
-            </>
-          )}
-          <SidebarPlaylistAndArtists />
-          <SidebarLinks />
-          <SidebarLanguageSelector />
+          <div className="h-fit overflow-auto bg-backgroundBase">
+            {user ? (
+              <SidebarPlaylistAndArtists />
+            ) : (
+              <>
+                <SidebarPlaylistPrompt />
+                <SidebarPodcastPrompt />
+                <SidebarLinks />
+                <SidebarLanguageSelector />
+              </>
+            )}
+          </div>
         </div>
       </div>
       <div
-        className="w-[1%] h-full cursor-col-resize hover:bg-essentialSubdued transition-all duration-300 mr-2"
+        className="w-[0.1rem] h-full rounded cursor-col-resize hover:bg-essentialSubdued transition-all ml-1 mr-1 duration-300"
         onMouseDown={handleMouseDown}
       ></div>
     </div>
