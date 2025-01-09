@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 const createPlaylist = async (req, res) => {
 	try {
-		const { PlaylistTitle, description } = req.body;
+		const { PlaylistTitle } = req.body;
 		const owner = req.user._id;
 
 		const newPlaylist = new Playlist({
