@@ -3,7 +3,6 @@ import { api } from "@/api";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { FaPause, FaPlay } from 'react-icons/fa';
-import volume from '../../assets/volume.svg';
 import { assets } from '@/assets/assets';
 
 interface Playlist {
