@@ -12,6 +12,7 @@ interface User {
   email: string;
   accessToken: string;
   [key: string]: any;
+  playlists: string[];
 }
 
 interface UserContextProps {
@@ -25,7 +26,11 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
+    const parsedUser = savedUser ? JSON.parse(savedUser) : null;
+    if (parsedUser && !parsedUser.playlists) {
+      parsedUser.playlists = [];
+    }
+    return parsedUser;
   });
 
   useEffect(() => {

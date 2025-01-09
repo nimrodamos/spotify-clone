@@ -13,6 +13,18 @@ const getArtists = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+// Get artist by name
+const getArtistByName = async (req, res) => {
+    try {
+        const artist = await Artist.findOne({ name: req.params.name });
+        if (!artist) {
+            return res.status(404).json({ message: 'Artist not found' });
+        }
+        res.status(200).json(artist);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // Get artist by ID
 const getArtistById = async (req, res) => {
@@ -27,4 +39,4 @@ const getArtistById = async (req, res) => {
     }
 };
 
-export { getArtists, getArtistById };
+export { getArtists, getArtistById, getArtistByName };

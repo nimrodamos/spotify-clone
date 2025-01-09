@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const PlaylistSchema = new mongoose.Schema({
     PlaylistTitle: { type: String, required: true }, // Playlist title
-    description: { type: String, default: '' }, // Optional description
+    description: { type: String, default: 'My Playlist' }, // Optional description
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the playlist owner
     tracks: [
     {
