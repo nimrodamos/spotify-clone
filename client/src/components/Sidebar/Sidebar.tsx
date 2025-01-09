@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
       >
         <div className="bg-backgroundBase h-full rounded">
           <SidebarHeader />
-          {user && user.playlists && user.playlists.length > 0 ? (
+          {user && user.playlists ? (
             <SidebarPlaylistAndArtists />
           ) : (
             <>
@@ -57,7 +57,6 @@ const Sidebar: React.FC = () => {
               <SidebarPodcastPrompt />
             </>
           )}
-          <SidebarPlaylistAndArtists />
           <SidebarLinks />
           <SidebarLanguageSelector />
         </div>

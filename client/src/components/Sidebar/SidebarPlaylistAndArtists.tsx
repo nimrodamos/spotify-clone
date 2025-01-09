@@ -66,7 +66,7 @@ const SidebarPlaylistAndArtists: React.FC = () => {
             {playlist.tracks.length > 0 && (
             <div className="relative">
             <img src={playlist.tracks[0].albumCoverUrl} alt={playlist.tracks[0].name} className="w-16 rounded" />
-            <div className="absolute inset-0 flex items-center justify-center bg-black rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => {
+            <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => {
                 e.stopPropagation();
                 setPlayIcon((prev) => (prev === 'play' ? 'pause' : 'play'));
             }}>
@@ -80,7 +80,9 @@ const SidebarPlaylistAndArtists: React.FC = () => {
             )}
             <div className='ml-2'>
             <p className={`font-semibold ${playIcon !== 'play' ? 'text-essentialPositive' : ''}`}>{playlist.PlaylistTitle}</p>
-            <img src={assets.volume_icon} />
+            {playIcon !== 'play' && (
+                <img src={assets.volume_icon} alt="Volume" className="absolute right-2 top-8 w-5 h-5 text-essentialPositive" style={{ filter: 'invert(35%) sepia(100%) saturate(500%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} />
+            )}
             <p className="text-sm text-textSubdued">{playlist.description}</p>
             </div>
             </div>
