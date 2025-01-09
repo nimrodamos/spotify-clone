@@ -12,7 +12,7 @@ export const SidebarHeader = () => {
             </div>
             <div className="flex items-center gap-3">
                 <img className="w-4 mr-2" src={assets.plus_icon} alt="" />
-                {user && <img className="w-5" src={assets.arrow_icon} alt="" />}
+                {user && <img className="w-4" src={assets.arrow_icon} alt="" />}
             </div>
         </div>
     );
