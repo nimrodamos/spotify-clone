@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "@/api"; // אם יש לך את ה-axios מוגדר פה
+import { api } from "@/api";
 import { IAlbum, ITrack } from "../types/types";
 
 const DisplayAlbum: React.FC = () => {
@@ -43,29 +43,33 @@ const DisplayAlbum: React.FC = () => {
 
   return (
     <div className="max-w-screen-lg mx-auto p-5">
-      <h2 className="text-3xl font-semibold text-center mb-4">{album.name}</h2>
-      <img
-        className="w-full max-w-sm mx-auto rounded-xl shadow-lg mb-4"
-        src={album.albumCoverUrl}
-        alt={album.name}
-      />
-      <p className="text-lg text-center text-gray-700 mb-2">
-        Artist: {album.artist}
-      </p>
-      <p className="text-lg text-center text-gray-700 mb-4">
-        Release Date: {album.releaseDate}
-      </p>
+      <div className="flex items-center justify-between mb-8">
+        <img
+          className="w-32 h-32 object-cover rounded-md shadow-md"
+          src={album.albumCoverUrl}
+          alt={album.name}
+        />
+        <div>
+          <h2 className="text-3xl font-semibold text-gray-800 mb-2">
+            {album.name}
+          </h2>
+          <p className="text-lg text-gray-600">Artist: {album.artist}</p>
+          <p className="text-sm text-gray-500">
+            Release Date: {album.releaseDate}
+          </p>
+        </div>
+      </div>
 
-      <h3 className="text-2xl font-semibold mb-2">Tracks:</h3>
-      {filteredTracks.length > 0 ? (
-        <div className="space-y-4">
-          {filteredTracks.map((track) => (
+      <h3 className="text-2xl font-semibold mb-4">Track List</h3>
+      <div className="space-y-4">
+        {filteredTracks.length > 0 ? (
+          filteredTracks.map((track) => (
             <div
               key={track.spotifyTrackId}
-              className="flex items-center space-x-4 bg-gray-100 p-4 rounded-lg shadow-md"
+              className="flex items-center space-x-4 bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300"
             >
               <img
-                className="w-20 h-20 object-cover rounded-md"
+                className="w-16 h-16 object-cover rounded-md"
                 src={track.albumCoverUrl}
                 alt={track.name}
               />
@@ -76,13 +80,13 @@ const DisplayAlbum: React.FC = () => {
                 <p className="text-sm text-gray-500">{track.artist}</p>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-lg text-gray-500">
-          No tracks available for this album.
-        </p>
-      )}
+          ))
+        ) : (
+          <p className="text-center text-lg text-gray-500">
+            No tracks available for this album.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
