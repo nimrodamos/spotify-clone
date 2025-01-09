@@ -52,6 +52,7 @@ const Sidebar: React.FC = () => {
       {hasPlaylists ? (
         <div className="bg-backgroundBase h-full rounded">
         <SidebarHeader />
+        <div className="h-fit overflow-auto bg-backgroundBase">
         {user && user.playlists ? (
           <SidebarPlaylistAndArtists />
         ) : (
@@ -63,6 +64,7 @@ const Sidebar: React.FC = () => {
           </>
         )}
         </div>
+      </div>
       ) : null}
       </div>
       <div
