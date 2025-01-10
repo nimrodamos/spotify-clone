@@ -19,7 +19,7 @@ const App = () => {
     <UserProvider>
       <div className="h-screen bg-black">
         {!isFullPage && (
-          <div className="h-[10%]">
+          <div className="h-[9%]">
             <Navbar />
           </div>
         )}
