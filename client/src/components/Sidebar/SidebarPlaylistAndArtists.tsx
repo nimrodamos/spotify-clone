@@ -134,10 +134,10 @@ const SidebarPlaylistAndArtists: React.FC = () => {
                 )
             ))}
             {artists.map((artist: Artist) => (
-                <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={artist._id} onClick={handleArtistPlayIconClick}>
+                <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={artist._id} onClick={() => navigate(`/artist/${artist._id}`)}>
                     <div className="relative">
                         <img src={artist.images[0]?.url} alt={artist.name} className="w-14 h-14 rounded-full" />
-                        <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded-full bg-opacity-50 z-10 opacity-0 group-hover:opacity-100">
+                        <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded-full bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleArtistPlayIconClick(); }}>
                             {artistPlayIcon === 'play' ? (
                                 <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
                             ) : (
@@ -159,3 +159,4 @@ const SidebarPlaylistAndArtists: React.FC = () => {
 };
 
 export default SidebarPlaylistAndArtists;
+
