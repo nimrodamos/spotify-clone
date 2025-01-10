@@ -1,5 +1,5 @@
 import { UserProvider } from "./Context/UserContext.tsx"; // Adjust the path as necessary
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar.tsx";
 import Player from "./components/Player";
 import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
