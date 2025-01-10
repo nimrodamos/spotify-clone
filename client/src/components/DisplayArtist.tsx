@@ -1,78 +1,86 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { useUserContext } from "../Context/UserContext";
-
-interface Track {
-  id: string;
-  name: string;
-  album: {
-    name: string;
-    images: { url: string }[];
-  };
-  duration_ms: number;
-  preview_url: string | null;
-}
+import { IArtist, ITrack } from "@/types/types";
+import { api } from "@/api";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useUserContext(); // קבלת המשתמש מה-Context
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const { user } = useUserContext();
+  const [artist, setArtist] = useState<IArtist | null>(null);
+  const [tracks, setTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchTopTracks() {
+    async function fetchArtistAndTracks() {
       try {
-        if (!user || !user.accessToken) {
-          throw new Error("No access token available");
-        }
+        const artistResponse = await api.get(`/api/artists/${id}`);
+        setArtist(artistResponse.data);
 
-        const response = await axios.get(
-          `https://api.spotify.com/v1/artists/${id}/top-tracks?market=US`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`, // שימוש בטוקן מה-Context
-            },
-          }
+        // Fetching the artist's tracks
+        const tracksResponse = await api.get(
+          `/api/tracks/artist/${artistResponse.data.name}`
         );
-
-        setTracks(response.data.tracks);
+        setTracks(tracksResponse.data);
       } catch (err) {
-        console.error("Error fetching top tracks:", err);
-        setError("Failed to load top tracks. Please try again.");
+        setError("Failed to load artist or tracks.");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchTopTracks();
-  }, [id, user]);
+    fetchArtistAndTracks();
+  }, [id]);
 
+  if (!user) return <p>Please log in to view this content.</p>;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="artist-item flex flex-col items-center p-4">
-      <h3 className="text-lg font-semibold">Top Tracks</h3>
-      <div className="w-full">
-        {tracks.map((track) => (
-          <div key={track.id} className="py-2 border-b border-gray-700">
-            <p className="font-bold">{track.name}</p>
-            <p className="text-sm text-gray-400">Album: {track.album.name}</p>
-            <img
-              src={track.album.images[0]?.url}
-              alt={track.name}
-              className="w-32 h-32 rounded mt-2"
-            />
-            {track.preview_url && (
-              <audio controls className="mt-2">
-                <source src={track.preview_url} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            )}
-          </div>
-        ))}
+    <div className="bg-black text-white">
+      {/* Header Section with background image */}
+      <div
+        className="relative h-[300px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${artist?.images?.[0]?.url})` }}
+      >
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
+          <h2 className="text-7xl font-bold text-white">{artist?.name}</h2>
+          <p className="text-xl text-white pt-5">
+            {artist?.followers?.total} monthly listeners
+          </p>
+          <a
+            href={artist?.external_urls?.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 text-green-500 hover:underline"
+          >
+            Listen on Spotify
+          </a>
+        </div>
+      </div>
+
+      {/* Tracks Section */}
+      <div className="p-6">
+        <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
+        <ul>
+          {tracks.length > 0 ? (
+            tracks.map((track) => (
+              <li key={track.spotifyTrackId} className="flex items-center mb-2">
+                <p className="font-bold flex-1">{track.name}</p>
+                <p className="text-sm">{track.album}</p>
+                <img
+                  src={track.albumCoverUrl}
+                  alt={track.name}
+                  className="w-12 h-12 ml-2"
+                />
+              </li>
+            ))
+          ) : (
+            <p>No tracks found for this artist.</p>
+          )}
+        </ul>
       </div>
     </div>
   );

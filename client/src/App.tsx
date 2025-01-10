@@ -1,5 +1,5 @@
 import { UserProvider } from "./Context/UserContext.tsx"; // Adjust the path as necessary
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar.tsx";
 import Player from "./components/Player";
 import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
@@ -19,12 +19,12 @@ const App = () => {
     <UserProvider>
       <div className="h-screen bg-black">
         {!isFullPage && (
-          <div className="h-[10%]">
+          <div className="h-[9%]">
             <Navbar />
           </div>
         )}
 
-        <div className={isFullPage ? "h-full" : "h-[80%]"}>
+        <div className={isFullPage ? "h-full" : "h-[81%]"}>
           <Routes>
             <Route path="*" element={<Main />} />
             <Route path="/signup" element={<SignUp />} />
