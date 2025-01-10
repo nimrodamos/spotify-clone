@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 //! icons import
+
 import { FaSpotify } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SiFacebook } from "react-icons/si";
@@ -10,6 +11,9 @@ import { IoChevronBack } from "react-icons/io5";
 import { IoIosCheckmark } from "react-icons/io";
 
 const SignUpPage: React.FC = () => {
+
+  //? states ? !??@?
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +24,15 @@ const SignUpPage: React.FC = () => {
   const [gender, setGender] = useState("");
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
+  const [isTouched, setIsTouched] = useState(false); // Tracks if the input has been interacted with
+  const [isErrorTriggered, setIsErrorTriggered] = useState(false); // Tracks if "Next" was pressed with an invalid passwor
+  const isPasswordValid =
+  /.*[a-zA-Z].*/.test(password) &&
+  /.*[0-9!@#$%^&*].*/.test(password) &&
+  password.length >= 10;
   const navigate = useNavigate();
+
+  //!functions
 
   const handleEmailValidation = async () => {
     try {
@@ -41,17 +53,28 @@ const SignUpPage: React.FC = () => {
       setError("An error occurred. Please try again later.");
     }
   };
-
+  // Validates the password and navigates to the next step
   const handlePasswordValidation = () => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9!@#$%^&*]).{10,}$/;
-    if (!passwordRegex.test(password)) {
-      setError(
-        "Password must contain at least one letter, one number or special character, and be at least 10 characters long."
-      );
+    if (!isPasswordValid) {
+      setIsTouched(true); // Ensure conditions and border are shown
+      setIsErrorTriggered(true); // Trigger red border
+      setError("Password must meet the conditions.");
       return;
     }
-    setError("");
-    setStep(3);
+    setError(""); // Clear any existing error
+    setStep(3); // Navigate to Step 3
+  };
+
+  // Marks the input as touched when it loses focus
+  const handleInputBlur = () => {
+    setIsTouched(true);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    setIsTouched(false); // Reset touch state while typing
+    setIsErrorTriggered(false); // Reset error triggered by "Next"
+    setError(""); // Clear general error
   };
 
   const handleProfileValidation = () => {
@@ -176,95 +199,142 @@ const SignUpPage: React.FC = () => {
           </button>
         </>
       )}
+{step === 2 && (
+  <>
+    {/* Progress Bar */}
+    <div className="w-[440px] h-[2px] bg-gray-600 rounded-full overflow-hidden mb-4">
+      <div className="h-full bg-green-500" style={{ width: "33%" }}></div>
+    </div>
 
-      {step === 2 && (
-        <>
-          {/* Progress Bar */}
-          <div className="w-[440px] h-[2px] bg-gray-600 rounded-full overflow-hidden mb-4">
-            <div className="h-full bg-green-500" style={{ width: "33%" }}></div>
-          </div>
+    {/* Step Indicator and Back Button */}
+    <div className="flex items-center justify-start w-[440px] mb-4">
+      <IoChevronBack
+        className="text-gray-400 cursor-pointer hover:text-white size-7"
+        onClick={() => setStep(1)}
+      />
+      <div className="flex flex-col gap-1 ml-4">
+        <p className="text-sm text-[#B3B3B3]">Step 1 of 3</p>
+        <p className="text-sm text-[#FFFFFF] font-bold">Create a password</p>
+      </div>
+    </div>
 
-          {/* Step Indicator and Back Button */}
-          <div className="flex items-center justify-start w-[440px] mb-3">
-            <IoChevronBack
-              className="text-gray-400 cursor-pointer hover:text-white size-7"
-              onClick={() => setStep(1)}
-            />
-            <div className="flex flex-col gap-1 ml-4">
-              <p className="text-sm text-[#B3B3B3]">Step 1 of 3</p>
-              <p className="text-sm text-[#FFFFFF] font-bold">
-                Create a password
-              </p>
-            </div>
-          </div>
+    {/* Password Input */}
+    <div className="mt-6 mb-4 w-[325px]">
+      <label className="block text-sm font-medium mb-2">Password</label>
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          className={`w-full px-3 py-[0.76rem] bg-transparent rounded border ${
+            (!isPasswordValid && isTouched) || isErrorTriggered
+              ? "border-[#ED2C3F]"
+              : "border-white/50"
+          } text-white outline-none hover:border-white`}
+          placeholder="Password"
+          value={password}
+          onChange={handlePasswordChange}
+          onBlur={handleInputBlur}
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-[0.65rem] text-gray-500 hover:text-gray-300"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          👁️
+        </button>
+      </div>
+      {error && <p className="text-[#ED2C3F] text-sm mt-2">{error}</p>}
+    </div>
 
-          {/* Password Input */}
-          <div className="mt-6 mb-4 w-[325px]">
-            <label className="block text-sm font-medium mb-2">Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                className={`w-full px-3 py-[0.76rem] bg-transparent rounded-md border ${
-                  error ? "border-[#ED2C3F]" : "border-white/50"
-                } text-white outline-none hover:border-white`}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-[0.65rem] text-gray-500 hover:text-gray-300"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                👁️
-              </button>
-            </div>
-            {error && <p className="text-[#ED2C3F] text-sm mt-2">{error}</p>}
-          </div>
-
-          {/* Password Criteria Section */}
-          <div className="w-[325px]">
-            <p className="text-sm text-[#FFFFFF] mb-2 font-bold">
-              Password must contain:
-            </p>
-            <ul className="text-gray-400 text-sm mb-6">
-              <li
-                className={
-                  /.*[a-zA-Z].*/.test(password)
-                    ? "text-[#FFFFFF]"
-                    : "text-[#F3727F]"
-                }
-              >
-                ✔ At least one letter
-              </li>
-              <li
-                className={
-                  /.*[0-9!@#$%^&*].*/.test(password)
-                    ? "text-[#FFFFFF]"
-                    : "text-[#F3727F]"
-                }
-              >
-                ✔ At least one number or special character
-              </li>
-              <li
-                className={
-                  password.length >= 10 ? "text-[#FFFFFF]" : "text-[#F3727F]"
-                }
-              >
-                ✔ At least 10 characters
-              </li>
-            </ul>
-          </div>
-
-          {/* Next Button */}
-          <button
-            className="w-[325px] py-[0.85rem] bg-green-500 text-black font-bold text-sm rounded-full shadow-md transform transition duration-300 hover:scale-105 hover:opacity-90"
-            onClick={handlePasswordValidation}
+    {/* Password Conditions */}
+    <div className="w-[325px]">
+      <p className="text-sm text-white mb-2">Password must contain:</p>
+      <ul className="text-sm mb-6 flex flex-col gap-2">
+        <li className="flex items-center gap-2">
+          <div
+            className={`w-3 h-3 rounded-full border flex items-center justify-center ${
+              /.*[a-zA-Z].*/.test(password)
+                ? "bg-[#1ED760] border-[#1ED760]"
+                : !isTouched
+                ? "border-[#7C7C7C]"
+                : "border-[#F3727F]"
+            }`}
           >
-            Next
-          </button>
-        </>
-      )}
+            {/.*[a-zA-Z].*/.test(password) && (
+              <IoIosCheckmark className="text-black w-3 h-3" />
+            )}
+          </div>
+          <span
+            className={
+              /.*[a-zA-Z].*/.test(password) || !isTouched
+                ? "text-[#FFFFFF]"
+                : "text-[#F3727F]"
+            }
+          >
+            At least one letter
+          </span>
+        </li>
+        <li className="flex items-center gap-2">
+          <div
+            className={`w-3 h-3 rounded-full border flex items-center justify-center ${
+              /.*[0-9!@#$%^&*].*/.test(password)
+                ? "bg-[#1ED760] border-[#1ED760]"
+                : !isTouched
+                ? "border-[#7C7C7C]"
+                : "border-[#F3727F]"
+            }`}
+          >
+            {/.*[0-9!@#$%^&*].*/.test(password) && (
+              <IoIosCheckmark className="text-black w-3 h-3" />
+            )}
+          </div>
+          <span
+            className={
+              /.*[0-9!@#$%^&*].*/.test(password) || !isTouched
+                ? "text-[#FFFFFF]"
+                : "text-[#F3727F]"
+            }
+          >
+            At least one number or special character
+          </span>
+        </li>
+        <li className="flex items-center gap-2">
+          <div
+            className={`w-3 h-3 rounded-full border flex items-center justify-center ${
+              password.length >= 10
+                ? "bg-[#1ED760] border-[#1ED760]"
+                : !isTouched
+                ? "border-[#7C7C7C]"
+                : "border-[#F3727F]"
+            }`}
+          >
+            {password.length >= 10 && (
+              <IoIosCheckmark className="text-black w-3 h-3 " />
+            )}
+          </div>
+          <span
+            className={
+              password.length >= 10 || !isTouched
+                ? "text-[#FFFFFF]"
+                : "text-[#F3727F]"
+            }
+          >
+            At least 10 characters
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    {/* Next Button */}
+    <button
+      className="w-[325px] py-[0.85rem] bg-green-500 text-black font-bold text-sm rounded-full shadow-md transform transition duration-300 hover:scale-105 hover:opacity-90"
+      onClick={handlePasswordValidation}
+    >
+      Next
+    </button>
+  </>
+)}
+
+
 
       {step === 3 && (
         <>
