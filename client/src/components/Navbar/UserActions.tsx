@@ -36,7 +36,7 @@ const UserActions: React.FC = () => {
         <div className="flex items-center font-medium gap-7 relative" ref={dropdownRef}>
             {user ? (
                 <>
-                    <button className="text-black text-sm bg-white font-bold  rounded-3xl px-4 py-[0.4rem]">Explore Premium</button>
+                    <button className="text-black text-sm bg-white hover:bg-[#f0f0f0] hover:scale-[1.04] font-bold  rounded-3xl px-4 py-[0.4rem]">Explore Premium</button>
                     <button className="flex items-center bg-black text-white hover:scale-[1.04] font-extrabold text-[13px] rounded-2xl cursor-pointer gap-1">
                         <GrInstallOption size={15} color="white" />
                         Install App
