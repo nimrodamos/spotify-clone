@@ -10,7 +10,7 @@ const Logo: React.FC = () => {
             <RiSpotifyFill
                 color="white"
                 size={38}
-                className="cursor-pointer mt-2 ml-6"
+                className="cursor-pointer ml-5"
                 onClick={() => navigate("/")}
             />
         </div>

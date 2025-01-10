@@ -5,6 +5,7 @@ import { useUserContext } from "../../Context/UserContext";
 import { GrInstallOption } from "react-icons/gr";
 import { assets } from "@/assets/assets";
 import { RxExternalLink } from "react-icons/rx";
+import { GoBell, GoBellFill } from "react-icons/go";
 
 const UserActions: React.FC = () => {
     const { user, setUser } = useUserContext();
@@ -32,24 +33,26 @@ const UserActions: React.FC = () => {
         };
     }, []);
     return (
-        <div className="flex items-center font-medium gap-4 relative" ref={dropdownRef}>
-
+        <div className="flex items-center font-medium gap-7 relative" ref={dropdownRef}>
             {user ? (
                 <>
-                    <p className="flex items-center bg-black text-white text-[15px] px-3 py-1 rounded-2xl cursor-pointer gap-2">
-                        <GrInstallOption color="white" />
+                    <button className="text-black text-sm bg-white font-bold  rounded-3xl px-4 py-[0.4rem]">Explore Premium</button>
+                    <button className="flex items-center bg-black text-white hover:scale-[1.04] font-extrabold text-[13px] rounded-2xl cursor-pointer gap-1">
+                        <GrInstallOption size={15} color="white" />
                         Install App
-                    </p>
-                    <img
-                        className="w-5 cursor-pointer"
-                        src={assets.bell_icon} 
-                        alt="bell_icon"
-                    />
+                    </button>
+                    <button onClick={() => navigate("/content-feed")}>
+                        {window.location.pathname === "/content-feed" ? (
+                            <GoBellFill size={17} className="text-white hover:scale-[1.04] hover:text-textBase" />
+                        ) : (
+                            <GoBell size={17} className="text-currentColor hover:scale-[1.04] hover:text-textBase" />
+                        )}
+                    </button>
                     <Avatar
-                        className="w-12 h-12 rounded-full cursor-pointer"
+                        className="rounded-full cursor-pointer bg-backgroundHighlight mr-1 p-2 hover:scale-[1.04] transition-all ease-in-out duration-150"
                         onClick={() => setDropdownOpen(!dropdownOpen)}
                     >
-                        <AvatarFallback className="bg-essentialPositive text-[#EDEDED] text-lg flex items-center justify-center w-10 h-10 rounded-full">
+                        <AvatarFallback className="bg-essentialPositive text-[#EDEDED] text-lg flex items-center justify-center w-8 h-8 rounded-full">
                             {user.displayName?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
                     </Avatar>
