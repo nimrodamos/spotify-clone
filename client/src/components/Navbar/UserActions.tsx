@@ -57,7 +57,7 @@ const UserActions: React.FC = () => {
                         </AvatarFallback>
                     </Avatar>
                     {dropdownOpen && (
-                        <div className="absolute right-0 mt-[19.2rem] mr-1 w-48 bg-[#282828] text-[#EDEDED] rounded shadow-lg z-10">
+                        <div className="absolute right-0 mt-[19.7rem] mr-1 w-48 bg-[#282828] text-[#EDEDED] rounded shadow-lg z-10">
                             <ul className="flex flex-col text-sm p-1 font-medium">
                                 <li
                                     className="flex justify-between items-center p-3 rounded cursor-pointer hover:bg-backgroundTintedHighlight"
