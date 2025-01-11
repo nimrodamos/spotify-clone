@@ -36,13 +36,21 @@ const SignUpPage: React.FC = () => {
 
   const handleEmailValidation = async () => {
     try {
+      // Email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for validating "something@something.something"
+      if (!emailRegex.test(email)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
+  
+      // Proceed with server validation
       const response = await fetch(
         `http://localhost:5000/api/users/validate-email?email=${encodeURIComponent(
           email
         )}`
       );
       const data = await response.json();
-
+  
       if (response.ok && !data.valid) {
         setError("This email is already registered. Please log in.");
       } else {
@@ -53,6 +61,7 @@ const SignUpPage: React.FC = () => {
       setError("An error occurred. Please try again later.");
     }
   };
+  
   // Validates the password and navigates to the next step
   const handlePasswordValidation = () => {
     if (!isPasswordValid) {
@@ -210,7 +219,10 @@ const SignUpPage: React.FC = () => {
     <div className="flex items-center justify-start w-[440px] mb-4">
       <IoChevronBack
         className="text-gray-400 cursor-pointer hover:text-white size-7"
-        onClick={() => setStep(1)}
+        onClick={() => {
+          setStep(1)
+          setError("")
+        }}
       />
       <div className="flex flex-col gap-1 ml-4">
         <p className="text-sm text-[#B3B3B3]">Step 1 of 3</p>
