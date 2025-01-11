@@ -67,7 +67,7 @@ const UserActions: React.FC = () => {
                                 </li>
                                 <li
                                     className=" cursor-pointer hover:bg-backgroundTintedHighlight p-3 rounded"
-                                    onClick={() => console.log("Profile clicked!")}
+                                    onClick={() => navigate("/profile")}
                                 >
                                     Profile
                                 </li>
