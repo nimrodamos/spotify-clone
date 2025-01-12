@@ -1,5 +1,5 @@
 import { useState } from "react";
-import InfoPopup from "./InfoPopup";
+import InfoPopup from "./InfoPopUp.tsx";
 import { useUserContext } from "@/Context/UserContext";
 import axios from "axios";
 

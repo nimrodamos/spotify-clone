@@ -18,7 +18,7 @@ const InfoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }, [onClose]);
 
     return (
-        <div ref={popupRef} className="absolute top-12 ml-962 left-0 bg-gradient-to-r from-blue-400 to-blue-500 text-black p-4 rounded-md shadow-lg w-90 animate-slide-in-left before:content-[''] before:absolute before:right-full before:mt-12 before:border-8 before:border-transparent before:border-r-blue-500 z-50">
+        <div ref={popupRef} className="absolute top-12 left-0 bg-gradient-to-r from-blue-400 to-blue-500 text-black p-4 rounded-md shadow-lg w-90 animate-slide-in-left before:content-[''] before:absolute before:right-full before:mt-12 before:border-8 before:border-transparent before:border-r-blue-500 z-50">
             <h3 className="font-bold text-lg">Create a playlist</h3>
             <p className="text-sm my-2">Log in to create and share playlists</p>
             <div className="flex justify-end gap-2 mt-4">
