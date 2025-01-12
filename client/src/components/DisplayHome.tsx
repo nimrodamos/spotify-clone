@@ -78,7 +78,7 @@ const DisplayHome: React.FC = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 px-6 pt-4">
       {/* Filter Buttons */}
       <div className="flex gap-4 my-4">
         <button
