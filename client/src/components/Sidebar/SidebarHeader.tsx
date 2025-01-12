@@ -37,9 +37,9 @@ export const SidebarHeader = () => {
 
     return (
         <>
-            <div className="p-4 flex flex-col gap-3">
+            <div className="p-2 ml-1 flex flex-col gap-3">
                 {/* Header Section */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     <img title="Collapse your library" className="w-6 cursor-pointer ml-2" src={assets.stack_icon} alt="" />
                     <p title="Collapse your library" className="font-semibold cursor-pointer">Your Library</p>
                     <div className="flex-grow"></div>

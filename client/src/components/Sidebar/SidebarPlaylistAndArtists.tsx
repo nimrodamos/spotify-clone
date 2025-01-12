@@ -118,66 +118,68 @@ const SidebarPlaylistAndArtists: React.FC = () => {
     }
 
     return (
-        <div className="grid grid-cols-1 p-2">
+    <div className=''>
+        <div className="grid grid-cols-1 p-[0.39rem]">
             {user && user._id && playlists.map((playlist: Playlist) => (
-                playlist.owner._id === user._id && (
-                    <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={playlist._id} onClick={() => handleAlbumClick(playlist._id)}>
-                        <div className="relative">
-                            <img src={playlist.tracks.length > 0 ? playlist.tracks[0].albumCoverUrl : playlist.customAlbumCover} alt={playlist.tracks.length > 0 ? playlist.tracks[0].name : playlist.PlaylistTitle} className="w-14 rounded" />
-                            <div className="absolute cursor-pointer inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={handlePlayIconClick}>
-                                <HoverCard>
-                                    <HoverCardTrigger>
-                                        {playIcon === 'play' ? (
-                                            <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
-                                        ) : (
-                                            <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
-                                        )}
-                                    </HoverCardTrigger>
-                                    <HoverCardContent side='top' className='p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-6'>
-                                        <p className="text-white">Play {playlist.PlaylistTitle}</p>
-                                    </HoverCardContent>
-                                </HoverCard>
-                            </div>
-                        </div>
-                        <div className='ml-4'>
-                            <p className={`font-semibold ${playIcon !== 'play' ? 'text-essentialPositive' : ''}`}>{playlist.PlaylistTitle}</p>
-                            {playIcon !== 'play' && (
-                                <img src={assets.volume_icon} alt="Volume" className="absolute right-2 top-8 w-5 h-5 text-essentialPositive" style={{ filter: 'invert(35%) sepia(100%) saturate(500%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} />
-                            )}
-                            <p className="text-sm text-textSubdued">{playlist.description}</p>
-                        </div>
-                    </div>
-                )
-            ))}
-            {artists.map((artist: Artist) => (
-                <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={artist._id} onClick={() => navigate(`/artist/${artist._id}`)}>
-                    <div className="relative">
-                        <img src={artist.images[0]?.url} alt={artist.name} className="w-14 h-14 rounded-full" />
-                        <div className="absolute cursor-pointer inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded-full bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleArtistPlayIconClick(); }}>
-                            <HoverCard>
-                                <HoverCardTrigger>
-                                    {artistPlayIcon === 'play' ? (
-                                        <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
-                                    ) : (
-                                        <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
-                                    )}
-                                </HoverCardTrigger>
-                                <HoverCardContent side='top' className='p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-6'>
-                                    <p className="text-white">Play {artist.name}</p>
-                                </HoverCardContent>
-                            </HoverCard>
-                        </div>
-                    </div>
-                    <div className='ml-4'>
-                        <p className={`font-semibold ${artistPlayIcon !== 'play' ? 'text-essentialPositive' : ''}`}>{artist.name}</p>
-                        {artistPlayIcon !== 'play' && (
-                            <img src={assets.volume_icon} alt="Volume" className="absolute right-2 top-8 w-5 h-5 text-essentialPositive" style={{ filter: 'invert(35%) sepia(100%) saturate(500%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} />
+            playlist.owner._id === user._id && (
+                <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={playlist._id} onClick={() => handleAlbumClick(playlist._id)}>
+                <div className="relative">
+                    <img src={playlist.tracks.length > 0 ? playlist.tracks[0].albumCoverUrl : playlist.customAlbumCover} alt={playlist.tracks.length > 0 ? playlist.tracks[0].name : playlist.PlaylistTitle} className="w-[2.9rem] rounded" />
+                    <div className="absolute cursor-pointer inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={handlePlayIconClick}>
+                    <HoverCard>
+                        <HoverCardTrigger>
+                        {playIcon === 'play' ? (
+                            <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
+                        ) : (
+                            <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
                         )}
-                        <p className="text-sm text-textSubdued">Artist</p>
+                        </HoverCardTrigger>
+                        <HoverCardContent side='top' className='p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-6'>
+                        <p className="text-white">Play {playlist.PlaylistTitle}</p>
+                        </HoverCardContent>
+                    </HoverCard>
                     </div>
                 </div>
+                <div className='ml-4'>
+                    <p className={`font-semibold ${playIcon !== 'play' ? 'text-essentialPositive' : ''}`}>{playlist.PlaylistTitle}</p>
+                    {playIcon !== 'play' && (
+                        <img src={assets.volume_icon} alt="Volume" className="absolute right-2 top-8 w-5 h-5 text-essentialPositive" style={{ filter: 'invert(35%) sepia(100%) saturate(500%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} />
+                    )}
+                    <p className="text-sm text-textSubdued">{playlist.description}</p>
+                </div>
+                </div>
+            )
+        ))}
+            {artists.map((artist: Artist) => (
+            <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={artist._id} onClick={() => navigate(`/artist/${artist._id}`)}>
+                <div className="relative">
+                <img src={artist.images[0]?.url} alt={artist.name} className="w-14 h-14 rounded-full" />
+                <div className="absolute cursor-pointer inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded-full bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleArtistPlayIconClick(); }}>
+                    <HoverCard>
+                    <HoverCardTrigger>
+                        {artistPlayIcon === 'play' ? (
+                            <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
+                        ) : (
+                            <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
+                        )}
+                    </HoverCardTrigger>
+                    <HoverCardContent side='top' className='p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-6'>
+                        <p className="text-white">Play {artist.name}</p>
+                    </HoverCardContent>
+                    </HoverCard>
+                </div>
+                </div>
+                <div className='ml-4'>
+                <p className={`font-semibold ${artistPlayIcon !== 'play' ? 'text-essentialPositive' : ''}`}>{artist.name}</p>
+                {artistPlayIcon !== 'play' && (
+                    <img src={assets.volume_icon} alt="Volume" className="absolute right-2 top-8 w-5 h-5 text-essentialPositive" style={{ filter: 'invert(35%) sepia(100%) saturate(500%) hue-rotate(90deg) brightness(90%) contrast(90%)' }} />
+                )}
+                <p className="text-sm text-textSubdued">Artist</p>
+                </div>
+            </div>
             ))}
         </div>
+    </div>
     );
 };
 

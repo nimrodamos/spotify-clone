@@ -47,7 +47,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full min-w-[30rem] text-textBase">
+    <div className="flex h-[100%] min-w-[26rem] text-textBase">
       <div className="flex-grow">
         <div className="bg-backgroundBase h-full rounded">
           <SidebarHeader />
