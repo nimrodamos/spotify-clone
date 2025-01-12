@@ -1,30 +1,11 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "@/api";
-import { IPlaylist, ITrack } from "../types/types";
+import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 
 const DisplayPlaylist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [playlist, setPlaylist] = useState<
-    (IPlaylist & { tracks: ITrack[] }) | null
-  >(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { playlists, loading, error } = useAppData(); // נתונים מה-Context
 
-  useEffect(() => {
-    async function fetchPlaylist() {
-      try {
-        const response = await api.get(`/api/playlists/${id}`);
-        setPlaylist(response.data);
-      } catch (error) {
-        console.error("Error fetching playlist:", error);
-        setError("Playlist not found. Please check the ID.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPlaylist();
-  }, [id]);
+  const playlist = playlists.find((p) => p._id === id);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
