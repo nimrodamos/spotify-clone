@@ -8,6 +8,7 @@ const Logo: React.FC = () => {
     return (
         <div className="flex items-center">
             <RiSpotifyFill
+                title="spotify"
                 color="white"
                 size={38}
                 className="cursor-pointer ml-5"

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FaPlay } from 'react-icons/fa';
 import { assets } from '@/assets/assets';
 import { IoIosPause } from 'react-icons/io';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@radix-ui/react-hover-card';
 
 interface Playlist {
     _id: string;
@@ -123,12 +124,19 @@ const SidebarPlaylistAndArtists: React.FC = () => {
                     <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={playlist._id} onClick={() => handleAlbumClick(playlist._id)}>
                         <div className="relative">
                             <img src={playlist.tracks.length > 0 ? playlist.tracks[0].albumCoverUrl : playlist.customAlbumCover} alt={playlist.tracks.length > 0 ? playlist.tracks[0].name : playlist.PlaylistTitle} className="w-14 rounded" />
-                            <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={handlePlayIconClick}>
-                                {playIcon === 'play' ? (
-                                    <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
-                                ) : (
-                                    <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
-                                )}
+                            <div className="absolute cursor-pointer inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={handlePlayIconClick}>
+                                <HoverCard>
+                                    <HoverCardTrigger>
+                                        {playIcon === 'play' ? (
+                                            <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
+                                        ) : (
+                                            <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
+                                        )}
+                                    </HoverCardTrigger>
+                                    <HoverCardContent side='top' className='p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-6'>
+                                        <p className="text-white">Play {playlist.PlaylistTitle}</p>
+                                    </HoverCardContent>
+                                </HoverCard>
                             </div>
                         </div>
                         <div className='ml-4'>
@@ -145,12 +153,19 @@ const SidebarPlaylistAndArtists: React.FC = () => {
                 <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={artist._id} onClick={() => navigate(`/artist/${artist._id}`)}>
                     <div className="relative">
                         <img src={artist.images[0]?.url} alt={artist.name} className="w-14 h-14 rounded-full" />
-                        <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded-full bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleArtistPlayIconClick(); }}>
-                            {artistPlayIcon === 'play' ? (
-                                <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
-                            ) : (
-                                <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
-                            )}
+                        <div className="absolute cursor-pointer inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded-full bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); handleArtistPlayIconClick(); }}>
+                            <HoverCard>
+                                <HoverCardTrigger>
+                                    {artistPlayIcon === 'play' ? (
+                                        <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
+                                    ) : (
+                                        <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
+                                    )}
+                                </HoverCardTrigger>
+                                <HoverCardContent side='top' className='p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-6'>
+                                    <p className="text-white">Play {artist.name}</p>
+                                </HoverCardContent>
+                            </HoverCard>
                         </div>
                     </div>
                     <div className='ml-4'>

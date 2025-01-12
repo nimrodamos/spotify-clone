@@ -4,6 +4,7 @@ import { useUserContext } from "../../Context/UserContext";
 import { useState } from "react";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { IoCheckmark, IoSearch } from "react-icons/io5";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 
 export const SidebarHeader = () => {
     const [filter, setFilter] = useState<'playlists' | 'artists' | null>(null);
@@ -39,11 +40,27 @@ export const SidebarHeader = () => {
             <div className="p-4 flex flex-col gap-3">
                 {/* Header Section */}
                 <div className="flex items-center gap-3">
-                    <img className="w-6 ml-2" src={assets.stack_icon} alt="" />
-                    <p className="font-semibold">Your Library</p>
+                    <img title="Collapse your library" className="w-6 cursor-pointer ml-2" src={assets.stack_icon} alt="" />
+                    <p title="Collapse your library" className="font-semibold cursor-pointer">Your Library</p>
                     <div className="flex-grow"></div>
-                    <img className="w-4 mr-2" src={assets.plus_icon} alt="" />
-                    {user && <img className="w-4" src={assets.arrow_icon} alt="" />}
+                            <div className="flex items-center cursor-pointer">
+                                <HoverCard>
+                                    <HoverCardTrigger asChild>
+                                        <img className="w-4 mr-2 cursor-pointer" src={assets.plus_icon} alt="" />
+                                    </HoverCardTrigger>
+                                    <HoverCardContent className="p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-1" side="top">
+                                        Create playlist or folder
+                                    </HoverCardContent>
+                                </HoverCard>
+                            </div>
+                <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <img className="w-4 ml-2 cursor-pointer" src={assets.arrow_icon} alt="" />
+                    </HoverCardTrigger>
+                    <HoverCardContent className="p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-1" side="top">
+                        Show more
+                    </HoverCardContent>
+                </HoverCard>
                 </div>
 
                 {user && user.playlists && (
@@ -78,12 +95,21 @@ export const SidebarHeader = () => {
                             <div
                                 className={`absolute top-0 bg-inputBackground flex rounded-md text-currentColor items-center transition-all duration-300 ease-in-out overflow-hidden ${isSearchActive ? "w-[60%]" : "w-10"}`}
                             >
-                                <div className={`hover:bg-backgroundHighlight p-2 hover:rounded-full ${isSearchActive ? "bg-backgroundHighlight hover:rounded-none" : ""}`}>
-                                    <IoSearch
-                                        onClick={toggleSearch}
-                                        className={`hover:bg-backgroundHighlight hover:text-white hover:rounded-full ${isSearchActive ? "bg-backgroundHighlight" : ""}`}
-                                        size={"1.5rem"}
-                                    />
+                                <div className={`cursor-pointer hover:bg-backgroundHighlight p-2 hover:rounded-full ${isSearchActive ? "bg-backgroundHighlight hover:rounded-none" : ""}`}>
+                                <HoverCard>
+                                    <HoverCardTrigger asChild>
+                                        <div>
+                                            <IoSearch
+                                                onClick={toggleSearch}
+                                                className={`hover:bg-backgroundHighlight hover:text-white hover:rounded-full ${isSearchActive ? "bg-backgroundHighlight" : ""}`}
+                                                size={"1.5rem"}
+                                            />
+                                        </div>
+                                    </HoverCardTrigger>
+                                    <HoverCardContent className="p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-3 ml-2" side="top">
+                                        Search in your library
+                                    </HoverCardContent>
+                                </HoverCard>
                                 </div>
 
                                 {/* Search Input */}

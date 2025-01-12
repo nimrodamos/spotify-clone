@@ -5,6 +5,7 @@ import { useUserContext } from "../../Context/UserContext";
 import { GrInstallOption } from "react-icons/gr";
 import { RxExternalLink } from "react-icons/rx";
 import { GoBell, GoBellFill } from "react-icons/go";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 
 const UserActions: React.FC = () => {
     const { user, setUser } = useUserContext();
@@ -40,13 +41,22 @@ const UserActions: React.FC = () => {
                         <GrInstallOption size={15} color="white" />
                         Install App
                     </button>
-                    <button onClick={() => navigate("/content-feed")}>
-                        {window.location.pathname === "/content-feed" ? (
-                            <GoBellFill size={17} className="text-white hover:scale-[1.04] hover:text-textBase" />
-                        ) : (
-                            <GoBell size={17} className="text-currentColor hover:scale-[1.04] hover:text-textBase" />
-                        )}
-                    </button>
+                    <HoverCard>
+                        <HoverCardTrigger asChild>
+                            <button onClick={() => navigate("/content-feed")}>
+                                {window.location.pathname === "/content-feed" ? (
+                                    <GoBellFill size={17} className="text-white hover:scale-[1.04] hover:text-textBase" />
+                                ) : (
+                                    <GoBell size={17} className="text-currentColor hover:scale-[1.04] hover:text-textBase" />
+                                )}
+                            </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent side="bottom" align="center" className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mt-4">
+                            <div className="p-2 text-sm">
+                                What's new
+                            </div>
+                        </HoverCardContent>
+                    </HoverCard>
                     <Avatar
                         className="rounded-full cursor-pointer bg-backgroundHighlight mr-1 p-2 hover:scale-[1.04] transition-all ease-in-out duration-150"
                         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -70,12 +80,12 @@ const UserActions: React.FC = () => {
                                 >
                                     Profile
                                 </li>
-                                <li
+                                <button
                                     className=" flex justify-between items-center cursor-pointer p-3 rounded hover:bg-backgroundTintedHighlight"
-                                    onClick={() => console.log("Profile clicked!")}
+                                    title="Upgrade to premium" onClick={() => console.log("Profile clicked!")}
                                 >
                                     Upgrade to Premium <RxExternalLink size={20} className="font-bold" />
-                                </li>
+                                </button>
                                 <li
                                     className=" cursor-pointer p-3 rounded hover:bg-backgroundTintedHighlight"
                                     onClick={() => console.log("Settings clicked!")}
