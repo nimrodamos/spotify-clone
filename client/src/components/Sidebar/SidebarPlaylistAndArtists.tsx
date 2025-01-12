@@ -65,10 +65,16 @@ const SidebarPlaylistAndArtists: React.FC = () => {
             try {
                 const uniqueArtistNames = [...new Set(artistNames)];
                 const artistPromises = uniqueArtistNames.map(name =>
-                    api.get(`/api/artists/name/${name}`)
+                    api.get(`/api/artists/name/${name}`).catch(error => {
+                        if (error.response && error.response.status === 404) {
+                            console.warn(`Artist not found: ${name}`);
+                            return null;
+                        }
+                        throw error;
+                    })
                 );
                 const artistResponses = await Promise.all(artistPromises);
-                const fetchedArtists = artistResponses.map(response => response.data);
+                const fetchedArtists = artistResponses.filter(response => response && response.data).map(response => response!.data);
                 setArtists(fetchedArtists);
             } catch (error) {
                 console.error('Error fetching artists', error);
@@ -112,18 +118,16 @@ const SidebarPlaylistAndArtists: React.FC = () => {
             {user && user._id && playlists.map((playlist: Playlist) => (
                 playlist.owner._id === user._id && (
                     <div className='hover:bg-backgroundHighlight flex items-center rounded p-2 relative group' key={playlist._id} onClick={() => handleAlbumClick(playlist._id)}>
-                        {playlist.tracks.length > 0 && (
-                            <div className="relative">
-                                <img src={playlist.tracks[0].albumCoverUrl} alt={playlist.tracks[0].name} className="w-14 rounded" />
-                                <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={handlePlayIconClick}>
-                                    {playIcon === 'play' ? (
-                                        <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
-                                    ) : (
-                                        <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
-                                    )}
-                                </div>
+                        <div className="relative">
+                            <img src={playlist.tracks.length > 0 ? playlist.tracks[0].albumCoverUrl : playlist.customAlbumCover} alt={playlist.tracks.length > 0 ? playlist.tracks[0].name : playlist.PlaylistTitle} className="w-14 rounded" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-backgroundElevatedHighlight rounded bg-opacity-50 z-10 opacity-0 group-hover:opacity-100" onClick={handlePlayIconClick}>
+                                {playIcon === 'play' ? (
+                                    <FaPlay className="text-white text-2xl hover:scale-[1.04]" />
+                                ) : (
+                                    <IoIosPause className="text-white text-4xl hover:scale-[1.04]" />
+                                )}
                             </div>
-                        )}
+                        </div>
                         <div className='ml-4'>
                             <p className={`font-semibold ${playIcon !== 'play' ? 'text-essentialPositive' : ''}`}>{playlist.PlaylistTitle}</p>
                             {playIcon !== 'play' && (

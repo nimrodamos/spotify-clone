@@ -52,7 +52,7 @@ const Sidebar: React.FC = () => {
         <div className="bg-backgroundBase h-full rounded">
           <SidebarHeader />
           <div className="h-fit overflow-auto bg-backgroundBase">
-            {user ? (
+            {user && user.playlists ? (
               <SidebarPlaylistAndArtists />
             ) : (
               <>
