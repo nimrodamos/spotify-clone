@@ -46,7 +46,7 @@ export const SidebarHeader = () => {
                     {user && <img className="w-4" src={assets.arrow_icon} alt="" />}
                 </div>
 
-                {user && user.playlists.length > 0 && (
+                {user && user.playlists && user.playlists.length > 0 && (
                     <>
                         {/* Filter Buttons */}
                         <div className="flex items-center gap-2 mt-4">
