@@ -47,12 +47,12 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full w-[28rem] text-textBase">
+    <div className="flex h-full min-w-[30rem] text-textBase">
       <div className="flex-grow">
         <div className="bg-backgroundBase h-full rounded">
           <SidebarHeader />
           <div className="h-fit overflow-auto bg-backgroundBase">
-            {user ? (
+            {user && user.playlists ? (
               <SidebarPlaylistAndArtists />
             ) : (
               <>

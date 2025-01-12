@@ -9,10 +9,10 @@ const createPlaylist = async (req, res) => {
 
 		const newPlaylist = new Playlist({
 			PlaylistTitle,
-			description,
+			description: req.body.description || "My Playlist",
 			owner,
 			tracks: [],
-			customAlbumCover: null,
+			customAlbumCover: req.body.customAlbumCover || "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84cac866a243e7de267899b06c",
 			isPublic: true,
 			totalDuration: 0,
 		});

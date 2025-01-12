@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../Context/UserContext";
 import { GrInstallOption } from "react-icons/gr";
-import { assets } from "@/assets/assets";
 import { RxExternalLink } from "react-icons/rx";
 import { GoBell, GoBellFill } from "react-icons/go";
 

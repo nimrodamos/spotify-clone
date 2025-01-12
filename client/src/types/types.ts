@@ -59,7 +59,9 @@ interface IPlaylist {
   _id: string;
   PlaylistTitle: string;
   description: string;
-  owner: string;
+  owner: {
+    _id: string;
+  };
   tracks: IPlaylistTrack[];
   customAlbumCover?: string;
   totalDuration: number;
