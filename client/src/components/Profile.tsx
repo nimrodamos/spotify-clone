@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useUserContext } from "../Context/UserContext";
 import { IArtist, ITrack } from "@/types/types";
 import { api } from "@/api";
+import { PiDotsThree } from "react-icons/pi";
 
 const Profile: React.FC = () => {
   const { user } = useUserContext();
@@ -15,48 +16,48 @@ const Profile: React.FC = () => {
     if (!user) return;
 
     // Fetch random artists for Top Artists
-               async function fetchTopArtists() {
-                 try {
-                   const response = await api.get("/api/artists");
-                   const artists: IArtist[] = response.data;
-                   setTopArtists(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
-                 } catch (error) {
-                   console.error("Error fetching artists:", error);
-                 }
-               }
-           
-               // Fetch random tracks for Top Tracks
-               async function fetchTopTracks() {
-                 try {
-                   const response = await api.get("/api/tracks");
-                   const tracks: ITrack[] = response.data;
-                   setTopTracks(tracks.sort(() => 0.5 - Math.random()).slice(0, 4));
-                 } catch (error) {
-                   console.error("Error fetching tracks:", error);
-                 }
-               }
-           
-               // Use random artists for the Followers Section
-               async function fetchFollowers() {
-                 try {
-                   const response = await api.get("/api/artists");
-                   const artists: IArtist[] = response.data;
-                   setFollowers(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
-                 } catch (error) {
-                   console.error("Error fetching followers:", error);
-                 }
-               }
-           
-               // Use random artists for the Following Section
-               async function fetchFollowing() {
-                 try {
-                   const response = await api.get("/api/artists");
-                   const artists: IArtist[] = response.data;
-                   setFollowing(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
-                 } catch (error) {
-                   console.error("Error fetching following:", error);
-                 }
-               }
+    async function fetchTopArtists() {
+      try {
+        const response = await api.get("/api/artists");
+        const artists: IArtist[] = response.data;
+        setTopArtists(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
+      } catch (error) {
+        console.error("Error fetching artists:", error);
+      }
+    }
+
+    // Fetch random tracks for Top Tracks
+    async function fetchTopTracks() {
+      try {
+        const response = await api.get("/api/tracks");
+        const tracks: ITrack[] = response.data;
+        setTopTracks(tracks.sort(() => 0.5 - Math.random()).slice(0, 4));
+      } catch (error) {
+        console.error("Error fetching tracks:", error);
+      }
+    }
+
+    // Use random artists for the Followers Section
+    async function fetchFollowers() {
+      try {
+        const response = await api.get("/api/artists");
+        const artists: IArtist[] = response.data;
+        setFollowers(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
+      } catch (error) {
+        console.error("Error fetching followers:", error);
+      }
+    }
+
+    // Use random artists for the Following Section
+    async function fetchFollowing() {
+      try {
+        const response = await api.get("/api/artists");
+        const artists: IArtist[] = response.data;
+        setFollowing(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
+      } catch (error) {
+        console.error("Error fetching following:", error);
+      }
+    }
     fetchTopArtists();
     fetchTopTracks();
     fetchFollowers();
@@ -81,184 +82,181 @@ const Profile: React.FC = () => {
     };
   }, [user]);
 
-  if (!user) return <p className="text-center text-lg text-white">Please log in to view your profile.</p>;
+  if (!user)
+    return (
+      <p className="text-center text-lg text-white">
+        Please log in to view your profile.
+      </p>
+    );
 
-  return (
-    <div className="min-h-screen w-full">
-      {/* Sticky Header */}
-      {showStickyHeader && (
-        <div
-          className="fixed top-[82px] left-[455px] w-[1430px] h-[65px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-50 rounded-t"
-          style={{ color: "#fff" }}
-        >
-          <h1 className="text-xl font-bold">{user.displayName}</h1>
-        </div>
-      )}
-
-      {/* Profile Section */}
-      <div className="bg-gradient-to-b from-[#B7DE72] to-black h-[572px] w-full">
-        <div className="flex items-center space-x-6 p-6 w-full max-w-[1200px] h-full">
-          <img
-            src={user.profilePicture || "../../public/profilePic.jpeg"}
-            alt={user.displayName}
-            className="w-[235px] h-[235px] object-cover rounded-full shadow-lg"
-          />
-          <div>
-            <p className="text-lg">Profile</p>
-            <h1 className="text-[6rem] font-bold">{user.displayName}</h1>
-            <p className="text-lg">8 Followers • 46 Following</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Top Artists Section */}
-<div className="bg-[#121212] w-full py-6">
-        <div className="w-full max-w">
-          <h2 className="text-2xl font-bold mb-4 text-white">
-            Top artists this month
-          </h2>
-          <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
-          <div className="flex ">
-            {topArtists.map((artist) => (
-              <div
-                key={artist._id}
-                className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
-              >
-                <img
-                  src={
-                    artist.images?.[0]?.url || "https://via.placeholder.com/150"
-                  }
-                  alt={artist.name}
-                  className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                />
-                <p className="text-sm mt-2 text-white text-left">
-                  {artist.name}
-                </p>
-                <p className="text-sm text-gray-400 text-left">Artist</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Top Tracks Section */}
-      <div className="bg-[#121212] w-full py-6">
-        <div className="w-full max-w ">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold mb-4 text-white">
-              Top tracks this month
-            </h2>
-            <a
-              href="/top-tracks"
-              className="text-sm text-gray-400 hover:text-white"
+    return (
+        <div className="min-h-screen w-full relative">
+          {/* Sticky Header */}
+          {showStickyHeader && (
+            <div
+              className="fixed top-[82px] left-[488px] w-[1424px] h-[65px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-50 rounded-t"
+              style={{ color: "#fff" }}
             >
-              Show all
-            </a>
+              <h1 className="text-xl font-bold">{user.displayName}</h1>
+            </div>
+          )}
+      
+          {/* Profile Section */}
+          <div className="relative bg-gradient-to-b from-[#B7DE72] to-black h-[572px] w-full">
+            <div className="flex pt-[85px] space-x-6 p-6 w-full max-w-[1200px] h-full">
+              <img
+                src={user.profilePicture || "../../public/profilePic.jpeg"}
+                alt={user.displayName}
+                className="w-[235px] h-[235px] object-cover rounded-full shadow-lg"
+              />
+              <div>
+                <p className="text-lg">Profile</p>
+                <h1 className="text-[6rem] font-bold">{user.displayName}</h1>
+                <p className="text-lg">8 Followers • 46 Following</p>
+              </div>
+            </div>
           </div>
-          <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
-          <ul>
-            {topTracks.map((track, index) => (
-              <li
-                key={track._id}
-                className="flex justify-between items-center py-2 hover:bg-[#1F1F1F] px-4 rounded-md"
-              >
-                <div className="flex items-center">
-                  <p className="text-sm text-gray-400 w-4">{index + 1}</p>
-                  <img
-                    src={
-                      track.albumCoverUrl || "https://via.placeholder.com/50"
-                    }
-                    alt={track.name}
-                    className="w-12 h-12 ml-4 object-cover"
-                  />
-                  <div className="ml-4">
-                    <p className="text-sm text-white">{track.name}</p>
-                    <p className="text-xs text-gray-400">{track.artist}</p>
+      
+          {/* Top Artists Section */}
+          <div
+            className="absolute top-[340px] left-0 bg-[#121212]/25 w-full 6"
+            style={{ backdropFilter: "blur(4px)" }}
+          >
+            <div className="w-full max-w pl-[37px]">
+            <PiDotsThree className="text-4xl mt-[32px] mb-[23px]" />
+              <h2 className="text-2xl font-bold  text-white">
+                Top artists this month
+              </h2>
+              <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
+              <div className="flex">
+                {topArtists.map((artist) => (
+                  <div
+                    key={artist._id}
+                    className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+                  >
+                    <img
+                      src={artist.images?.[0]?.url || "https://via.placeholder.com/150"}
+                      alt={artist.name}
+                      className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
+                    />
+                    <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
+                    <p className="text-sm text-gray-400 text-left">Artist</p>
                   </div>
-                </div>
-                <p className="text-sm text-gray-400">{track.album}</p>
-                <p className="text-sm text-gray-400">
-                  {(track.durationMs / 60000).toFixed(2)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Followers Section */}
-      <div className="bg-[#121212] w-full py-6">
-        <div className="w-full max-w ">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold mb-4 text-white">Followers</h2>
-            <a
-              href="/followers"
-              className="text-sm text-gray-400 hover:text-white"
-            >
-              Show all
-            </a>
-          </div>
-          <div className="flex">
-            {followers.map((artist) => (
-              <div
-                key={artist._id}
-                className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
-              >
-                <img
-                  src={
-                    artist.images?.[0]?.url || "https://via.placeholder.com/50"
-                  }
-                  alt={artist.name}
-                  className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                />
-                <p className="text-sm mt-2 text-white text-left">
-                  {artist.name}
-                </p>
-                <p className="text-sm text-gray-400 text-left">Profile</p>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Following Section */}
-      <div className="bg-[#121212] w-full py-6">
-        <div className="w-full max-w ">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold mb-4 text-white">Following</h2>
-            <a
-              href="/following"
-              className="text-sm text-gray-400 hover:text-white"
-            >
-              Show all
-            </a>
-          </div>
-          <div className="flex ">
-            {following.map((artist) => (
-              <div
-                key={artist._id}
-                className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
-              >
-                <img
-                  src={
-                    artist.images?.[0]?.url || "https://via.placeholder.com/50"
-                  }
-                  alt={artist.name}
-                  className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                />
-                <p className="text-sm mt-2 text-white text-left">
-                  {artist.name}
-                </p>
-                <p className="text-sm text-gray-400 text-left">Artist</p>
+      
+          {/* Top Tracks Section */}
+          <div
+            className="absolute top-[764px] left-0 bg-[#121212] w-full "
+            style={{ backdropFilter: "blur(4px)" }}
+          >
+            <div className="w-full max-w pl-[37px]">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold  text-white">
+                  Top tracks this month
+                </h2>
+                <a href="/top-tracks" className="text-sm text-gray-400 hover:text-white">
+                  Show all
+                </a>
               </div>
-            ))}
+              <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
+              <ul>
+                {topTracks.map((track, index) => (
+                  <li
+                    key={track._id}
+                    className="flex justify-between items-center py-2 hover:bg-[#1F1F1F] px-4 rounded-md"
+                  >
+                    <div className="flex items-center">
+                      <p className="text-sm text-gray-400 w-4">{index + 1}</p>
+                      <img
+                        src={track.albumCoverUrl || "https://via.placeholder.com/50"}
+                        alt={track.name}
+                        className="w-[40px] h-[40px] ml-4 object-cover rounded"
+                      />
+                      <div className="ml-4">
+                        <p className="text-sm text-white">{track.name}</p>
+                        <p className="text-xs text-gray-400">{track.artist}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-400">{track.album}</p>
+                    <p className="text-sm text-gray-400">
+                      {(track.durationMs / 60000).toFixed(2)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* footer section*/}
-      <div className="bg-[#121212] w-full py-6 border-t border-gray-700">
-        <div className="w-full max-w-[1200px]  grid grid-cols-4 gap-8">
+      
+          {/* Followers Section */}
+          <div
+            className="absolute top-[1079px] left-0 bg-[#121212] w-full py-6"
+            style={{ backdropFilter: "blur(4px)" }}
+          >
+            <div className="w-full max-w pl-[37px]">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold mb-4 text-white">Followers</h2>
+                <a href="/followers" className="text-sm text-gray-400 hover:text-white">
+                  Show all
+                </a>
+              </div>
+              <div className="flex">
+                {followers.map((artist) => (
+                  <div
+                    key={artist._id}
+                    className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+                  >
+                    <img
+                      src={artist.images?.[0]?.url || "https://via.placeholder.com/50"}
+                      alt={artist.name}
+                      className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
+                    />
+                    <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
+                    <p className="text-sm text-gray-400 text-left">Profile</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+      
+          {/* Following Section */}
+          <div
+            className="absolute top-[1390px] left-0 bg-[#121212]/50 w-full py-6"
+            style={{ backdropFilter: "blur(4px)" }}
+          >
+            <div className="w-full max-w pl-[37px]">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold mb-4 text-white">Following</h2>
+                <a href="/following" className="text-sm text-gray-400 hover:text-white">
+                  Show all
+                </a>
+              </div>
+              <div className="flex">
+                {following.map((artist) => (
+                  <div
+                    key={artist._id}
+                    className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+                  >
+                    <img
+                      src={artist.images?.[0]?.url || "https://via.placeholder.com/50"}
+                      alt={artist.name}
+                      className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
+                    />
+                    <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
+                    <p className="text-sm text-gray-400 text-left">Artist</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+      
+          {/* Footer Section */}
+          <div
+            className="absolute top-[1740px] left-0 bg-[#121212] w-full py-6 border-t border-gray-700 "
+          >
+           <div className="w-full max-w-[970px]  grid grid-cols-4 gap-8 pl-[37px]">
           {/* Column 1: Company */}
           <div>
             <h3 className="text-white font-bold mb-4">Company</h3>
