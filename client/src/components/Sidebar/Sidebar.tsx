@@ -53,7 +53,16 @@ const Sidebar: React.FC = () => {
           <SidebarHeader />
           <div className="h-fit overflow-auto bg-backgroundBase">
             {user ? (
+              user.playlists.length > 0 ? (
               <SidebarPlaylistAndArtists />
+              ) : (
+              <>
+                <SidebarPlaylistPrompt />
+                <SidebarPodcastPrompt />
+                <SidebarLinks />
+                <SidebarLanguageSelector />
+              </>
+              )
             ) : (
               <>
                 <SidebarPlaylistPrompt />

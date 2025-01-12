@@ -47,8 +47,9 @@ const SidebarPlaylistAndArtists: React.FC = () => {
                 const response = await api.get('/api/playlists');
                 console.log('Fetched playlists:', response.data);
                 if (Array.isArray(response.data)) {
-                    setPlaylists(response.data);
-                    const artistNames = response.data.flatMap((playlist: Playlist) =>
+                    const userPlaylists = response.data.filter((playlist: Playlist) => user && playlist.owner._id === user._id);
+                    setPlaylists(userPlaylists);
+                    const artistNames = userPlaylists.flatMap((playlist: Playlist) =>
                         playlist.tracks.map(track => track.artist)
                     );
                     fetchArtists(artistNames);
@@ -159,4 +160,3 @@ const SidebarPlaylistAndArtists: React.FC = () => {
 };
 
 export default SidebarPlaylistAndArtists;
-
