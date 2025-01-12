@@ -1,27 +1,9 @@
-import { useEffect, useState } from "react";
-import { api } from "@/api";
+import React from "react";
 import CardItem from "@/components/CardItem";
-import { IAlbum } from "@/types/types";
+import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 
 const AllAlbums: React.FC = () => {
-  const [albums, setAlbums] = useState<IAlbum[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchAlbums() {
-      try {
-        const response = await api.get("/api/albums");
-        setAlbums(response.data);
-      } catch (err) {
-        console.error("Error fetching albums:", err);
-        setError("Failed to load albums. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchAlbums();
-  }, []);
+  const { albums, loading, error } = useAppData(); // נתוני אלבומים מה-Context
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;

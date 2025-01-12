@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "@/api";
 import { IAlbum, ITrack } from "../types/types";
+import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 
 const DisplayAlbum: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // מזהה האלבום
+  const { albums, loading: contextLoading, error: contextError } = useAppData(); // נתונים מה-Context
   const [album, setAlbum] = useState<IAlbum | null>(null);
   const [tracks, setTracks] = useState<ITrack[]>([]);
   const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]); // שירים שמתאימים לאלבום הנבחר
@@ -14,9 +16,15 @@ const DisplayAlbum: React.FC = () => {
   useEffect(() => {
     async function fetchAlbumData() {
       try {
-        // שליפת נתוני האלבום לפי ה-ID
-        const albumResponse = await api.get(`/api/albums/${id}`);
-        setAlbum(albumResponse.data);
+        // שליפת נתוני האלבום מ-Context
+        const albumFromContext = albums.find((a) => a.spotifyAlbumId === id);
+        if (albumFromContext) {
+          setAlbum(albumFromContext);
+        } else {
+          // אם האלבום לא נמצא בקונטקסט, שליפתו מה-API
+          const albumResponse = await api.get(`/api/albums/${id}`);
+          setAlbum(albumResponse.data);
+        }
 
         // שליפת כל השירים
         const tracksResponse = await api.get(`/api/tracks`);
@@ -24,10 +32,10 @@ const DisplayAlbum: React.FC = () => {
 
         // חיפוש שירים שמתאימים לאלבום
         const albumTracks = tracksResponse.data.filter(
-          (track: ITrack) => track.album === albumResponse.data.name
+          (track: ITrack) => track.album === (albumFromContext?.name || "")
         );
         setFilteredTracks(albumTracks);
-      } catch (error) {
+      } catch (err) {
         setError("Failed to load album or tracks.");
       } finally {
         setLoading(false);
@@ -35,10 +43,16 @@ const DisplayAlbum: React.FC = () => {
     }
 
     fetchAlbumData();
-  }, [id]);
+  }, [id, albums]);
 
-  if (loading) return <p className="text-center text-xl">Loading...</p>;
-  if (error) return <p className="text-center text-xl text-red-500">{error}</p>;
+  if (contextLoading || loading)
+    return <p className="text-center text-xl">Loading...</p>;
+  if (contextError || error)
+    return (
+      <p className="text-center text-xl text-red-500">
+        {contextError || error}
+      </p>
+    );
   if (!album) return <p className="text-center text-xl">Album not found</p>;
 
   return (
