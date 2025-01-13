@@ -17,8 +17,6 @@ const getLimitedAlbums = async (req, res) => {
   try {
     const { limit, random } = req.query;
 
-    console.log("Limit:", limit, "Random:", random); // Check the parameters from the request
-
     let albums;
     const size = parseInt(limit);
     if (isNaN(size) || size <= 0) {
@@ -27,10 +25,8 @@ const getLimitedAlbums = async (req, res) => {
 
     if (random === "true") {
       albums = await Album.aggregate([{ $sample: { size } }]);
-      console.log("Random Albums:", albums); // Check the random results
     } else {
       albums = await Album.find({}).limit(size);
-      console.log("Limited Albums:", albums); // Check the limited results
     }
 
     if (!albums || albums.length === 0) {
