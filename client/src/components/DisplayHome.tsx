@@ -8,10 +8,7 @@ import FilterButtons from "./FilterButtons";
 import PersonalizedPlaylists from "./Playlists/PersonalizedPlaylists";
 
 const ShowAllButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
-  <button
-    onClick={onClick}
-    className="text-blue-500 hover:underline text-sm mb-2"
-  >
+  <button onClick={onClick} className=" hover:underline text-sm mb-2">
     Show All
   </button>
 );
@@ -49,8 +46,8 @@ const DisplayHome: React.FC = () => {
   if (error) return <div className="text-center text-red-500">{error}</div>;
 
   return (
-    <div className="mb-4 px-6 pt-4 display-home">
-      <FilterButtons filter={filter} setFilter={setFilter} />
+    <div className=" px-3 display-home">
+      {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
       {user && (
         <>
@@ -60,13 +57,25 @@ const DisplayHome: React.FC = () => {
           <PersonalizedPlaylists playlists={filteredPlaylists} />
         </>
       )}
-
-      <h1 className="my-5 font-bold text-2xl">Popular Artists</h1>
-      <ShowAllButton onClick={() => navigate("/artists")} />
+      <div className="flex justify-between items-center">
+        <h1
+          className="my-5 font-bold text-2xl cursor-pointer hover:underline"
+          onClick={() => navigate("/artists")}
+        >
+          Popular Artists
+        </h1>
+        <ShowAllButton onClick={() => navigate("/artists")} />
+      </div>
       <CarouselArtists artists={filteredArtists} />
-
-      <h1 className="my-5 font-bold text-2xl">Featured Albums</h1>
-      <ShowAllButton onClick={() => navigate("/albums")} />
+      <div className="flex justify-between items-center">
+        <h1
+          className="my-5 font-bold text-2xl cursor-pointer hover:underline"
+          onClick={() => navigate("/albums")}
+        >
+          Featured Albums
+        </h1>
+        <ShowAllButton onClick={() => navigate("/albums")} />
+      </div>
       <CarouselAlbums albums={filteredAlbums} />
     </div>
   );
