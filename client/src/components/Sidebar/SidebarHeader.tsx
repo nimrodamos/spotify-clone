@@ -54,9 +54,11 @@ export const SidebarHeader = () => {
                                 </HoverCard>
                             </div>
                 <HoverCard>
-                    <HoverCardTrigger asChild>
-                        <img className="w-4 ml-2 cursor-pointer" src={assets.arrow_icon} alt="" />
-                    </HoverCardTrigger>
+                    {user && (
+                        <HoverCardTrigger asChild>
+                            <img className="w-4 ml-2 cursor-pointer" src={assets.arrow_icon} alt="" />
+                        </HoverCardTrigger>
+                    )}
                     <HoverCardContent className="p-1 bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg mb-1" side="top">
                         Show more
                     </HoverCardContent>
