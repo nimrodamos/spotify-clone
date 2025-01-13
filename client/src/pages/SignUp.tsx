@@ -158,56 +158,67 @@ const SignUpPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-[#121212] text-white relative">
-      <FaSpotify className="text-5xl text-green-500 mt-6 mb-6" />
+      <FaSpotify className="text-[41px] text-[#FFFFFF] mt-6 mb-6" />
 
       {step === 1 && (
-        <>
-          <h1 className="text-5xl font-bold text-center mb-12">
-            Sign up to <br /> start listening
-          </h1>
+  <>
+    <h1 className="text-5xl font-bold text-center mb-12">
+      Sign up to <br /> start listening
+    </h1>
 
-          <div className="mb-4 w-[300px]">
-            <label className="block text-sm font-medium mb-2">
-              Email address
-            </label>
-            <input
-              type="email"
-              className="w-full px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
-              placeholder="name@domain.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          </div>
+    <div className="mb-4 w-[325px]">
+      <label className="block text-sm font-medium mb-2">Email address</label>
+      <input
+        type="email"
+        className="w-full px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
+        placeholder="name@domain.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+    </div>
 
-          <button
-            className="w-[300px] py-[0.85rem] bg-green-500 text-black font-bold text-sm rounded-full shadow-md transform transition duration-300 hover:scale-105 hover:opacity-90 mb-10"
-            onClick={handleEmailValidation}
-          >
-            Next
-          </button>
+    <button
+      className="w-[325px] py-[0.85rem] bg-green-500 text-black font-bold text-sm rounded-full shadow-md transform transition duration-300 hover:scale-105 hover:opacity-90 mb-10"
+      onClick={handleEmailValidation}
+    >
+      Next
+    </button>
 
-          <div className="relative flex items-center justify-center mb-10">
-            <div className="w-[300px] h-[1px] bg-[#7C7C7C]"></div>
-            <span className="absolute bg-[#121212] px-4 text-sm text-gray-400">
-              or
-            </span>
-          </div>
+    <div className="relative flex items-center justify-center mb-10">
+      <div className="w-[325px] h-[1px] bg-[#7C7C7C]"></div>
+      <span className="absolute bg-[#121212] px-4 text-sm text-[#FFFFFF]">or</span>
+    </div>
 
-          <button className="w-[300px] py-[0.73rem] mb-2 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
-            <FcGoogle className="ml-6 size-6" />
-            <span className="text-center w-full">Sign up with Google</span>
-          </button>
-          <button className="w-[300px] py-[0.73rem] mb-2 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
-            <SiFacebook className="ml-6 size-6" color="#1877F2" />
-            <span className="text-center w-full">Sign up with Facebook</span>
-          </button>
-          <button className="w-[300px] py-[0.73rem] mb-6 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
-            <FaApple className="ml-6 size-6" />
-            <span className="text-center w-full">Sign up with Apple</span>
-          </button>
-        </>
-      )}
+    <button className="w-[325px] py-[0.73rem] mb-2 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
+      <FcGoogle className="ml-6 size-6" />
+      <span className="text-center w-full">Sign up with Google</span>
+    </button>
+    <button className="w-[325px] py-[0.73rem] mb-2 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
+      <SiFacebook className="ml-6 size-6" color="#1877F2" />
+      <span className="text-center w-full">Sign up with Facebook</span>
+    </button>
+    <button className="w-[325px] py-[0.73rem] mb-6 bg-transparent text-[#E4E4E4] font-bold text-sm rounded-full shadow-md flex items-center justify-center gap-2 border border-white/50 hover:border-white">
+      <FaApple className="ml-6 size-6" />
+      <span className="text-center w-full">Sign up with Apple</span>
+    </button>
+
+    {/*Section for Blurred Line and Navigation */}
+    <div className="relative flex items-center justify-center mt-2 mb-8">
+      <div className="w-[325px] h-[1px] bg-[#292929]"></div>
+    </div>
+    <p className="text-sm text-gray-400">
+      Already have an account?{" "}
+      <a
+        href="/login"
+        className="text-white underline hover:text-green-500"
+      >
+        Log in here
+      </a>
+    </p>
+  </>
+)}
+
 {step === 2 && (
   <>
     {/* Progress Bar */}
@@ -224,7 +235,7 @@ const SignUpPage: React.FC = () => {
           setError("")
         }}
       />
-      <div className="flex flex-col gap-1 ml-4">
+      <div className="flex flex-col gap-1 ml-6">
         <p className="text-sm text-[#B3B3B3]">Step 1 of 3</p>
         <p className="text-sm text-[#FFFFFF] font-bold">Create a password</p>
       </div>
@@ -403,7 +414,7 @@ const SignUpPage: React.FC = () => {
               <input
                 type="text"
                 maxLength={4}
-                className="w-1/3 px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
+                className="w-1/4 px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
                 placeholder="yyyy"
                 value={birthYear}
                 onChange={(e) => {
@@ -412,7 +423,7 @@ const SignUpPage: React.FC = () => {
                 }}
               />
               <select
-                className="w-1/3 px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
+                className="w-2/4 px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
                 onChange={(e) => setBirthMonth(e.target.value)}
                 value={birthMonth}
               >
@@ -426,7 +437,7 @@ const SignUpPage: React.FC = () => {
               <input
                 type="text"
                 maxLength={2}
-                className="w-1/3 px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
+                className="w-1/4 px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
                 placeholder="dd"
                 value={birthDay}
                 onChange={(e) => {
@@ -449,7 +460,6 @@ const SignUpPage: React.FC = () => {
                 "Man",
                 "Woman",
                 "Non-binary",
-                "Undefined",
                 "Something-Else",
                 "Prefer-Not-To-Say",
               ].map((option) => (
