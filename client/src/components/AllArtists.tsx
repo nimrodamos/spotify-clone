@@ -1,27 +1,9 @@
-import { useEffect, useState } from "react";
-import { api } from "@/api";
+import React from "react";
 import CardItem from "@/components/CardItem";
-import { IArtist } from "@/types/types";
+import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 
 const AllArtists: React.FC = () => {
-  const [artists, setArtists] = useState<IArtist[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchArtists() {
-      try {
-        const response = await api.get("/api/artists");
-        setArtists(response.data);
-      } catch (err) {
-        console.error("Error fetching artists:", err);
-        setError("Failed to load artists. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchArtists();
-  }, []);
+  const { artists, loading, error } = useAppData(); // נתוני אמנים מה-Context
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;

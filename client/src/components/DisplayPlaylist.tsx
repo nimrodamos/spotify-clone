@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "@/api";
+import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 import { IPlaylist, ITrack } from "../types/types";
+import { api } from "@/api";
 
 const DisplayPlaylist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const {
+    playlists,
+    loading: contextLoading,
+    error: contextError,
+  } = useAppData(); // נתוני פלייליסטים מה-Context
   const [playlist, setPlaylist] = useState<
     (IPlaylist & { tracks: ITrack[] }) | null
   >(null);
@@ -12,22 +18,29 @@ const DisplayPlaylist: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchPlaylist() {
+    const fetchPlaylist = async () => {
       try {
-        const response = await api.get(`/api/playlists/${id}`);
-        setPlaylist(response.data);
-      } catch (error) {
-        console.error("Error fetching playlist:", error);
-        setError("Playlist not found. Please check the ID.");
+        // חיפוש הפלייליסט בקונטקסט
+        const playlistFromContext = playlists.find((p) => p._id === id);
+        if (playlistFromContext) {
+          const response = await api.get(`/api/playlists/${id}`);
+          setPlaylist({ ...playlistFromContext, tracks: response.data.tracks });
+        } else {
+          setError("Playlist not found in context. Please check the ID.");
+        }
+      } catch (err) {
+        console.error("Error fetching playlist:", err);
+        setError("Failed to fetch playlist.");
       } finally {
         setLoading(false);
       }
-    }
-    fetchPlaylist();
-  }, [id]);
+    };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+    fetchPlaylist();
+  }, [id, playlists]);
+
+  if (contextLoading || loading) return <p>Loading...</p>;
+  if (contextError || error) return <p>{contextError || error}</p>;
   if (!playlist) return <p>Playlist not found</p>;
 
   return (
@@ -35,7 +48,7 @@ const DisplayPlaylist: React.FC = () => {
       <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-end">
         <img
           className="w-48 rounded"
-          src={playlist.customAlbumCover || ""}
+          src={playlist.tracks[0]?.albumCoverUrl || ""}
           alt={playlist.PlaylistTitle}
         />
         <div className="flex flex-col">

@@ -1,117 +1,60 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import CardItem from "./CardItem";
-import { api } from "@/api";
-import { IAlbum, IPlaylist, IArtist } from "../types/types";
+import { useAppData } from "@/Context/AppDataContext";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 
-// Utility function to shuffle an array
-const shuffleArray = (array: any[]) => {
-  return array.sort(() => Math.random() - 0.5);
-};
-
 const DisplayHome: React.FC = () => {
-  const { user } = useUserContext(); // Access UserContext
-  const navigate = useNavigate(); // Get navigate function
-  const [albums, setAlbums] = useState<IAlbum[]>([]);
-  const [playlists, setPlaylists] = useState<IPlaylist[]>([]);
-  const [artists, setArtists] = useState<IArtist[]>([]);
-  const [filteredAlbums, setFilteredAlbums] = useState<IAlbum[]>([]);
-  const [filteredPlaylists, setFilteredPlaylists] = useState<IPlaylist[]>([]);
-  const [filteredArtists, setFilteredArtists] = useState<IArtist[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "music" | "podcast">("all");
+  const { user } = useUserContext();
+  const { albums, playlists, artists, loading, error } = useAppData();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [albumsResponse, playlistsResponse, artistsResponse] =
-          await Promise.all([
-            api.get("/api/albums"),
-            api.get("/api/playlists"),
-            api.get("/api/artists"),
-          ]);
+  const [filter, setFilter] = React.useState<"all" | "music" | "podcast">(
+    "all"
+  );
 
-        const shuffledAlbums = shuffleArray(albumsResponse.data).slice(0, 7); // Shuffle and limit to 7 albums
-        setAlbums(shuffledAlbums);
-        setPlaylists(playlistsResponse.data.slice(0, 7)); // Limit to 7 playlists
-        setArtists(shuffleArray(artistsResponse.data.slice(0, 7))); // Shuffle and limit to 7 artists
-        setFilteredAlbums(shuffledAlbums);
-        setFilteredPlaylists(playlistsResponse.data.slice(0, 7));
-        setFilteredArtists(shuffleArray(artistsResponse.data.slice(0, 7))); // Shuffle and limit to 7 artists
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Failed to fetch data. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    }
+  const filteredAlbums = React.useMemo(() => {
+    if (filter === "music")
+      return albums.filter((album) => album.genres.includes("music"));
+    if (filter === "podcast") return [];
+    return albums;
+  }, [filter, albums]);
 
-    fetchData();
-  }, []);
+  const filteredPlaylists = React.useMemo(() => {
+    if (filter === "music")
+      return playlists.filter((playlist) => playlist.type === "music");
+    if (filter === "podcast")
+      return playlists.filter((playlist) => playlist.type === "podcast");
+    return playlists;
+  }, [filter, playlists]);
 
-  useEffect(() => {
-    // Filter logic
-    if (filter === "all") {
-      setFilteredAlbums(albums);
-      setFilteredPlaylists(playlists);
-      setFilteredArtists(artists);
-    } else if (filter === "music") {
-      setFilteredAlbums(
-        albums.filter((album) => album.genres.includes("music"))
-      );
-      setFilteredPlaylists(
-        playlists.filter((playlist) => playlist.type === "music")
-      );
-      setFilteredArtists(artists); // Assuming all artists are music-related
-    } else if (filter === "podcast") {
-      setFilteredAlbums([]); // No albums in podcasts
-      setFilteredPlaylists(
-        playlists.filter((playlist) => playlist.type === "podcast")
-      );
-      setFilteredArtists([]); // No artists in podcasts
-    }
-  }, [filter, albums, playlists, artists]);
+  const filteredArtists = React.useMemo(() => {
+    if (filter === "podcast") return [];
+    return artists;
+  }, [filter, artists]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 px-6 pt-4">
       {/* Filter Buttons */}
       <div className="flex gap-4 my-4">
-        <button
-          className={`py-2 px-4 rounded-full ${
-            filter === "all"
-              ? "bg-white text-black"
-              : "bg-gray-700 text-gray-300"
-          }`}
-          onClick={() => setFilter("all")}
-        >
-          All
-        </button>
-        <button
-          className={`py-2 px-4 rounded-full ${
-            filter === "music"
-              ? "bg-white text-black"
-              : "bg-gray-700 text-gray-300"
-          }`}
-          onClick={() => setFilter("music")}
-        >
-          Music
-        </button>
-        <button
-          className={`py-2 px-4 rounded-full ${
-            filter === "podcast"
-              ? "bg-white text-black"
-              : "bg-gray-700 text-gray-300"
-          }`}
-          onClick={() => setFilter("podcast")}
-        >
-          Podcasts
-        </button>
+        {["all", "music", "podcast"].map((type) => (
+          <button
+            key={type}
+            className={`py-2 px-4 rounded-full ${
+              filter === type
+                ? "bg-white text-black"
+                : "bg-gray-700 text-gray-300"
+            }`}
+            onClick={() => setFilter(type as "all" | "music" | "podcast")}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
       </div>
+
       {/* Show personalized section if user is logged in */}
       {user && (
         <>
