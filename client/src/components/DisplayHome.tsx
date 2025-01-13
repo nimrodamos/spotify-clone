@@ -1,8 +1,20 @@
 import React from "react";
-import CardItem from "./CardItem";
 import { useAppData } from "@/Context/AppDataContext";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
+import CarouselArtists from "./Artists/CarouselArtists";
+import CarouselAlbums from "./Albums/CarouselAlbums";
+import FilterButtons from "./FilterButtons";
+import PersonalizedPlaylists from "./Playlists/PersonalizedPlaylists";
+
+const ShowAllButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="text-blue-500 hover:underline text-sm mb-2"
+  >
+    Show All
+  </button>
+);
 
 const DisplayHome: React.FC = () => {
   const { user } = useUserContext();
@@ -20,6 +32,11 @@ const DisplayHome: React.FC = () => {
     return albums;
   }, [filter, albums]);
 
+  const filteredArtists = React.useMemo(() => {
+    if (filter === "podcast") return [];
+    return artists;
+  }, [filter, artists]);
+
   const filteredPlaylists = React.useMemo(() => {
     if (filter === "music")
       return playlists.filter((playlist) => playlist.type === "music");
@@ -28,85 +45,29 @@ const DisplayHome: React.FC = () => {
     return playlists;
   }, [filter, playlists]);
 
-  const filteredArtists = React.useMemo(() => {
-    if (filter === "podcast") return [];
-    return artists;
-  }, [filter, artists]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="text-center text-white">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
 
   return (
-    <div className="mb-4 px-6 pt-4">
-      {/* Filter Buttons */}
-      <div className="flex gap-4 my-4">
-        {["all", "music", "podcast"].map((type) => (
-          <button
-            key={type}
-            className={`py-2 px-4 rounded-full ${
-              filter === type
-                ? "bg-white text-black"
-                : "bg-gray-700 text-gray-300"
-            }`}
-            onClick={() => setFilter(type as "all" | "music" | "podcast")}
-          >
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-          </button>
-        ))}
-      </div>
+    <div className="mb-4 px-6 pt-4 display-home">
+      <FilterButtons filter={filter} setFilter={setFilter} />
 
-      {/* Show personalized section if user is logged in */}
       {user && (
         <>
           <h1 className="my-5 font-bold text-2xl">
             Made for {user.displayName}
           </h1>
-          <div className="flex overflow-auto">
-            {filteredPlaylists.map((playlist) => (
-              <CardItem
-                key={playlist._id}
-                name={playlist.PlaylistTitle}
-                desc={playlist.description}
-                id={playlist._id}
-                image={playlist.customAlbumCover || ""}
-                type="playlist"
-              />
-            ))}
-          </div>
+          <PersonalizedPlaylists playlists={filteredPlaylists} />
         </>
       )}
 
-      {/* Artists Section */}
       <h1 className="my-5 font-bold text-2xl">Popular Artists</h1>
-      <button onClick={() => navigate("/artists")}>Show All</button>
-      <div className="flex overflow-auto">
-        {filteredArtists.map((artist) => (
-          <CardItem
-            key={artist._id}
-            name={artist.name}
-            desc={artist.genres.join(", ")}
-            id={artist._id}
-            image={artist.images[0]?.url || ""}
-            type="artist"
-          />
-        ))}
-      </div>
+      <ShowAllButton onClick={() => navigate("/artists")} />
+      <CarouselArtists artists={filteredArtists} />
 
-      {/* Albums Section */}
       <h1 className="my-5 font-bold text-2xl">Featured Albums</h1>
-      <button onClick={() => navigate("/albums")}>Show All</button>
-      <div className="flex overflow-auto">
-        {filteredAlbums.map((album) => (
-          <CardItem
-            key={album.spotifyAlbumId}
-            name={album.name}
-            desc={album.artist}
-            id={album.spotifyAlbumId}
-            image={album.albumCoverUrl}
-            type="album"
-          />
-        ))}
-      </div>
+      <ShowAllButton onClick={() => navigate("/albums")} />
+      <CarouselAlbums albums={filteredAlbums} />
     </div>
   );
 };

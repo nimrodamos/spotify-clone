@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "@/api";
-import { IAlbum, ITrack } from "../types/types";
+import { IAlbum, ITrack } from "../../types/types";
 import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 
 const DisplayAlbum: React.FC = () => {
