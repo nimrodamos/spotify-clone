@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import DisplayHome from "./DisplayHome";
-import DisplayAlbum from "./DisplayAlbum";
-import DisplayPlaylist from "./DisplayPlaylist";
-import DisplayArtist from "./DisplayArtist";
-import AllAlbums from "./AllAlbums";
-import AllArtists from "./AllArtists";
-import AllPlaylists from "./AllPlaylists";
+import DisplayAlbum from "./Albums/DisplayAlbum";
+import DisplayPlaylist from "./Playlists/DisplayPlaylist";
+import DisplayArtist from "./Artists/DisplayArtist";
+import AllAlbums from "./Albums/AllAlbums";
+import AllArtists from "./Artists/AllArtists";
+import AllPlaylists from "./Playlists/AllPlaylists";
 import Profile from "./Profile";
 
 const Display = () => {

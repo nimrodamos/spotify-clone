@@ -33,8 +33,8 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
         setLoading(true);
         const [albumsResponse, artistsResponse, playlistsResponse] =
           await Promise.all([
-            api.get("/api/albums"),
-            api.get("/api/artists"),
+            api.get("/api/albums/limited?limit=20&random=true"),
+            api.get("/api/artists/limited?limit=20&random=true"),
             api.get("/api/playlists"),
           ]);
         setAlbums(albumsResponse.data);
