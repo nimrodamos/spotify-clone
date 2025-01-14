@@ -19,18 +19,18 @@ const App = () => {
     <UserProvider>
       <div className="h-screen bg-black">
         {!isFullPage && (
-          <div className="h-[9%]">
+          <div className="h-[8.5%]">
             <Navbar />
           </div>
         )}
 
         <div className={isFullPage ? "h-full" : "h-[81%]"}>
-            <Routes>
-              <Route path="/" element={<Main />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<LogIn />} />
-              <Route path="/password-reset" element={<PasswordRecoveryPage />} />
-            </Routes>
+          <Routes>
+            <Route path="*" element={<Main />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/password-reset" element={<PasswordRecoveryPage />} />
+          </Routes>
         </div>
 
         {!isFullPage && (
