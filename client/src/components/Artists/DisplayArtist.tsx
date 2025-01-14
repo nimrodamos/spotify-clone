@@ -5,6 +5,8 @@ import { ITrack } from "@/types/types";
 import { api } from "@/api";
 import { VscVerifiedFilled } from "react-icons/vsc";
 
+// new commit
+
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { artists, loading, error } = useAppData(); // נתונים מה-Context
