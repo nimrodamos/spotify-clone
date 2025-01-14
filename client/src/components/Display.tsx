@@ -7,7 +7,8 @@ import AllAlbums from "./Albums/AllAlbums";
 import AllArtists from "./Artists/AllArtists";
 import AllPlaylists from "./Playlists/AllPlaylists";
 import Profile from "./Profile";
-import DisplaySong from "./DisplaySong";
+
+import DisplayTrack from "./DisplayTrack";
 
 const Display = () => {
   return (
@@ -18,7 +19,7 @@ const Display = () => {
         <Route path="/album/:id" element={<DisplayAlbum />} />
         <Route path="/artist/:id" element={<DisplayArtist />} />
         <Route path="/playlist/:id" element={<DisplayPlaylist />} />
-        <Route path="/track/:id" element={<DisplaySong />} />
+        <Route path="/track/:id" element={<DisplayTrack />} />
 
         <Route path="/albums" element={<AllAlbums />} />
         <Route path="/artists" element={<AllArtists />} />

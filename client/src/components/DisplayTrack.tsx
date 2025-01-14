@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppData } from "@/Context/AppDataContext";
-import { ITrack } from "@/types/types";
+import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
 
-const DisplaySong: React.FC = () => {
+const DisplayTrack: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { tracks, loading: contextLoading, error: contextError } = useAppData();
   const [track, setTrack] = useState<ITrack | null>(null);
+  const [artist, setArtist] = useState<IArtist | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,9 +37,29 @@ const DisplaySong: React.FC = () => {
     }
   }, [id, tracks, contextLoading]);
 
+  useEffect(() => {
+    const fetchArtist = async () => {
+      try {
+        if (track?.artist) {
+          const artistResponse = await api.get(
+            `/api/artists/name/${track.artist}`
+          );
+          setArtist(artistResponse.data);
+        }
+      } catch (err) {
+        setError("Failed to fetch artist data");
+      }
+    };
+
+    if (track) {
+      fetchArtist();
+    }
+  }, [track]);
+
   if (loading) return <p>Loading track...</p>;
   if (error || contextError) return <p>{error || contextError}</p>;
   if (!track) return <p>Track not found</p>;
+  if (!artist) return <p>Artist not found</p>;
 
   return (
     <div className="bg-black text-white h-screen p-8">
@@ -64,7 +85,14 @@ const DisplaySong: React.FC = () => {
         <FaCheckCircle size={32} color="LimeGreen" />
         <div className="text-white text-2xl cursor-pointer">&#8230;</div>
       </div>
-
+      <div>
+        <h1 className="text-6xl font-bold mb-4">{track.artist}</h1>
+        <img
+          src={artist.images[0].url}
+          alt={track.name}
+          className="w-[50px] h-[50px] object-cover rounded-md"
+        />
+      </div>
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Recommended</h2>
         {/* Render recommended tracks here if available */}
@@ -73,4 +101,4 @@ const DisplaySong: React.FC = () => {
   );
 };
 
-export default DisplaySong;
+export default DisplayTrack;
