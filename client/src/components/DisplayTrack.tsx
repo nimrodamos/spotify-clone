@@ -5,6 +5,7 @@ import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
+import { BiPlusCircle } from "react-icons/bi";
 
 const DisplayTrack: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,7 @@ const DisplayTrack: React.FC = () => {
   const [artist, setArtist] = useState<IArtist | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTrack = async () => {
@@ -82,16 +84,25 @@ const DisplayTrack: React.FC = () => {
 
       <div className="mt-8 flex gap-4 items-center">
         <AiFillPlayCircle size={70} color="LimeGreen" />
-        <FaCheckCircle size={32} color="LimeGreen" />
+        <button onClick={() => setAdded(!added)} className="focus:outline-none">
+          {added ? (
+            <FaCheckCircle size={32} color="LimeGreen" />
+          ) : (
+            <BiPlusCircle size={32} />
+          )}
+        </button>
         <div className="text-white text-2xl cursor-pointer">&#8230;</div>
       </div>
-      <div>
-        <h1 className="text-6xl font-bold mb-4">{track.artist}</h1>
+      <div className="mt-8 flex items-center gap-4">
         <img
           src={artist.images[0].url}
           alt={track.name}
-          className="w-[50px] h-[50px] object-cover rounded-md"
+          className="w-[70px] h-[70px] object-cover rounded-full"
         />
+        <div className="flex flex-col">
+          <h1 className="text-l font-bold ">artist</h1>
+          <h1 className="text-l font-bold ">{track.artist}</h1>
+        </div>
       </div>
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Recommended</h2>
