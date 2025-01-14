@@ -4,6 +4,7 @@ import { useAppData } from "@/Context/AppDataContext";
 import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
 import { VscVerifiedFilled } from "react-icons/vsc";
+import { AiFillPlayCircle } from "react-icons/ai";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -62,21 +63,23 @@ const DisplayArtist: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
-          <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
-          Verified Artist
+          <div className="flex items-center gap-2 mb-2">
+            <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+            Verified Artist
+          </div>
           <h2 className="text-7xl font-bold">{artist.name}</h2>
           <p className="text-xl pt-5">
             {artist.followers.total.toLocaleString()} monthly listeners
           </p>
-          <a
-            href={artist.external_urls.spotify}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 text-green-500 hover:underline"
-          >
-            Listen on Spotify
-          </a>
         </div>
+      </div>
+
+      <div className="p-6 flex items-center gap-4">
+        <AiFillPlayCircle size={"70px"} color="LimeGreen" />
+        <button className="bg-transparent text-white border border-white py-2 px-4 rounded-full hover:bg-white hover:text-black transition">
+          Follow
+        </button>
+        <div className="text-white text-2xl cursor-pointer">&#8230;</div>
       </div>
 
       <div className="p-6">
