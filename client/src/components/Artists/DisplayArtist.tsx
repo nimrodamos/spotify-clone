@@ -4,6 +4,8 @@ import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 import { ITrack } from "@/types/types";
 import { api } from "@/api";
 
+// new commit
+
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { artists, loading, error } = useAppData(); // נתונים מה-Context
