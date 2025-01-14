@@ -4,9 +4,8 @@ import Player from "./components/Player";
 import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/Login";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import PasswordRecoveryPage from "./pages/ForgotPassword";
-import NotFoundPage from "./pages/404Page.tsx";
 
 const App = () => {
   const location = useLocation();
@@ -19,7 +18,7 @@ const App = () => {
   return (
     <UserProvider>
       <div className="h-screen bg-black">
-        {!isFullPage && location.pathname !== "/404" && (
+        {!isFullPage && (
           <div className="h-[8.5%]">
             <Navbar />
           </div>
@@ -31,12 +30,10 @@ const App = () => {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<LogIn />} />
               <Route path="/password-reset" element={<PasswordRecoveryPage />} />
-              <Route path="*" element={<Navigate to="/404" />} />
-              <Route path="/404" element={<NotFoundPage />} />
             </Routes>
         </div>
 
-        {!isFullPage && location.pathname !== "/404" &&  (
+        {!isFullPage && (
           <div className="h-[10%]">
             <Player />
           </div>
