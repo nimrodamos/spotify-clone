@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppData } from "@/Context/AppDataContext";
 import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
@@ -8,6 +8,7 @@ import { AiFillPlayCircle } from "react-icons/ai";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const {
     artists,
     loading: contextLoading,
@@ -58,17 +59,22 @@ const DisplayArtist: React.FC = () => {
   return (
     <div className="bg-black text-white">
       <div
-        className="relative h-[300px] bg-cover bg-center"
-        style={{ backgroundImage: `url(${artist.images?.[0]?.url})` }}
+        className="relative h-[300px]"
+        style={{
+          backgroundImage: `url(${artist.images?.[0]?.url})`,
+          backgroundSize: "cover", // Cover the entire div
+          backgroundPosition: "center 10%", // Center the image
+          backgroundRepeat: "no-repeat",
+        }}
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 opacity-50"></div>
         <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
           <div className="flex items-center gap-2 mb-2">
             <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
             Verified Artist
           </div>
           <h2 className="text-7xl font-bold">{artist.name}</h2>
-          <p className="text-xl pt-5">
+          <p className="text-l pt-5">
             {artist.followers.total.toLocaleString()} monthly listeners
           </p>
         </div>
@@ -76,25 +82,30 @@ const DisplayArtist: React.FC = () => {
 
       <div className="p-6 flex items-center gap-4">
         <AiFillPlayCircle size={"70px"} color="LimeGreen" />
-        <button className="bg-transparent text-white border border-white py-2 px-4 rounded-full hover:bg-white hover:text-black transition">
+        <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
           Follow
         </button>
-        <div className="text-white text-2xl cursor-pointer">&#8230;</div>
+        <div className="text-white text-2xl cursor-pointer pb-4">&#8230;</div>
       </div>
 
       <div className="p-6">
         <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
         <ul>
           {tracks.length > 0 ? (
-            tracks.map((track) => (
-              <li key={track.spotifyTrackId} className="flex items-center mb-2">
-                <p className="font-bold flex-1">{track.name}</p>
-                <p className="text-sm">{track.album}</p>
+            tracks.map((track, index) => (
+              <li
+                key={track.spotifyTrackId}
+                className="flex items-center mb-2 cursor-pointer"
+                onClick={() => navigate(`/track/${track.spotifyTrackId}`)}
+              >
+                <p className="font-bold mr-4">{index + 1}</p>
                 <img
                   src={track.albumCoverUrl}
                   alt={track.name}
-                  className="w-12 h-12 ml-2"
+                  className="w-12 h-12 mr-4"
                 />
+                <p className="flex-1">{track.name}</p>
+                <p>{(track.durationMs / 60000).toFixed(2)}</p>
               </li>
             ))
           ) : (
