@@ -1,24 +1,45 @@
-// DisplayArtist.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppData } from "@/Context/AppDataContext";
-import { IArtist, ITrack } from "@/types/types";
+import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
 import { VscVerifiedFilled } from "react-icons/vsc";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { artists, loading, error } = useAppData();
+  const {
+    artists,
+    loading: contextLoading,
+    error: contextError,
+  } = useAppData();
   const [tracks, setTracks] = useState<ITrack[]>([]);
   const [artist, setArtist] = useState<IArtist | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading && artists.length > 0) {
-      const foundArtist = artists.find((a) => a._id === id);
-      console.log("Found artist:", foundArtist); // Log found artist
-      setArtist(foundArtist || null);
+    const fetchArtist = async () => {
+      try {
+        setLoading(true);
+        const foundArtist = artists.find((a) => a._id === id);
+        if (foundArtist) {
+          setArtist(foundArtist);
+        } else {
+          // Fetch artist directly from API if not found in context
+          const response = await api.get(`/api/artists/${id}`);
+          setArtist(response.data);
+        }
+      } catch (err) {
+        setError("Failed to fetch artist data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!contextLoading) {
+      fetchArtist();
     }
-  }, [loading, artists, id]);
+  }, [id, artists, contextLoading]);
 
   useEffect(() => {
     if (artist) {
@@ -29,8 +50,8 @@ const DisplayArtist: React.FC = () => {
     }
   }, [artist]);
 
-  if (loading || !artists.length) return <p>Loading artists...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p>Loading artist...</p>;
+  if (error || contextError) return <p>{error || contextError}</p>;
   if (!artist) return <p>Artist not found</p>;
 
   return (
@@ -41,13 +62,11 @@ const DisplayArtist: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
-          <div className="flex items-center mb-2">
-            <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
-            Verified Artist
-          </div>
+          <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+          Verified Artist
           <h2 className="text-7xl font-bold">{artist.name}</h2>
           <p className="text-xl pt-5">
-            {artist.followers.total} monthly listeners
+            {artist.followers.total.toLocaleString()} monthly listeners
           </p>
           <a
             href={artist.external_urls.spotify}

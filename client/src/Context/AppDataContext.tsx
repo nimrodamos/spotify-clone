@@ -1,4 +1,3 @@
-// AppDataContext.tsx
 import React, {
   createContext,
   useState,
@@ -38,12 +37,10 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
             api.get("/api/artists/limited?limit=20&random=true"),
             api.get("/api/playlists"),
           ]);
-        console.log("Artists fetched:", artistsResponse.data); // Log artists
         setAlbums(albumsResponse.data);
         setArtists(artistsResponse.data);
         setPlaylists(playlistsResponse.data);
       } catch (err: any) {
-        console.error("Error fetching data:", err);
         setError(err.message || "Failed to fetch data");
       } finally {
         setLoading(false);
