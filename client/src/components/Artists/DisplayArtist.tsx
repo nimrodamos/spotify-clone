@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
 import { ITrack } from "@/types/types";
 import { api } from "@/api";
-
-// new commit
+import { VscVerifiedFilled } from "react-icons/vsc";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +36,10 @@ const DisplayArtist: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
+          <div className="flex items-center mb-2">
+            <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+            Verified Artist
+          </div>
           <h2 className="text-7xl font-bold">{artist.name}</h2>
           <p className="text-xl pt-5">
             {artist.followers.total} monthly listeners
