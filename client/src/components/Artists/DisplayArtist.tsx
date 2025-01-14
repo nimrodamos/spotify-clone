@@ -1,21 +1,27 @@
+// DisplayArtist.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
-import { ITrack } from "@/types/types";
+import { useAppData } from "@/Context/AppDataContext";
+import { IArtist, ITrack } from "@/types/types";
 import { api } from "@/api";
 import { VscVerifiedFilled } from "react-icons/vsc";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { artists, loading, error } = useAppData(); // נתונים מה-Context
-  const [tracks, setTracks] = useState<ITrack[]>([]); // רשימת השירים
+  const { artists, loading, error } = useAppData();
+  const [tracks, setTracks] = useState<ITrack[]>([]);
+  const [artist, setArtist] = useState<IArtist | null>(null);
 
-  // מציאת האמן מתוך הנתונים שב-Context
-  const artist = artists.find((a) => a._id === id);
+  useEffect(() => {
+    if (!loading && artists.length > 0) {
+      const foundArtist = artists.find((a) => a._id === id);
+      console.log("Found artist:", foundArtist); // Log found artist
+      setArtist(foundArtist || null);
+    }
+  }, [loading, artists, id]);
 
   useEffect(() => {
     if (artist) {
-      // שליפת שירים עבור האמן
       api
         .get(`/api/tracks/artist/${artist.name}`)
         .then((response) => setTracks(response.data))
@@ -23,13 +29,12 @@ const DisplayArtist: React.FC = () => {
     }
   }, [artist]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading || !artists.length) return <p>Loading artists...</p>;
   if (error) return <p>{error}</p>;
   if (!artist) return <p>Artist not found</p>;
 
   return (
     <div className="bg-black text-white">
-      {/* Header Section */}
       <div
         className="relative h-[300px] bg-cover bg-center"
         style={{ backgroundImage: `url(${artist.images?.[0]?.url})` }}
@@ -55,7 +60,6 @@ const DisplayArtist: React.FC = () => {
         </div>
       </div>
 
-      {/* Tracks Section */}
       <div className="p-6">
         <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
         <ul>
