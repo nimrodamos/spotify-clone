@@ -69,34 +69,35 @@ const DisplayArtist: React.FC = () => {
   if (!artist) return <p>Artist not found</p>;
 
   return (
-    <div className="bg-black text-white">
+    <div
+      className="relative"
+      style={{
+        background: `linear-gradient(to bottom, ${backgroundColor}, #121212)`,
+      }}
+    >
       {/* Artist Image */}
-      <div>
+      <div className="relative">
         <img
           src={artist.images?.[0]?.url}
           alt={artist.name}
-          className="w-full h-[300px] object-cover"
+          className="w-full h-96 object-cover"
         />
+        <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+              Verified Artist
+            </div>
+            <h2 className="text-7xl font-bold">{artist.name}</h2>
+            <p className="text-l pt-2">
+              {artist.followers.total.toLocaleString()} monthly listeners
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Background with Dynamic Gradient */}
-      <div
-        className="p-6"
-        style={{
-          background: `linear-gradient(to bottom, ${backgroundColor}, #121212)`,
-        }}
-      >
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
-            Verified Artist
-          </div>
-          <h2 className="text-7xl font-bold">{artist.name}</h2>
-          <p className="text-l pt-2">
-            {artist.followers.total.toLocaleString()} monthly listeners
-          </p>
-        </div>
-
+      <div className="p-6">
         <div className="flex items-center gap-4 mb-8">
           <AiFillPlayCircle size={"70px"} color="LimeGreen" />
           <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
