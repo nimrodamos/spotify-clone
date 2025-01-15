@@ -1,12 +1,8 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
-} from "react";
+import React, { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { api } from "@/api";
 import { IAlbum, IArtist, IPlaylist, ITrack } from "@/types/types";
+
+type RsbMode = "queue" | "song";
 
 interface AppDataContextType {
   albums: IAlbum[];
@@ -15,19 +11,35 @@ interface AppDataContextType {
   tracks: ITrack[];
   loading: boolean;
   error: string | null;
+  isRsbOpen: boolean;
+  rsbMode: RsbMode;
+  toggleRsb: (mode: RsbMode) => void;
+  setRsbMode: (mode: RsbMode) => void;
+  setIsRsbOpen: (isOpen: boolean) => void;
 }
 
 const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
 
-export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [albums, setAlbums] = useState<IAlbum[]>([]);
   const [artists, setArtists] = useState<IArtist[]>([]);
   const [playlists, setPlaylists] = useState<IPlaylist[]>([]);
   const [tracks, setTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isRsbOpen, setIsRsbOpen] = useState<boolean>(false);
+  const [rsbMode, setRsbMode] = useState<RsbMode>("queue");
+
+  const toggleRsb = (mode: RsbMode) => {
+    if (isRsbOpen && rsbMode === mode) {
+      // Close the sidebar if it's already open and the same button is clicked
+      setIsRsbOpen(false);
+    } else {
+      // Open the sidebar and set the mode
+      setRsbMode(mode);
+      setIsRsbOpen(true);
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -59,7 +71,19 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <AppDataContext.Provider
-      value={{ albums, artists, playlists, tracks, loading, error }}
+      value={{
+        albums,
+        artists,
+        playlists,
+        tracks,
+        loading,
+        error,
+        isRsbOpen,
+        rsbMode,
+        toggleRsb,
+        setRsbMode,
+        setIsRsbOpen,
+      }}
     >
       {children}
     </AppDataContext.Provider>

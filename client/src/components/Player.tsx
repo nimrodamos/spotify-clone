@@ -1,28 +1,41 @@
 import { assets, songsData } from "../assets/assets";
 import { useUserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
+import React from "react";
+import { useAppData } from "@/Context/AppDataContext";
 
 function Player() {
   const { user } = useUserContext(); // Access UserContext
   const navigate = useNavigate();
+  const { toggleRsb, setRsbMode } = useAppData();
 
   if (!user) {
     return (
-    <div className="bg-black mx-2">
-      <div className="text-textBase bg-gradient-to-r from-[#af2896] to-[#509bf5] p-2 pl-4 flex w-full h-full flex-row items-center justify-between cursor-pointer gap-6 mt-[-0.25rem] relative z-10" data-testid="signup-bar">
-        <div className="flex flex-col">
-          <p className="text-sm font-bold" data-encore-id="text">Preview of Spotify</p>
-          <p className="text-base" data-encore-id="text">Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
-        </div>
-        <button
-          data-encore-id="buttonPrimary"
-          className="bg-textBase text-black p-4 mr-4 mt-2 rounded-3xl py-3 px-8 text-base font-bold"
-          onClick={() => navigate("/signup")}
+      <div className="bg-black mx-2">
+        <div
+          className="text-textBase bg-gradient-to-r from-[#af2896] to-[#509bf5] p-2 pl-4 flex w-full h-full flex-row items-center justify-between cursor-pointer gap-6 mt-[-0.25rem] relative z-10"
+          data-testid="signup-bar"
+        >
+          <div className="flex flex-col">
+            <p className="text-sm font-bold" data-encore-id="text">
+              Preview of Spotify
+            </p>
+            <p className="text-base" data-encore-id="text">
+              Sign up to get unlimited songs and podcasts with occasional ads.
+              No credit card needed.
+            </p>
+          </div>
+          <button
+            data-encore-id="buttonPrimary"
+            className="bg-textBase text-black p-4 mr-4 mt-2 rounded-3xl py-3 px-8 text-base font-bold"
+            onClick={() => navigate("/signup")}
           >
-          <span className="ButtonInner-sc-14ud5tc-0 kwEVAz encore-inverted-light-set XkXPpDRWozMF6G8_GlLQ">Sign up free</span>
-        </button>
+            <span className="ButtonInner-sc-14ud5tc-0 kwEVAz encore-inverted-light-set XkXPpDRWozMF6G8_GlLQ">
+              Sign up free
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
     );
   }
 
@@ -57,9 +70,19 @@ function Player() {
           </div>
         </div>
         <div className="hidden lg:flex items-center gap-2 opacity-75">
-          <img className="w-4" src={assets.plays_icon} alt="" />
+          <img
+            className="w-4 cursor-pointer"
+            src={assets.plays_icon}
+            alt="song"
+            onClick={() => toggleRsb("song")}
+          />
           <img className="w-4" src={assets.mic_icon} alt="" />
-          <img className="w-4" src={assets.queue_icon} alt="" />
+          <img
+            className="w-4 cursor-pointer"
+            src={assets.queue_icon}
+            alt="Queue"
+            onClick={() => toggleRsb("queue")}
+          />
           <img className="w-4" src={assets.speaker_icon} alt="" />
           <img className="w-4" src={assets.volume_icon} alt="" />
           <div className="w-20 bg-slate-50 h-1 rounder"></div>
