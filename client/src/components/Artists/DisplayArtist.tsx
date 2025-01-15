@@ -5,7 +5,7 @@ import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
 import { VscVerifiedFilled } from "react-icons/vsc";
 import { AiFillPlayCircle } from "react-icons/ai";
-import { getDominantColor } from "@/lib/getDominantColor"; // ייבוא הפונקציה שלנו
+import { getDominantColor } from "@/lib/getDominantColor";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
