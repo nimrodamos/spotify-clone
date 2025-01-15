@@ -26,15 +26,15 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 }) => {
     const { user } = useUserContext();
     const createPlaylist = async () => {
-        if (!user || !user.playlists || !user.accessToken) {
-            console.error('User is not authenticated or playlists are not available');
+        if (!user) {
+            console.error('User is not logged in');
             return;
         }
         const newPlaylistTitle = `My Playlist #${user.playlists.length + 1}`;
         try {
-            const response = await axios.post('http://localhost:5000/api/playlists', 
+            const response = await axios.post('http://localhost:5000/api/playlists/', 
             {
-                title: newPlaylistTitle,
+                PlaylistTitle: newPlaylistTitle,
                 owner: user._id,
             },
             {
@@ -45,6 +45,8 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     
             if (response.status === 201) {
                 console.log('Playlist created successfully:', response.data);
+                // Optionally, update the user context with the new playlist
+                user.playlists.push(response.data);
             } else {
                 console.error('Failed to create playlist:', response.statusText);
             }
