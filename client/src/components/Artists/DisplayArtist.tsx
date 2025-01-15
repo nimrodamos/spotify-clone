@@ -5,6 +5,7 @@ import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
 import { VscVerifiedFilled } from "react-icons/vsc";
 import { AiFillPlayCircle } from "react-icons/ai";
+import { getDominantColor } from "@/lib/getDominantColor";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,8 @@ const DisplayArtist: React.FC = () => {
   const [artist, setArtist] = useState<IArtist | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [backgroundColor, setBackgroundColor] =
+    useState<string>("rgb(0, 0, 0)");
 
   useEffect(() => {
     const fetchArtist = async () => {
@@ -27,7 +30,6 @@ const DisplayArtist: React.FC = () => {
         if (foundArtist) {
           setArtist(foundArtist);
         } else {
-          // Fetch artist directly from API if not found in context
           const response = await api.get(`/api/artists/${id}`);
           setArtist(response.data);
         }
@@ -44,6 +46,16 @@ const DisplayArtist: React.FC = () => {
   }, [id, artists, contextLoading]);
 
   useEffect(() => {
+    if (artist?.images?.[0]?.url) {
+      getDominantColor(artist.images[0].url)
+        .then((color) => setBackgroundColor(color))
+        .catch((err) =>
+          console.error("Failed to extract dominant color:", err)
+        );
+    }
+  }, [artist]);
+
+  useEffect(() => {
     if (artist) {
       api
         .get(`/api/tracks/artist/${artist.name}`)
@@ -57,38 +69,43 @@ const DisplayArtist: React.FC = () => {
   if (!artist) return <p>Artist not found</p>;
 
   return (
-    <div className="bg-black text-white">
-      <div
-        className="relative h-[300px]"
-        style={{
-          backgroundImage: `url(${artist.images?.[0]?.url})`,
-          backgroundSize: "cover", // Cover the entire div
-          backgroundPosition: "center 10%", // Center the image
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 opacity-50"></div>
-        <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
-          <div className="flex items-center gap-2 mb-2">
-            <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
-            Verified Artist
+    <div
+      className="relative"
+      style={{
+        background: `linear-gradient(to bottom, ${backgroundColor}, #121212)`,
+      }}
+    >
+      {/* Artist Image */}
+      <div className="relative">
+        <img
+          src={artist.images?.[0]?.url}
+          alt={artist.name}
+          className="w-full h-96 object-cover"
+        />
+        <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+              Verified Artist
+            </div>
+            <h2 className="text-7xl font-bold">{artist.name}</h2>
+            <p className="text-l pt-2">
+              {artist.followers.total.toLocaleString()} monthly listeners
+            </p>
           </div>
-          <h2 className="text-7xl font-bold">{artist.name}</h2>
-          <p className="text-l pt-5">
-            {artist.followers.total.toLocaleString()} monthly listeners
-          </p>
         </div>
       </div>
 
-      <div className="p-6 flex items-center gap-4">
-        <AiFillPlayCircle size={"70px"} color="LimeGreen" />
-        <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
-          Follow
-        </button>
-        <div className="text-white text-2xl cursor-pointer pb-4">&#8230;</div>
-      </div>
-
+      {/* Background with Dynamic Gradient */}
       <div className="p-6">
+        <div className="flex items-center gap-4 mb-8">
+          <AiFillPlayCircle size={"70px"} color="LimeGreen" />
+          <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
+            Follow
+          </button>
+          <div className="text-white text-2xl cursor-pointer">&#8230;</div>
+        </div>
+
         <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
         <ul>
           {tracks.length > 0 ? (
