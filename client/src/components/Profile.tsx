@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../Context/UserContext";
+import { useAppData } from "../Context/AppDataContext"; // Assuming isRsbOpen comes from AppDataContext
 import { IArtist, ITrack } from "@/types/types";
 import { api } from "@/api";
 import { PiDotsThree } from "react-icons/pi";
 
 const Profile: React.FC = () => {
   const { user } = useUserContext();
+  const { isRsbOpen } = useAppData(); // Access RSB state
   const [topArtists, setTopArtists] = useState<IArtist[]>([]);
   const [topTracks, setTopTracks] = useState<ITrack[]>([]);
   const [followers, setFollowers] = useState<IArtist[]>([]);
   const [following, setFollowing] = useState<IArtist[]>([]);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
+
+  // Adjusted width based on RSB state
+  const profileWidth = isRsbOpen ? "77.1%" : "81.4%";
+
+  // Adjusted display limit based on RSB state
+  const displayLimit = isRsbOpen ? 6 : 8;
 
   useEffect(() => {
     if (!user) return;
@@ -20,7 +28,7 @@ const Profile: React.FC = () => {
       try {
         const response = await api.get("/api/artists");
         const artists: IArtist[] = response.data;
-        setTopArtists(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
+        setTopArtists(artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit));
       } catch (error) {
         console.error("Error fetching artists:", error);
       }
@@ -42,7 +50,7 @@ const Profile: React.FC = () => {
       try {
         const response = await api.get("/api/artists");
         const artists: IArtist[] = response.data;
-        setFollowers(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
+        setFollowers(artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit));
       } catch (error) {
         console.error("Error fetching followers:", error);
       }
@@ -53,11 +61,12 @@ const Profile: React.FC = () => {
       try {
         const response = await api.get("/api/artists");
         const artists: IArtist[] = response.data;
-        setFollowing(artists.sort(() => 0.5 - Math.random()).slice(0, 8));
+        setFollowing(artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit));
       } catch (error) {
         console.error("Error fetching following:", error);
       }
     }
+
     fetchTopArtists();
     fetchTopTracks();
     fetchFollowers();
@@ -80,75 +89,67 @@ const Profile: React.FC = () => {
     return () => {
       scrollableContainer.removeEventListener("scroll", handleScroll);
     };
-  }, [user]);
+  }, [user, displayLimit]);
 
-  if (!user)
+  if (!user) {
     return (
-      <p className="text-center text-lg text-white">
-        Please log in to view your profile.
-      </p>
+      <p className="text-center text-lg text-white">Please log in to view your profile.</p>
     );
+  }
 
-    return (
-        <div className="min-h-screen w-full relative">
-          {/* Sticky Header */}
-          {showStickyHeader && (
-            <div
-              className="fixed top-[82px] left-[488px] w-[1424px] h-[65px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-50 rounded-t"
-              style={{ color: "#fff" }}
-            >
-              <h1 className="text-xl font-bold">{user.displayName}</h1>
-            </div>
-          )}
-      
-          {/* Profile Section */}
-          <div className="relative bg-gradient-to-b from-[#B7DE72] to-black h-[572px] w-full">
-            <div className="flex pt-[85px] space-x-6 p-6 w-full max-w-[1200px] h-full">
-              <img
-                src={user.profilePicture || "../../public/profilePic.jpeg"}
-                alt={user.displayName}
-                className="w-[235px] h-[235px] object-cover rounded-full shadow-lg"
-              />
-              <div>
-                <p className="text-lg">Profile</p>
-                <h1 className="text-[6rem] font-bold">{user.displayName}</h1>
-                <p className="text-lg">8 Followers • 46 Following</p>
-              </div>
-            </div>
+  return (
+    <div className="min-h-screen w-full relative">
+      {/* Sticky Header */}
+      {showStickyHeader && (
+        <div
+          className="fixed top-[8.5%] left-[432px] h-[67px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-50 rounded-t"
+          style={{ width: profileWidth, color: "#fff" }}
+        >
+          <h1 className="text-xl font-bold">{user.displayName}</h1>
+        </div>
+      )}
+
+      {/* Profile Section */}
+      <div className="relative bg-gradient-to-b from-[#B7DE72] to-black h-[572px] w-full">
+        <div className="flex pt-[85px] space-x-6 p-6 w-full" style={{ maxWidth: profileWidth }}>
+          <img
+            src={user.profilePicture || "../../public/profilePic.jpeg"}
+            alt={user.displayName}
+            className="w-[235px] h-[235px] object-cover rounded-full shadow-lg"
+          />
+          <div>
+            <p className="text-lg">Profile</p>
+            <h1 className="text-[6rem] font-bold">{user.displayName}</h1>
+            <p className="text-lg">8 Followers • 46 Following</p>
           </div>
-      
-          {/* Top Artists Section */}
-          <div
-            className="absolute top-[340px] left-0 bg-[#121212]/25 w-full 6"
-            style={{ backdropFilter: "blur(4px)" }}
-          >
-            <div className="w-full max-w pl-[37px]">
-            <PiDotsThree className="text-4xl mt-[32px] mb-[23px]" />
-              <h2 className="text-2xl font-bold  text-white">
-                Top artists this month
-              </h2>
-              <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
-              <div className="flex">
-                {topArtists.map((artist) => (
-                  <div
-                    key={artist._id}
-                    className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
-                  >
-                    <img
-                      src={artist.images?.[0]?.url || "https://via.placeholder.com/150"}
-                      alt={artist.name}
-                      className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                    />
-                    <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
-                    <p className="text-sm text-gray-400 text-left">Artist</p>
-                  </div>
-                ))}
+        </div>
+      </div>
+
+      {/* Top Artists Section */}
+      <div className="absolute top-[340px] left-0 bg-[#121212]/25 w-full" style={{ backdropFilter: "blur(4px)" }}>
+        <div className="w-full pl-[37px]">
+        <PiDotsThree className="text-4xl mt-[32px] mb-[23px]" />
+          <h2 className="text-2xl font-bold text-white">Top artists this month</h2>
+          <div className="flex">
+            {topArtists.map((artist) => (
+              <div
+                key={artist._id}
+                className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+              >
+                <img
+                  src={artist.images?.[0]?.url || "https://via.placeholder.com/150"}
+                  alt={artist.name}
+                  className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
+                />
+                <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
+                <p className="text-sm text-gray-400 text-left">Artist</p>
               </div>
-            </div>
+            ))}
           </div>
-      
-          {/* Top Tracks Section */}
-          <div
+        </div>
+      </div>
+{/* Top Tracks Section */}
+<div
             className="absolute top-[764px] left-0 bg-[#121212] w-full "
             style={{ backdropFilter: "blur(4px)" }}
           >

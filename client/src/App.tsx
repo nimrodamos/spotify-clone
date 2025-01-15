@@ -1,4 +1,5 @@
 import { UserProvider } from "./Context/UserContext.tsx"; // Adjust the path as necessary
+import { AppDataProvider } from "./Context/AppDataContext";
 import Navbar from "./components/Navbar/Navbar.tsx";
 import Player from "./components/Player";
 import Main from "./pages/Main";
@@ -17,28 +18,30 @@ const App = () => {
 
   return (
     <UserProvider>
-      <div className="h-screen bg-black">
-        {!isFullPage && (
-          <div className="h-[8.5%]">
-            <Navbar />
-          </div>
-        )}
+      <AppDataProvider>
+        <div className="h-screen bg-black">
+          {!isFullPage && (
+            <div className="h-[8.5%]">
+              <Navbar />
+            </div>
+          )}
 
-        <div className={isFullPage ? "h-full" : "h-[81%]"}>
-          <Routes>
-            <Route path="*" element={<Main />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/password-reset" element={<PasswordRecoveryPage />} />
-          </Routes>
+          <div className={isFullPage ? "h-full" : "h-[81%]"}>
+            <Routes>
+              <Route path="*" element={<Main />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<LogIn />} />
+              <Route path="/password-reset" element={<PasswordRecoveryPage />} />
+            </Routes>
+          </div>
+
+          {!isFullPage && (
+            <div className="h-[10%]">
+              <Player />
+            </div>
+          )}
         </div>
-
-        {!isFullPage && (
-          <div className="h-[10%]">
-            <Player />
-          </div>
-        )}
-      </div>
+      </AppDataProvider>
     </UserProvider>
   );
 };

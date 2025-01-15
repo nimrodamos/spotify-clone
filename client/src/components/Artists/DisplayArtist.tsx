@@ -1,20 +1,62 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
-import { ITrack } from "@/types/types";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAppData } from "@/Context/AppDataContext";
+import { ITrack, IArtist } from "@/types/types";
 import { api } from "@/api";
+import { VscVerifiedFilled } from "react-icons/vsc";
+import { AiFillPlayCircle } from "react-icons/ai";
+import { getDominantColor } from "@/lib/getDominantColor";
 
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { artists, loading, error } = useAppData(); // נתונים מה-Context
-  const [tracks, setTracks] = useState<ITrack[]>([]); // רשימת השירים
+  const navigate = useNavigate();
+  const {
+    artists,
+    loading: contextLoading,
+    error: contextError,
+  } = useAppData();
+  const [tracks, setTracks] = useState<ITrack[]>([]);
+  const [artist, setArtist] = useState<IArtist | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [backgroundColor, setBackgroundColor] =
+    useState<string>("rgb(0, 0, 0)");
 
-  // מציאת האמן מתוך הנתונים שב-Context
-  const artist = artists.find((a) => a._id === id);
+  useEffect(() => {
+    const fetchArtist = async () => {
+      try {
+        setLoading(true);
+        const foundArtist = artists.find((a) => a._id === id);
+        if (foundArtist) {
+          setArtist(foundArtist);
+        } else {
+          const response = await api.get(`/api/artists/${id}`);
+          setArtist(response.data);
+        }
+      } catch (err) {
+        setError("Failed to fetch artist data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!contextLoading) {
+      fetchArtist();
+    }
+  }, [id, artists, contextLoading]);
+
+  useEffect(() => {
+    if (artist?.images?.[0]?.url) {
+      getDominantColor(artist.images[0].url)
+        .then((color) => setBackgroundColor(color))
+        .catch((err) =>
+          console.error("Failed to extract dominant color:", err)
+        );
+    }
+  }, [artist]);
 
   useEffect(() => {
     if (artist) {
-      // שליפת שירים עבור האמן
       api
         .get(`/api/tracks/artist/${artist.name}`)
         .then((response) => setTracks(response.data))
@@ -22,48 +64,65 @@ const DisplayArtist: React.FC = () => {
     }
   }, [artist]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p>Loading artist...</p>;
+  if (error || contextError) return <p>{error || contextError}</p>;
   if (!artist) return <p>Artist not found</p>;
 
   return (
-    <div className="bg-black text-white">
-      {/* Header Section */}
-      <div
-        className="relative h-[300px] bg-cover bg-center"
-        style={{ backgroundImage: `url(${artist.images?.[0]?.url})` }}
-      >
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="absolute top-1/2 left-6 transform -translate-y-1/2">
-          <h2 className="text-7xl font-bold">{artist.name}</h2>
-          <p className="text-xl pt-5">
-            {artist.followers.total} monthly listeners
-          </p>
-          <a
-            href={artist.external_urls.spotify}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 text-green-500 hover:underline"
-          >
-            Listen on Spotify
-          </a>
+    <div
+      className="relative"
+      style={{
+        background: `linear-gradient(to bottom, ${backgroundColor}, #121212)`,
+      }}
+    >
+      {/* Artist Image */}
+      <div className="relative">
+        <img
+          src={artist.images?.[0]?.url}
+          alt={artist.name}
+          className="w-full h-96 object-cover"
+        />
+        <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+              Verified Artist
+            </div>
+            <h2 className="text-7xl font-bold">{artist.name}</h2>
+            <p className="text-l pt-2">
+              {artist.followers.total.toLocaleString()} monthly listeners
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Tracks Section */}
+      {/* Background with Dynamic Gradient */}
       <div className="p-6">
+        <div className="flex items-center gap-4 mb-8">
+          <AiFillPlayCircle size={"70px"} color="LimeGreen" />
+          <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
+            Follow
+          </button>
+          <div className="text-white text-2xl cursor-pointer">&#8230;</div>
+        </div>
+
         <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
         <ul>
           {tracks.length > 0 ? (
-            tracks.map((track) => (
-              <li key={track.spotifyTrackId} className="flex items-center mb-2">
-                <p className="font-bold flex-1">{track.name}</p>
-                <p className="text-sm">{track.album}</p>
+            tracks.map((track, index) => (
+              <li
+                key={track.spotifyTrackId}
+                className="flex items-center mb-2 cursor-pointer"
+                onClick={() => navigate(`/track/${track.spotifyTrackId}`)}
+              >
+                <p className="font-bold mr-4">{index + 1}</p>
                 <img
                   src={track.albumCoverUrl}
                   alt={track.name}
-                  className="w-12 h-12 ml-2"
+                  className="w-12 h-12 mr-4"
                 />
+                <p className="flex-1">{track.name}</p>
+                <p>{(track.durationMs / 60000).toFixed(2)}</p>
               </li>
             ))
           ) : (

@@ -6,11 +6,11 @@ interface FilterButtonsProps {
 }
 
 const FilterButtons: React.FC<FilterButtonsProps> = ({ filter, setFilter }) => (
-  <div className="flex gap-4 my-4">
+  <div className="flex gap-2 sticky top-0 z-10 bg-[rgba(0,0,0,0.6)] py-4">
     {["all", "music", "podcast"].map((type) => (
       <button
         key={type}
-        className={`py-2 px-4 rounded-full ${
+        className={`py-1 px-4  rounded-full ${
           filter === type ? "bg-white text-black" : "bg-gray-700 text-gray-300"
         }`}
         onClick={() => setFilter(type as "all" | "music" | "podcast")}
