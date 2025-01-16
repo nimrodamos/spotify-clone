@@ -12,7 +12,6 @@ const DisplayAlbum: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { albums, loading: contextLoading, error: contextError } = useAppData();
   const [album, setAlbum] = useState<IAlbum | null>(null);
-  const [tracks, setTracks] = useState<ITrack[]>([]);
   const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,23 +19,31 @@ const DisplayAlbum: React.FC = () => {
   const [background, setBackground] = useState<string>("#121212");
 
   useEffect(() => {
-    async function fetchAlbumData() {
+    async function fetchAlbumAndTracks() {
       try {
+        setLoading(true);
+
+        // שליפת האלבום מהקונטקסט או מהשרת
         const albumFromContext = albums.find((a) => a.spotifyAlbumId === id);
-        if (albumFromContext) {
-          setAlbum(albumFromContext);
-        } else {
+        let currentAlbum = albumFromContext;
+
+        if (!albumFromContext) {
           const albumResponse = await api.get(`/api/albums/${id}`);
-          setAlbum(albumResponse.data);
+          currentAlbum = albumResponse.data;
         }
 
-        const tracksResponse = await api.get(`/api/tracks`);
-        setTracks(tracksResponse.data);
+        setAlbum(currentAlbum || null);
 
-        const albumTracks = tracksResponse.data.filter(
-          (track: ITrack) => track.album === (albumFromContext?.name || "")
-        );
-        setFilteredTracks(albumTracks);
+        // שליפת השירים מהשרת לפי שם האלבום
+        if (currentAlbum) {
+          const tracksResponse = await api.get(`/api/tracks`);
+          const albumTracks = tracksResponse.data.filter(
+            (track: ITrack) => track.album === currentAlbum.name
+          );
+          setFilteredTracks(albumTracks);
+        } else {
+          setFilteredTracks([]);
+        }
       } catch (err) {
         setError("Failed to load album or tracks.");
       } finally {
@@ -44,7 +51,7 @@ const DisplayAlbum: React.FC = () => {
       }
     }
 
-    fetchAlbumData();
+    fetchAlbumAndTracks();
   }, [id, albums]);
 
   useEffect(() => {
