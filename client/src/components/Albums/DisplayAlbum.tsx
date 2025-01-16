@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "@/api";
-import { IAlbum, ITrack } from "../../types/types";
+import { IAlbum, ITrack, IArtist } from "../../types/types";
 import { useAppData } from "@/Context/AppDataContext";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
@@ -12,6 +12,7 @@ const DisplayAlbum: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { albums, loading: contextLoading, error: contextError } = useAppData();
   const [album, setAlbum] = useState<IAlbum | null>(null);
+  const [artist, setArtist] = useState<IArtist | null>(null); // State for artist data
   const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,11 +20,11 @@ const DisplayAlbum: React.FC = () => {
   const [background, setBackground] = useState<string>("#121212");
 
   useEffect(() => {
-    async function fetchAlbumAndTracks() {
+    async function fetchAlbumAndArtist() {
       try {
         setLoading(true);
 
-        // שליפת האלבום מהקונטקסט או מהשרת
+        // Fetch album from context or API
         const albumFromContext = albums.find((a) => a.spotifyAlbumId === id);
         let currentAlbum = albumFromContext;
 
@@ -34,8 +35,14 @@ const DisplayAlbum: React.FC = () => {
 
         setAlbum(currentAlbum || null);
 
-        // שליפת השירים מהשרת לפי שם האלבום
+        // Fetch artist data
         if (currentAlbum) {
+          const artistResponse = await api.get(
+            `/api/artists/name/${encodeURIComponent(currentAlbum.artist)}`
+          );
+          setArtist(artistResponse.data);
+
+          // Fetch tracks for the album
           const tracksResponse = await api.get(`/api/tracks`);
           const albumTracks = tracksResponse.data.filter(
             (track: ITrack) => track.album === currentAlbum.name
@@ -45,13 +52,13 @@ const DisplayAlbum: React.FC = () => {
           setFilteredTracks([]);
         }
       } catch (err) {
-        setError("Failed to load album or tracks.");
+        setError("Failed to load album or artist data.");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchAlbumAndTracks();
+    fetchAlbumAndArtist();
   }, [id, albums]);
 
   useEffect(() => {
@@ -80,20 +87,29 @@ const DisplayAlbum: React.FC = () => {
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
       >
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center mb-8">
           <img
-            className="w-32 h-32 object-cover rounded-md shadow-md"
+            className="w-48 h-48 object-cover rounded-md shadow-md"
             src={album.albumCoverUrl}
             alt={album.name}
           />
-          <div>
-            <h2 className="text-3xl font-semibold text-white mb-2">
+          <div className="m-5">
+            <h2 className="text-5xl md:text-7xl font-bold text-white mb-2">
               {album.name}
             </h2>
-            <p className="text-lg text-gray-300">Artist: {album.artist}</p>
-            <p className="text-sm text-gray-400">
-              Release Date: {album.releaseDate}
-            </p>
+            <div className="flex items-center space-x-4">
+              {artist?.images?.[0]?.url && (
+                <img
+                  className="w-12 h-12 object-cover rounded-full"
+                  src={artist.images[0].url}
+                  alt={artist.name}
+                />
+              )}
+              <p className="text-lg text-gray-300">{album.artist}</p>
+              <p className="text-sm text-gray-400">
+                Release Date: {album.releaseDate}
+              </p>
+            </div>
           </div>
         </div>
 
