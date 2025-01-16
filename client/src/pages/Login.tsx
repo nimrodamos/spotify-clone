@@ -4,6 +4,8 @@ import { FaApple, FaSpotify } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SiFacebook } from "react-icons/si";
 import { useUserContext } from "../Context/UserContext"; // Import UserContext
+import { AiOutlineEyeInvisible } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -121,10 +123,10 @@ const LoginPage: React.FC = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-[0.65rem] text-gray-500 hover:text-gray-300"
+                  className="absolute right-4 top-[10px] text-3xl text-[#B3B3B3] hover:text-[#FFFFFF]"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  👁️
+                  {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
                 </button>
               </div>
             </div>
