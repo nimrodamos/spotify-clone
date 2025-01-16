@@ -8,7 +8,7 @@ import PlaylistRoutes from "./routes/playlistRoute.js";
 import apiCallsRoutes from "./routes/apiCallsRoute.js";
 import dbAlbumRoutes from "./routes/dbAlbumRoute.js";
 import dbTrackRoutes from "./routes/dbTrackRoute.js";
-import dbArtistRoutes from "./routes/dbartistRoute.js";
+import dbArtistRoutes from "./routes/dbArtistRoute.js";
 import path from "path";
 import cloudinary from "cloudinary";
 import User from "./models/userModel.js";

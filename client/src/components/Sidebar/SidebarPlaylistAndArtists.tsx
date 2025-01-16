@@ -84,7 +84,7 @@ const SidebarPlaylistAndArtists: React.FC<SidebarPlaylistAndArtistsProps> = ({
 
             const fetchArtists = async (artistNames: string[]) => {
                 try {
-                    const uniqueArtistNames = [...new Set(artistNames)];
+                    const uniqueArtistNames = [...new Set(artistNames.flatMap(name => name.split(',').map(n => n.trim())))];
                     const artistPromises = uniqueArtistNames.map(name =>
                         api.get(`/api/artists/name/${name}`).catch(error => {
                             if (error.response && error.response.status === 404) {
