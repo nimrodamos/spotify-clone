@@ -82,13 +82,13 @@ const DisplayArtist: React.FC = () => {
           alt={artist.name}
           className="w-full h-96 object-cover"
         />
-        <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+        <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-[#16151575] to-transparent w-full">
           <div className="mb-6"></div>
           <div className="flex items-center gap-2 mb-2">
             <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
             Verified Artist
           </div>
-          <h2 className="text-7xl font-bold">{artist.name}</h2>
+          <h2 className="text-8xl font-bold">{artist.name}</h2>
           <p className="text-l pt-2">
             {artist.followers.total.toLocaleString()} monthly listeners
           </p>
