@@ -6,7 +6,7 @@ interface FilterButtonsProps {
 }
 
 const FilterButtons: React.FC<FilterButtonsProps> = ({ filter, setFilter }) => (
-  <div className="flex gap-2 sticky top-0 z-10 bg-[#212b21] px-11 py-4">
+  <div className="flex gap-2 sticky top-0 z-10 bg-[#1c251c] px-11 py-4">
     {["all", "music", "podcast"].map((type) => (
       <button
         key={type}
