@@ -2,35 +2,37 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "@/api";
 import { IAlbum, ITrack } from "../../types/types";
-import { useAppData } from "@/Context/AppDataContext"; // שימוש ב-Context
+import { useAppData } from "@/Context/AppDataContext";
+import { AiFillPlayCircle } from "react-icons/ai";
+import { FaCheckCircle } from "react-icons/fa";
+import { BiPlusCircle } from "react-icons/bi";
+import { getDominantColor } from "@/lib/getDominantColor";
 
 const DisplayAlbum: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // מזהה האלבום
-  const { albums, loading: contextLoading, error: contextError } = useAppData(); // נתונים מה-Context
+  const { id } = useParams<{ id: string }>();
+  const { albums, loading: contextLoading, error: contextError } = useAppData();
   const [album, setAlbum] = useState<IAlbum | null>(null);
   const [tracks, setTracks] = useState<ITrack[]>([]);
-  const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]); // שירים שמתאימים לאלבום הנבחר
+  const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState<boolean>(false);
+  const [background, setBackground] = useState<string>("#121212");
 
   useEffect(() => {
     async function fetchAlbumData() {
       try {
-        // שליפת נתוני האלבום מ-Context
         const albumFromContext = albums.find((a) => a.spotifyAlbumId === id);
         if (albumFromContext) {
           setAlbum(albumFromContext);
         } else {
-          // אם האלבום לא נמצא בקונטקסט, שליפתו מה-API
           const albumResponse = await api.get(`/api/albums/${id}`);
           setAlbum(albumResponse.data);
         }
 
-        // שליפת כל השירים
         const tracksResponse = await api.get(`/api/tracks`);
         setTracks(tracksResponse.data);
 
-        // חיפוש שירים שמתאימים לאלבום
         const albumTracks = tracksResponse.data.filter(
           (track: ITrack) => track.album === (albumFromContext?.name || "")
         );
@@ -45,6 +47,14 @@ const DisplayAlbum: React.FC = () => {
     fetchAlbumData();
   }, [id, albums]);
 
+  useEffect(() => {
+    if (album?.albumCoverUrl) {
+      getDominantColor(album.albumCoverUrl).then((color) => {
+        setBackground(color);
+      });
+    }
+  }, [album]);
+
   if (contextLoading || loading)
     return <p className="text-center text-xl">Loading...</p>;
   if (contextError || error)
@@ -56,31 +66,55 @@ const DisplayAlbum: React.FC = () => {
   if (!album) return <p className="text-center text-xl">Album not found</p>;
 
   return (
-    <div className="max-w-screen-lg mx-auto p-5">
-      <div className="flex items-center justify-between mb-8">
-        <img
-          className="w-32 h-32 object-cover rounded-md shadow-md"
-          src={album.albumCoverUrl}
-          alt={album.name}
-        />
-        <div>
-          <h2 className="text-3xl font-semibold text-gray-800 mb-2">
-            {album.name}
-          </h2>
-          <p className="text-lg text-gray-600">Artist: {album.artist}</p>
-          <p className="text-sm text-gray-500">
-            Release Date: {album.releaseDate}
-          </p>
+    <div className="max-w-screen-lg mx-auto">
+      <div
+        className="p-5"
+        style={{
+          background: `linear-gradient(to bottom, ${background}, #121212)`,
+        }}
+      >
+        <div className="flex items-center justify-between mb-8">
+          <img
+            className="w-32 h-32 object-cover rounded-md shadow-md"
+            src={album.albumCoverUrl}
+            alt={album.name}
+          />
+          <div>
+            <h2 className="text-3xl font-semibold text-white mb-2">
+              {album.name}
+            </h2>
+            <p className="text-lg text-gray-300">Artist: {album.artist}</p>
+            <p className="text-sm text-gray-400">
+              Release Date: {album.releaseDate}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 flex gap-4 items-center">
+          <AiFillPlayCircle size={70} color="LimeGreen" />
+          <button
+            onClick={() => setAdded(!added)}
+            className="focus:outline-none"
+          >
+            {added ? (
+              <FaCheckCircle size={32} color="LimeGreen" />
+            ) : (
+              <BiPlusCircle size={32} />
+            )}
+          </button>
+          <div className="text-white text-2xl cursor-pointer">&#8230;</div>
         </div>
       </div>
 
-      <h3 className="text-2xl font-semibold mb-4">Track List</h3>
+      <h3 className="text-2xl font-semibold text-white mb-4 mt-5">
+        Track List
+      </h3>
       <div className="space-y-4">
         {filteredTracks.length > 0 ? (
           filteredTracks.map((track) => (
             <div
               key={track.spotifyTrackId}
-              className="flex items-center space-x-4 bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300"
+              className="flex items-center space-x-4 bg-gray-900 p-4 rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
             >
               <img
                 className="w-16 h-16 object-cover rounded-md"
@@ -88,15 +122,13 @@ const DisplayAlbum: React.FC = () => {
                 alt={track.name}
               />
               <div>
-                <p className="text-xl font-semibold text-gray-800">
-                  {track.name}
-                </p>
-                <p className="text-sm text-gray-500">{track.artist}</p>
+                <p className="text-xl font-semibold text-white">{track.name}</p>
+                <p className="text-sm text-gray-400">{track.artist}</p>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-center text-lg text-gray-500">
+          <p className="text-center text-lg text-gray-400">
             No tracks available for this album.
           </p>
         )}
