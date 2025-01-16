@@ -83,30 +83,30 @@ const DisplayArtist: React.FC = () => {
           className="w-full h-96 object-cover"
         />
         <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
-              Verified Artist
-            </div>
-            <h2 className="text-7xl font-bold">{artist.name}</h2>
-            <p className="text-l pt-2">
-              {artist.followers.total.toLocaleString()} monthly listeners
-            </p>
+          <div className="mb-6"></div>
+          <div className="flex items-center gap-2 mb-2">
+            <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
+            Verified Artist
           </div>
+          <h2 className="text-7xl font-bold">{artist.name}</h2>
+          <p className="text-l pt-2">
+            {artist.followers.total.toLocaleString()} monthly listeners
+          </p>
         </div>
       </div>
 
       {/* Background with Dynamic Gradient */}
-      <div className="p-6">
-        <div className="flex items-center gap-4 mb-8">
-          <AiFillPlayCircle size={"70px"} color="LimeGreen" />
-          <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
-            Follow
-          </button>
-          <div className="text-white text-2xl cursor-pointer">&#8230;</div>
-        </div>
 
-        <h3 className="text-2xl font-semibold mb-4">Popular Tracks</h3>
+      <div className="m-4 flex gap-4 items-center ">
+        <AiFillPlayCircle size={"70px"} color="LimeGreen" />
+        <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
+          Follow
+        </button>
+        <div className="text-white text-2xl cursor-pointer">&#8230;</div>
+      </div>
+
+      <div className="m-4">
+        <h3 className="text-2xl font-semibold mb-4">Popular </h3>
         <ul>
           {tracks.length > 0 ? (
             tracks.map((track, index) => (
