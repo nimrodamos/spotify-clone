@@ -87,7 +87,7 @@ const DisplayAlbum: React.FC = () => {
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
       >
-        <div className="flex items-center mb-8">
+        <div className="flex items-center">
           <img
             className="w-48 h-48 object-cover rounded-md shadow-md"
             src={album.albumCoverUrl}
@@ -112,40 +112,29 @@ const DisplayAlbum: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="mt-8 flex gap-4 items-center">
-          <AiFillPlayCircle size={70} color="LimeGreen" />
-          <button
-            onClick={() => setAdded(!added)}
-            className="focus:outline-none"
-          >
-            {added ? (
-              <FaCheckCircle size={32} color="LimeGreen" />
-            ) : (
-              <BiPlusCircle size={32} />
-            )}
-          </button>
-          <div className="text-white text-2xl cursor-pointer">&#8230;</div>
-        </div>
+      </div>
+      <div className="mx-8 flex gap-4 items-center ">
+        <AiFillPlayCircle size={70} color="LimeGreen" />
+        <button onClick={() => setAdded(!added)} className="focus:outline-none">
+          {added ? (
+            <FaCheckCircle size={32} color="LimeGreen" />
+          ) : (
+            <BiPlusCircle size={32} />
+          )}
+        </button>
+        <div className="text-white text-2xl cursor-pointer">&#8230;</div>
       </div>
 
-      <h3 className="text-2xl font-semibold text-white mb-4 mt-5">
-        Track List
-      </h3>
+      <h3 className=" font-semibold text-white m-4 mt-5"># title</h3>
       <div className="space-y-4">
         {filteredTracks.length > 0 ? (
           filteredTracks.map((track) => (
             <div
               key={track.spotifyTrackId}
-              className="flex items-center space-x-4 bg-gray-900 p-4 rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
+              className="flex items-center  space-x-4 ml-4 p-2 rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
             >
-              <img
-                className="w-16 h-16 object-cover rounded-md"
-                src={track.albumCoverUrl}
-                alt={track.name}
-              />
               <div>
-                <p className="text-xl font-semibold text-white">{track.name}</p>
+                <p className="text-l font-semibold text-white">{track.name}</p>
                 <p className="text-sm text-gray-400">{track.artist}</p>
               </div>
             </div>
