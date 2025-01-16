@@ -50,12 +50,16 @@ const DisplayHome: React.FC = () => {
       {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
       {user && (
-        <>
-          <h1 className="px-8 my-5 font-bold text-2xl">
-            Made for {user.displayName}
-          </h1>
-          <PersonalizedPlaylists playlists={filteredPlaylists} />
-        </>
+        <div>
+          <div className="px-8">
+            <h1 className="px-4 my-5 font-bold text-2xl">
+              Made for {user.displayName}
+            </h1>
+          </div>
+          <>
+            <PersonalizedPlaylists playlists={filteredPlaylists} />
+          </>
+        </div>
       )}
       <div className="flex justify-between items-center px-8">
         <h1
