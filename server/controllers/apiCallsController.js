@@ -30,7 +30,6 @@ async function fetchAppAccessToken() {
   }
 }
 
-// Function to fetch artist details
 const fetchArtistDetails = async (req, res) => {
   try {
     const { artistId } = req.params;
@@ -64,7 +63,7 @@ const fetchArtistDetails = async (req, res) => {
 
 const fetchTracks = async (req, res) => {
   try {
-    const { trackIds } = req.body; // Expecting an array of track IDs
+    const { trackIds } = req.body;
     const accessToken = await fetchAppAccessToken();
 
     const tracks = [];

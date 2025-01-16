@@ -1,12 +1,12 @@
 import axios from "axios";
-import User from "../models/userModel.js"; // Adjust the path as necessary
+import User from "../models/userModel.js";
 import puppeteer from 'puppeteer';
 
 const getSpotifyAuthorizationCode = async () => {
     const spotifyAuthUrl = `https://accounts.spotify.com/authorize`;
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const redirectUri = process.env.REDIRECT_URI;
-    const scopes = "user-read-playback-state user-modify-playback-state user-read-currently-playing";
+    const scopes = "user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private";
 
     if (!redirectUri) {
         throw new Error("REDIRECT_URI is not defined in the environment variables.");
@@ -22,7 +22,7 @@ const getSpotifyAuthorizationCode = async () => {
     const spotifyPassword = process.env.SPOTIFY_PASSWORD;
 
     const browser = await puppeteer.launch({
-        headless: true, // Run in headless mode to avoid opening the browser
+        headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
@@ -31,18 +31,15 @@ const getSpotifyAuthorizationCode = async () => {
         console.log("Navigating to Spotify login page...");
         await page.goto(loginUrl, { waitUntil: "networkidle2" });
 
-        // Login to Spotify
         console.log("Filling in login credentials...");
         await page.waitForSelector('input#login-username', { timeout: 10000 });
         await page.type('input#login-username', spotifyUsername, { delay: 50 });
         await page.type('input#login-password', spotifyPassword, { delay: 50 });
         await page.click('button#login-button');
 
-        // Wait for navigation or redirection
         console.log("Waiting for navigation...");
         await page.waitForNavigation({ waitUntil: "networkidle2" });
 
-        // Handle authorization consent page
         const authorizeButton = await page.$('button[data-testid="auth-accept"]');
         if (authorizeButton) {
             console.log("Clicking authorize button...");
@@ -50,7 +47,6 @@ const getSpotifyAuthorizationCode = async () => {
             await page.waitForNavigation({ waitUntil: "networkidle2" });
         }
 
-        // Capture redirected URL
         const redirectedUrl = page.url();
         console.log("Redirected URL after authorization:", redirectedUrl);
 
@@ -72,35 +68,91 @@ const getSpotifyAuthorizationCode = async () => {
     }
 };
 
-
-// Step 2: Exchange Authorization Code for Tokens
-const exchangeAuthorizationCodeForTokens = async (code) => {
+const getAvailableDevices = async (accessToken) => {
     try {
-        const response = await axios.post(
-            'https://accounts.spotify.com/api/token',
-            new URLSearchParams({
-                grant_type: 'authorization_code',
-                code,
-                redirect_uri: process.env.REDIRECT_URI,
-                client_id: process.env.SPOTIFY_CLIENT_ID,
-                client_secret: process.env.SPOTIFY_CLIENT_SECRET,
-            }).toString(),
-            {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }
-        );
-
-        const { access_token, refresh_token, expires_in } = response.data;
-        console.log('Tokens:', { access_token, refresh_token, expires_in });
-
-        return { access_token, refresh_token, expires_in };
+        const response = await axios.get("https://api.spotify.com/v1/me/player/devices", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log("Available Devices:", response.data.devices);
+        return response.data.devices;
     } catch (error) {
-        console.error('Error exchanging authorization code for tokens:', error.message);
-        throw new Error('Failed to exchange Spotify authorization code for tokens');
+        console.error("Error fetching available devices:", error.response?.data || error.message);
+        throw new Error("Failed to fetch available devices");
     }
 };
 
-// Fetch access token if expired
+const activateDevice = async (accessToken, deviceId) => {
+    try {
+        const response = await axios.put(
+            "https://api.spotify.com/v1/me/player",
+            {
+                device_ids: [deviceId],
+                play: false,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        console.log("Playback transferred successfully");
+        return response.data;
+    } catch (error) {
+        console.error("Error transferring playback:", error.response?.data || error.message);
+        throw new Error("Failed to activate the device");
+    }
+};
+
+const exchangeAuthorizationCodeForTokens = async (authorizationCode) => {
+    try {
+        const redirectUri = process.env.REDIRECT_URI;
+        const clientId = process.env.SPOTIFY_CLIENT_ID;
+        const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+
+        if (!authorizationCode || !redirectUri || !clientId || !clientSecret) {
+            throw new Error("Missing required environment variables or authorization code");
+        }
+
+        const response = await axios.post(
+            "https://accounts.spotify.com/api/token",
+            new URLSearchParams({
+                grant_type: "authorization_code",
+                code: authorizationCode,
+                redirect_uri: redirectUri,
+            }).toString(),
+            {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            }
+        );
+
+        console.log("Token exchange response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error exchanging authorization code for tokens:", error.response?.data || error.message);
+        throw new Error("Failed to exchange Spotify authorization code for tokens");
+    }
+};
+
+const getCurrentUserProfile = async (accessToken) => {
+    try {
+        const response = await axios.get("https://api.spotify.com/v1/me", {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        console.log("User Profile:", response.data);
+        return response.data.product;
+    } catch (error) {
+        console.error("Error fetching user profile:", error.response?.data || error.message);
+        throw new Error("Failed to fetch user profile");
+    }
+};
+
 const getSpotifyAccessToken = async (user) => {
     try {
         const currentTime = Math.floor(Date.now() / 1000);
@@ -109,7 +161,7 @@ const getSpotifyAccessToken = async (user) => {
             const newAccessToken = await refreshSpotifyToken(user.refreshToken);
 
             user.accessToken = newAccessToken;
-            user.expiresIn = currentTime + 3600; // Set to 1 hour from now
+            user.expiresIn = currentTime + 3600;
             await user.save();
 
             console.log('Access token refreshed successfully:', newAccessToken);
@@ -124,7 +176,6 @@ const getSpotifyAccessToken = async (user) => {
     }
 };
 
-// Function to fetch a new Spotify access token (client credentials flow)
 const fetchSpotifyAccessToken = async () => {
     try {
         const response = await axios.post('https://accounts.spotify.com/api/token', null, {
@@ -139,15 +190,14 @@ const fetchSpotifyAccessToken = async () => {
             }
         });
 
-        console.log("Spotify token fetched:", response.data);  // Add logging
-        return response.data.access_token;  // Return the new access token
+        console.log("Spotify token fetched:", response.data);
+        return response.data.access_token;
     } catch (error) {
         console.error("Error fetching token:", error.response?.data || error.message);
         throw new Error('Failed to fetch Spotify access token');
     }
 };
 
-// Function to refresh the access token using the refresh token
 const refreshSpotifyToken = async (refreshToken) => {
     try {
         console.log('Refreshing token with refreshToken:', refreshToken);
@@ -168,7 +218,6 @@ const refreshSpotifyToken = async (refreshToken) => {
     } catch (error) {
         console.error('Error refreshing token:', error.response?.data || error.message);
         throw new Error('Failed to refresh Spotify token');
-        
     }
 };
 
@@ -237,4 +286,4 @@ const exchangeAuthorizationCode = async (user, code) => {
     }
 };
 
-export { getSpotifyAccessToken, refreshSpotifyToken, refreshTokenMiddleware, fetchSpotifyData, exchangeAuthorizationCode, getSpotifyAuthorizationCode, exchangeAuthorizationCodeForTokens };
+export { getSpotifyAccessToken, activateDevice, getAvailableDevices, getCurrentUserProfile, refreshSpotifyToken, refreshTokenMiddleware, fetchSpotifyData, exchangeAuthorizationCode, getSpotifyAuthorizationCode, exchangeAuthorizationCodeForTokens };

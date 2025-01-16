@@ -13,7 +13,7 @@ import {
 
 const router = express.Router();
 
-// Define specific routes first
+
 router.get('/validate-email', validateEmail);
 router.post('/signup', signupUser);
 router.post('/login', loginUser);
@@ -22,7 +22,6 @@ router.post('/logout', logoutUser);
 router.post('/:id/follow', protectRoute, followUnFollowUser);
 router.put('/:id', protectRoute, updateUser);
 
-// Define generic routes last
-router.get('/:query', getUserProfile); // Get users by name or other queries
+router.get('/:query', getUserProfile);
 
 export default router;

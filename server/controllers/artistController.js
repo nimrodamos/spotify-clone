@@ -1,10 +1,8 @@
 import Artist from "../models/artistModel.js";
 import { EventEmitter } from "events";
 
-// Increase the maximum number of listeners
 EventEmitter.defaultMaxListeners = 20;
 
-// Get all artists
 const getArtists = async (req, res) => {
   try {
     const artists = await Artist.find();
@@ -14,7 +12,6 @@ const getArtists = async (req, res) => {
   }
 };
 
-// Get limited artists
 const getLimitedArtists = async (req, res) => {
   try {
     const { limit, random } = req.query;
@@ -22,10 +19,10 @@ const getLimitedArtists = async (req, res) => {
     let artists;
     if (random === "true") {
       const size = parseInt(limit) || 20;
-      artists = await Artist.aggregate([{ $sample: { size } }]); // אמנים רנדומליים
+      artists = await Artist.aggregate([{ $sample: { size } }]);
     } else {
       const size = parseInt(limit) || 20;
-      artists = await Artist.find({}).limit(size); // אמנים מוגבלים לפי limit
+      artists = await Artist.find({}).limit(size);
     }
 
     if (!artists || artists.length === 0) {
@@ -38,7 +35,6 @@ const getLimitedArtists = async (req, res) => {
   }
 };
 
-// Get artist by name
 const getArtistByName = async (req, res) => {
   try {
     const artist = await Artist.findOne({ name: req.params.name });
@@ -51,7 +47,6 @@ const getArtistByName = async (req, res) => {
   }
 };
 
-// Get artist by ID
 const getArtistById = async (req, res) => {
   try {
     const artist = await Artist.findById(req.params.id);

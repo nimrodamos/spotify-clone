@@ -4,15 +4,13 @@ import jwt from "jsonwebtoken";
 const protectRoute = async (req, res, next) => {
   try {
     let token;
-
-    // בדוק אם הטוקן נמצא בכותרת Authorization
+    
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer ")
     ) {
       token = req.headers.authorization.split(" ")[1];
     } else if (req.cookies.jwt) {
-      // אם לא, בדוק אם הוא נמצא ב-cookie
       token = req.cookies.jwt;
     }
 

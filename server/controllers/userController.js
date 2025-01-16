@@ -93,7 +93,7 @@ const signupUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, spotifyAuthCode } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -105,20 +105,17 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    // Refresh Spotify tokens if needed
-    const currentTime = Math.floor(Date.now() / 1000);
-    if (!user.accessToken || user.expiresIn < currentTime) {
+    // Exchange Spotify authorization code for tokens
+    if (spotifyAuthCode) {
       try {
-        const { access_token, refresh_token, expires_in } = await exchangeAuthorizationCodeForTokens(
-          user.refreshToken
-        );
+        const { access_token, refresh_token, expires_in } = await exchangeAuthorizationCodeForTokens(spotifyAuthCode);
 
         user.accessToken = access_token;
         user.refreshToken = refresh_token;
-        user.expiresIn = currentTime + expires_in;
+        user.expiresIn = Math.floor(Date.now() / 1000) + expires_in;
         await user.save();
 
-        console.log("Spotify tokens refreshed during login");
+        console.log("Spotify tokens updated during login");
       } catch (error) {
         console.error("Error refreshing Spotify tokens:", error.message);
         return res.status(500).json({ error: "Failed to refresh Spotify tokens" });
@@ -132,13 +129,12 @@ const loginUser = async (req, res) => {
       _id: user._id,
       displayName: user.displayName,
       email: user.email,
-      profilePicture: user.profilePicture,
     });
   } catch (error) {
     console.error("Error during login:", error.message);
     res.status(500).json({ error: error.message });
   }
-};
+};  
 
 const logoutUser = (res) => {
   try {
