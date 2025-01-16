@@ -107,9 +107,8 @@ const DisplayAlbum: React.FC = () => {
                 />
               )}
               <p className="text-lg text-gray-300">{album.artist}</p>
-              <p className="text-sm text-gray-400">
-                Release Date: {album.releaseDate}
-              </p>
+              <p className="text-sm text-gray-400">{album.releaseDate}</p>
+              <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
             </div>
           </div>
         </div>
