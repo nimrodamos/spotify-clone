@@ -33,6 +33,8 @@ const LoginPage: React.FC = () => {
       // Store the logged-in user in UserContext
       setUser(userData);
 
+      console.log("Access Token:", userData.accessToken);
+
       // Redirect to the main page or dashboard
       navigate("/");
     } catch (error) {
