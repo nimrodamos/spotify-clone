@@ -94,7 +94,8 @@ const DisplayAlbum: React.FC = () => {
             alt={album.name}
           />
           <div className="m-5">
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-2">
+            <span>Album</span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-2">
               {album.name}
             </h2>
             <div className="flex items-center space-x-4">
