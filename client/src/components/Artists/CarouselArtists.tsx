@@ -11,7 +11,7 @@ interface CarouselArtistsProps {
 }
 
 const CarouselArtists: React.FC<CarouselArtistsProps> = ({ artists }) => (
-  <div className="flex overflow-auto">
+  <div className="flex overflow-auto px-8">
     {artists.map((artist) => (
       <CardItem
         key={artist._id}

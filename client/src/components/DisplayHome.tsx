@@ -46,18 +46,18 @@ const DisplayHome: React.FC = () => {
   if (error) return <div className="text-center text-red-500">{error}</div>;
 
   return (
-    <div className="h-screen bg-gradient-to-b from-[#212b21] via-black/100 to-black">
+    <div className="bg-gradient-to-b from-[#212b21] via-black/100 to-black">
       {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
       {user && (
         <>
-          <h1 className="px-2 my-5 font-bold text-2xl">
+          <h1 className="px-8 my-5 font-bold text-2xl">
             Made for {user.displayName}
           </h1>
           <PersonalizedPlaylists playlists={filteredPlaylists} />
         </>
       )}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center px-8">
         <h1
           className="px-2 my-5 font-bold text-2xl cursor-pointer hover:underline"
           onClick={() => navigate("/artists")}
@@ -67,7 +67,7 @@ const DisplayHome: React.FC = () => {
         <ShowAllButton onClick={() => navigate("/artists")} />
       </div>
       <CarouselArtists artists={filteredArtists} />
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center px-8">
         <h1
           className="px-2 my-5 font-bold text-2xl cursor-pointer hover:underline"
           onClick={() => navigate("/albums")}
