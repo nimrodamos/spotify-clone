@@ -1,13 +1,12 @@
 import { assets, songsData } from "../assets/assets";
 import { useUserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
-import React from "react";
 import { useAppData } from "@/Context/AppDataContext";
 
 function Player() {
   const { user } = useUserContext(); // Access UserContext
   const navigate = useNavigate();
-  const { toggleRsb, setRsbMode } = useAppData();
+  const { toggleRsb } = useAppData();
 
   if (!user) {
     return (

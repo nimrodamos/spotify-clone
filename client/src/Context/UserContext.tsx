@@ -11,7 +11,7 @@ interface User {
   displayName: string;
   email: string;
   accessToken: string;
-  [key: string]: any;
+  [key: string]: string | string[];
   playlists: string[];
 }
 
