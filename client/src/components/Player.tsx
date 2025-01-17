@@ -114,30 +114,30 @@ function Player() {
     }
   };
 
-  const playTrack = async () => {
-    const testSongUri = "spotify:track:4uLU6hMCjMI75M1A2tKUQC"; // Test ID of a random Spotify song
-    try {
-      await axios.put(
-        `https://api.spotify.com/v1/me/player/play`,
-        {
-          uris: [testSongUri],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Track started playing successfully.");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error starting track playback:", error.response?.data || error.message);
-      } else {
-        console.error("Error starting track playback:", error);
-      }
-    }
-  };
+  // const playTrack = async () => {
+  //   const testSongUri = "spotify:track:4uLU6hMCjMI75M1A2tKUQC"; // Test ID of a random Spotify song
+  //   try {
+  //     await axios.put(
+  //       `https://api.spotify.com/v1/me/player/play`,
+  //       {
+  //         uris: [testSongUri],
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${user?.accessToken}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     console.log("Track started playing successfully.");
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.error("Error starting track playback:", error.response?.data || error.message);
+  //     } else {
+  //       console.error("Error starting track playback:", error);
+  //     }
+  //   }
+  // };
 
   if (!user) {
     return (
@@ -185,7 +185,7 @@ function Player() {
               className={`w-4 cursor-pointer ${!isReady ? "opacity-50" : ""}`}
               src={assets.play_icon}
               alt=""
-              onClick={playTrack}
+              // onClick={playTrack}
             />
             <img className="w-4 cursor-pointer" src={assets.next_icon} alt="" />
             <img className="w-4 cursor-pointer" src={assets.loop_icon} alt="" />
