@@ -9,6 +9,8 @@ import { SiFacebook } from "react-icons/si";
 import { FaApple } from "react-icons/fa";
 import { IoChevronBack } from "react-icons/io5";
 import { IoIosCheckmark } from "react-icons/io";
+import { AiOutlineEyeInvisible } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai";
 
 const SignUpPage: React.FC = () => {
 
@@ -170,7 +172,7 @@ const SignUpPage: React.FC = () => {
       <label className="block text-sm font-medium mb-2">Email address</label>
       <input
         type="email"
-        className="w-full px-3 py-[0.76rem] bg-transparent rounded-md border border-white/50 text-white focus:ring-2 focus:ring-green-500 outline-none hover:border-white"
+        className="w-[100%] px-3 py-[0.76rem] bg-transparent rounded border border-white/50 text-white focus:ring-2 focus:ring-[#FFFFFF] outline-none hover:border-white"
         placeholder="name@domain.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -259,10 +261,10 @@ const SignUpPage: React.FC = () => {
         />
         <button
           type="button"
-          className="absolute right-3 top-[0.65rem] text-gray-500 hover:text-gray-300"
+          className="absolute right-4 top-[10px] text-3xl text-[#B3B3B3] hover:text-[#FFFFFF]"
           onClick={() => setShowPassword(!showPassword)}
         >
-          👁️
+          {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
         </button>
       </div>
       {error && <p className="text-[#ED2C3F] text-sm mt-2">{error}</p>}
