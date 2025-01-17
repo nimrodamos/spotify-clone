@@ -6,7 +6,14 @@ const getSpotifyAuthorizationCode = async () => {
     const spotifyAuthUrl = `https://accounts.spotify.com/authorize`;
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const redirectUri = process.env.REDIRECT_URI;
-    const scopes = "user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private";
+    const SCOPES = [
+        "streaming",
+        "user-modify-playback-state",
+        "user-read-playback-state"
+      ];
+      const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${SCOPES.join(" ")}`;
+      
+
 
     if (!redirectUri) {
         throw new Error("REDIRECT_URI is not defined in the environment variables.");
@@ -14,7 +21,7 @@ const getSpotifyAuthorizationCode = async () => {
 
     const loginUrl = `${spotifyAuthUrl}?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(
         redirectUri
-    )}&scope=${encodeURIComponent(scopes)}`;
+    )}&scope=${encodeURIComponent(SCOPES)}`;
 
     console.log("Spotify Login URL:", loginUrl);
 

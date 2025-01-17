@@ -13,9 +13,7 @@ interface Playlist {
     _id: string;
     PlaylistTitle: string;
     description: string;
-    owner: {
-        _id: string;
-    };
+    owner: string;
     tracks: {
         spotifyTrackId: string;
         name: string;
@@ -70,7 +68,7 @@ const SidebarPlaylistAndArtists: React.FC<SidebarPlaylistAndArtistsProps> = ({
                     setLoading(true);
                     const response = await api.get('/api/playlists');
                     if (Array.isArray(response.data)) {
-                        const userPlaylists = response.data.filter((playlist: Playlist) => playlist.owner._id === user._id);
+                        const userPlaylists = response.data.filter((playlist: Playlist) => playlist.owner === user._id);
                         setPlaylists(userPlaylists);
                         const artistNames = userPlaylists.flatMap((playlist: Playlist) => playlist.tracks.map(track => track.artist));
                         await fetchArtists(artistNames);
@@ -126,8 +124,8 @@ const SidebarPlaylistAndArtists: React.FC<SidebarPlaylistAndArtistsProps> = ({
             case 'Creator':
                 if (user) {
                     return [
-                        ...playlists.filter(playlist => playlist.owner._id === user._id),
-                        ...playlists.filter(playlist => playlist.owner._id !== user._id).sort((a, b) => {
+                        ...playlists.filter(playlist => playlist.owner === user._id),
+                        ...playlists.filter(playlist => playlist.owner !== user._id).sort((a, b) => {
                             const artistA = a.tracks[0]?.artist.toLowerCase() || '';
                             const artistB = b.tracks[0]?.artist.toLowerCase() || '';
                             return artistA.localeCompare(artistB);
