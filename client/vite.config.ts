@@ -1,12 +1,19 @@
-import path from "path";
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
+import fs from 'fs';
+import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  server: {
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, './certs/localhost-key.pem')),
+      cert: fs.readFileSync(path.resolve(__dirname, './certs/localhost-cert.pem')),
+    },
+    host: 'localhost',
+    port: 5173,
+  },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'), // Map "@" to the "src" directory
     },
   },
 });

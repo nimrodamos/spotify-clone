@@ -8,7 +8,7 @@ import PlaylistRoutes from "./routes/playlistRoute.js";
 import apiCallsRoutes from "./routes/apiCallsRoute.js";
 import dbAlbumRoutes from "./routes/dbAlbumRoute.js";
 import dbTrackRoutes from "./routes/dbTrackRoute.js";
-import dbArtistRoutes from "./routes/dbartistRoute.js";
+import dbArtistRoutes from "./routes/dbArtistRoute.js";
 import path from "path";
 import cloudinary from "cloudinary";
 import User from "./models/userModel.js";
@@ -41,9 +41,9 @@ app.use(cookieParser());
 app.use(express.static(frontendPath));
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with the frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    credentials: true, // Allow cookies and credentials
+    origin: "https://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"], 
+    credentials: true,
   })
 );
 app.use("/api/users", userRoutes);
