@@ -83,6 +83,8 @@ const signupUser = async (req, res) => {
       _id: savedUser._id,
       displayName: savedUser.displayName,
       email: savedUser.email,
+      accessToken: access_token,
+      refreshToken: refresh_token,
       profilePicture: savedUser.profilePicture,
     });
   } catch (err) {
@@ -105,10 +107,14 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
+    let access_token, refresh_token;
     // Exchange Spotify authorization code for tokens
     if (spotifyAuthCode) {
       try {
-        const { access_token, refresh_token, expires_in } = await exchangeAuthorizationCodeForTokens(spotifyAuthCode);
+        const tokens = await exchangeAuthorizationCodeForTokens(spotifyAuthCode);
+        access_token = tokens.access_token;
+        refresh_token = tokens.refresh_token;
+        const expires_in = tokens.expires_in;
 
         user.accessToken = access_token;
         user.refreshToken = refresh_token;
@@ -129,6 +135,8 @@ const loginUser = async (req, res) => {
       _id: user._id,
       displayName: user.displayName,
       email: user.email,
+      accessToken: user.accessToken || access_token,
+      refreshToken: user.refreshToken || refresh_token,
     });
   } catch (error) {
     console.error("Error during login:", error.message);
