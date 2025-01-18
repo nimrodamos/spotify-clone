@@ -2,14 +2,7 @@ import React, { createContext, useState, useEffect, useContext, ReactNode } from
 import { api } from "@/api";
 import { IAlbum, IArtist, IPlaylist, ITrack } from "@/types/types";
 
-// Type definitions
 type RsbMode = "queue" | "song";
-
-interface SidebarState {
-  isOpen: boolean;
-  width: number;
-  isResizing: boolean;
-}
 
 interface AppDataContextType {
   // Data states
@@ -19,6 +12,14 @@ interface AppDataContextType {
   tracks: ITrack[];
   loading: boolean;
   error: string | null;
+
+  // Fetch functions
+  fetchAlbums: () => Promise<void>;
+  fetchArtists: () => Promise<void>;
+  fetchPlaylists: () => Promise<void>;
+  fetchTracks: () => Promise<void>;
+  fetchAlbumById: (id: string) => Promise<IAlbum | null>;
+  fetchAllData: () => Promise<void>;
 
   // LSB states
   isLsbOpen: boolean;
@@ -39,21 +40,17 @@ interface AppDataContextType {
   setRsbMode: (mode: RsbMode) => void;
   toggleRsb: (mode: RsbMode) => void;
   setIsRsbOpen: (isOpen: boolean) => void;
-  fetchAlbumById: (id: string) => Promise<IAlbum | null>;
 }
 
 const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
 
-// Constants
 const SIDEBAR_CONSTRAINTS = {
   MIN_WIDTH: 280,
   MAX_WIDTH: 420,
   COLLAPSED_WIDTH: 72
 };
 
-export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Data states
   const [albums, setAlbums] = useState<IAlbum[]>([]);
   const [artists, setArtists] = useState<IArtist[]>([]);
@@ -72,6 +69,68 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
   const [rsbWidth, setRsbWidth] = useState(SIDEBAR_CONSTRAINTS.MIN_WIDTH);
   const [isResizingRsb, setIsResizingRsb] = useState(false);
   const [rsbMode, setRsbMode] = useState<RsbMode>("queue");
+
+  // Fetch functions
+  const fetchAlbums = async () => {
+    try {
+      const response = await api.get("/api/albums/limited?limit=20&random=true");
+      setAlbums(response.data);
+    } catch (err: any) {
+      setError("Failed to fetch albums.");
+    }
+  };
+
+  const fetchArtists = async () => {
+    try {
+      const response = await api.get("/api/artists/limited?limit=20&random=true");
+      setArtists(response.data);
+    } catch (err: any) {
+      setError("Failed to fetch artists.");
+    }
+  };
+
+  const fetchPlaylists = async () => {
+    try {
+      const response = await api.get("/api/playlists");
+      setPlaylists(response.data);
+    } catch (err: any) {
+      setError("Failed to fetch playlists.");
+    }
+  };
+
+  const fetchTracks = async () => {
+    try {
+      const response = await api.get("/api/tracks");
+      setTracks(response.data);
+    } catch (err: any) {
+      setError("Failed to fetch tracks.");
+    }
+  };
+
+  const fetchAlbumById = async (id: string): Promise<IAlbum | null> => {
+    try {
+      const response = await api.get(`/api/albums/${id}`);
+      return response.data;
+    } catch {
+      return null;
+    }
+  };
+
+  const fetchAllData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchAlbums(),
+        fetchArtists(),
+        fetchPlaylists(),
+        fetchTracks(),
+      ]);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Toggle functions
   const toggleLsb = () => {
@@ -101,30 +160,9 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [lsbWidth, rsbWidth, isResizingLsb, isResizingRsb, isLsbOpen, isRsbOpen]);
 
-  // Data fetching
+  // Initial data fetch
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const [albumsResponse, artistsResponse, playlistsResponse, tracksResponse] = 
-          await Promise.all([
-            api.get("/api/albums/limited?limit=20&random=true"),
-            api.get("/api/artists/limited?limit=20&random=true"),
-            api.get("/api/playlists"),
-            api.get("/api/tracks"),
-          ]);
-
-        setAlbums(albumsResponse.data);
-        setArtists(artistsResponse.data);
-        setPlaylists(playlistsResponse.data);
-        setTracks(tracksResponse.data);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch data");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
+    fetchAllData();
   }, []);
 
   return (
@@ -137,6 +175,14 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
         tracks,
         loading,
         error,
+
+        // Fetch functions
+        fetchAlbums,
+        fetchArtists,
+        fetchPlaylists,
+        fetchTracks,
+        fetchAlbumById,
+        fetchAllData,
 
         // LSB values
         isLsbOpen,
@@ -157,7 +203,6 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
         setRsbMode,
         toggleRsb,
         setIsRsbOpen,
-        fetchAlbumById,
       }}
     >
       {children}
