@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { getSpotifyAccessToken, getAvailableDevices } from './spotifyController.js';
-import { Track } from '../models/trackModel.js';
 
 const playTrack = async (req, res) => {
     try {

@@ -1,8 +1,7 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
-import axios from "axios";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
-import { getSpotifyAuthorizationCode, exchangeAuthorizationCodeForTokens } from "./spotifyController.js";
+import { getSpotifyAuthorizationCode, exchangeAuthorizationCode, refreshSpotifyToken } from "./spotifyController.js";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 
@@ -59,7 +58,7 @@ const signupUser = async (req, res) => {
       return res.status(500).json({ error: "Failed to fetch Spotify authorization code" });
     }
 
-    const { access_token, refresh_token, expires_in } = await exchangeAuthorizationCodeForTokens(
+    const { access_token, refresh_token, expires_in } = await exchangeAuthorizationCode(
       authorizationCode
     );
 
@@ -102,6 +101,21 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
+    // Check if access token is expired and refresh it if necessary
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (user.expiresIn < currentTime) {
+      try {
+        const { accessToken, expiresIn } = await refreshSpotifyToken(user.refreshToken);
+        user.accessToken = accessToken;
+        user.expiresIn = expiresIn;
+        await user.save();
+        console.log("Spotify access token refreshed during login");
+      } catch (error) {
+        console.error("Error refreshing Spotify access token:", error.message);
+        return res.status(500).json({ error: "Failed to refresh Spotify access token" });
+      }
+    }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ error: "Invalid email or password" });
@@ -111,7 +125,7 @@ const loginUser = async (req, res) => {
     // Exchange Spotify authorization code for tokens
     if (spotifyAuthCode) {
       try {
-        const tokens = await exchangeAuthorizationCodeForTokens(spotifyAuthCode);
+        const tokens = await exchangeAuthorizationCode(spotifyAuthCode);
         access_token = tokens.access_token;
         refresh_token = tokens.refresh_token;
         const expires_in = tokens.expires_in;

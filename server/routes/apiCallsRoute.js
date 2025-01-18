@@ -6,7 +6,9 @@ import {
 } from '../controllers/apiCallsController.js';
 import {
     getSpotifyAuthorizationCode,
-    exchangeAuthorizationCodeForTokens,
+    exchangeAuthorizationCode,
+    refreshTokenMiddleware,
+    fetchSpotifyData,
 } from '../controllers/spotifyController.js';
 import {
     playTrack,
@@ -37,12 +39,15 @@ router.get('/spotify/auth-code', async (req, res) => {
 router.post('/spotify/exchange-token', async (req, res) => {
     try {
         const { code } = req.body;
-        const tokens = await exchangeAuthorizationCodeForTokens(code);
+        const tokens = await exchangeAuthorizationCode(code);
         res.status(200).json(tokens);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
+router.get("/test-refresh" ,protectRoute, refreshTokenMiddleware, fetchSpotifyData);
+
 
 router.put('/spotify/play/:spotifyTrackId', protectRoute, playTrack);
 router.put('/spotify/pause', protectRoute, pauseTrack);

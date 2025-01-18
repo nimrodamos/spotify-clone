@@ -160,4 +160,3 @@ const fetchTrackDetails = async (req, res) => {
 };
 
 export { fetchTrackDetails, fetchArtistDetails, fetchTracks };
-export default fetchAppAccessToken;
