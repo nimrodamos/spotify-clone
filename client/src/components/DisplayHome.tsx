@@ -46,7 +46,7 @@ const DisplayHome: React.FC = () => {
   if (error) return <div className="text-center text-red-500">{error}</div>;
 
   return (
-    <div className="bg-gradient-to-b from-[#141b14] via-backgroundBase/100 to-backgroundBase">
+    <div className="bg-gradient-to-b from-[#181818] via-backgroundBase/100 to-backgroundBase">
       {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
       {user && (
