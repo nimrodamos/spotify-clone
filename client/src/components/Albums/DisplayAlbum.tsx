@@ -113,9 +113,15 @@ const DisplayAlbum: React.FC = () => {
           />
           <div className="m-5">
             <span>Album</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-2">
+            <h2
+              style={{
+                fontSize: `${Math.max(24, 60 - album.name.length)}px`, // מינימום 24px, מקסימום 60px
+              }}
+              className="font-bold text-white mb-2"
+            >
               {album.name}
             </h2>
+
             <div className="flex items-center space-x-4">
               {artist?.images?.[0]?.url && (
                 <img
