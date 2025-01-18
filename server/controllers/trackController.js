@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-import Playlist from "../models/customPlaylistModel.js";
 import { Track } from "../models/trackModel.js";
 
 const getTracks = async (req, res) => {
