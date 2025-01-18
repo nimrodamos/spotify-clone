@@ -10,9 +10,14 @@ import { getDominantColor } from "@/lib/getDominantColor";
 
 const DisplayAlbum: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { albums, loading: contextLoading, error: contextError } = useAppData();
+  const {
+    albums,
+    fetchAlbumById,
+    loading: contextLoading,
+    error: contextError,
+  } = useAppData();
   const [album, setAlbum] = useState<IAlbum | null>(null);
-  const [artist, setArtist] = useState<IArtist | null>(null); // State for artist data
+  const [artist, setArtist] = useState<IArtist | null>(null);
   const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,32 +29,45 @@ const DisplayAlbum: React.FC = () => {
       try {
         setLoading(true);
 
-        // Fetch album from context or API
-        const albumFromContext = albums.find((a) => a.spotifyAlbumId === id);
-        let currentAlbum = albumFromContext;
+        // חיפוש האלבום בקונטקסט
+        let currentAlbum: IAlbum | undefined | null = albums.find(
+          (a) => a.spotifyAlbumId === id
+        );
 
-        if (!albumFromContext) {
-          const albumResponse = await api.get(`/api/albums/${id}`);
-          currentAlbum = albumResponse.data;
+        // אם האלבום לא נמצא, מבצעים קריאה לשרת
+        if (!currentAlbum) {
+          currentAlbum = await fetchAlbumById(id!);
         }
 
-        setAlbum(currentAlbum || null);
+        if (!currentAlbum) {
+          setError("Album not found.");
+          return;
+        }
 
-        // Fetch artist data
-        if (currentAlbum) {
+        setAlbum(currentAlbum);
+
+        // טעינת אמן
+        try {
           const artistResponse = await api.get(
             `/api/artists/name/${encodeURIComponent(currentAlbum.artist)}`
           );
           setArtist(artistResponse.data);
+        } catch {
+          console.warn(`Artist not found: ${currentAlbum.artist}`);
+        }
 
-          // Fetch tracks for the album
-          const tracksResponse = await api.get(`/api/tracks`);
+        // טעינת שירים
+        try {
+          const tracksResponse = await api.get(
+            `/api/tracks/artist/${encodeURIComponent(currentAlbum.artist)}`
+          );
           const albumTracks = tracksResponse.data.filter(
             (track: ITrack) => track.album === currentAlbum.name
           );
           setFilteredTracks(albumTracks);
-        } else {
-          setFilteredTracks([]);
+        } catch {
+          console.warn(`Tracks not found for artist: ${currentAlbum.artist}`);
+          setFilteredTracks([]); // אם אין שירים, קבע מערך ריק
         }
       } catch (err) {
         setError("Failed to load album or artist data.");
@@ -59,7 +77,7 @@ const DisplayAlbum: React.FC = () => {
     }
 
     fetchAlbumAndArtist();
-  }, [id, albums]);
+  }, [id, albums, fetchAlbumById]);
 
   useEffect(() => {
     if (album?.albumCoverUrl) {
@@ -125,13 +143,13 @@ const DisplayAlbum: React.FC = () => {
         <div className="text-white text-2xl cursor-pointer">&#8230;</div>
       </div>
 
-      <h3 className=" font-semibold text-white m-4 mt-5"># title</h3>
+      <h3 className="font-semibold text-white m-4 mt-5"># title</h3>
       <div className="space-y-4">
-        {filteredTracks.length > 0 ? (
+        {filteredTracks && filteredTracks.length > 0 ? (
           filteredTracks.map((track) => (
             <div
               key={track.spotifyTrackId}
-              className="flex items-center  space-x-4 ml-4 p-2 rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
+              className="flex items-center space-x-4 ml-4 p-2 rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
             >
               <div>
                 <p className="text-l font-semibold text-white">{track.name}</p>

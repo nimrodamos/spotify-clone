@@ -30,13 +30,12 @@ const getTrackById = async (req, res) => {
   }
 };
 
-// חפש שירים על פי שם האמן
 const getTracksByArtist = async (req, res) => {
   try {
-    const { artistName } = req.params;
-
-    // חפש שירים של האמן
-    const tracks = await Track.find({ artist: artistName });
+    const artistName = decodeURIComponent(req.params.artistName);
+    const tracks = await Track.find({
+      artist: { $regex: new RegExp(`^${artistName}$`, "i") },
+    });
 
     if (!tracks || tracks.length === 0) {
       return res
