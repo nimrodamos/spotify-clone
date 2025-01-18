@@ -45,14 +45,14 @@ function Main() {
             : `72px minmax(0, 1fr) ${isRsbOpen ? `${rsbWidth}px` : '0fr'}`,
         }}>
         {/* Left Sidebar */}
-        <div className="h-full bg-[#121212] rounded-lg transition-all duration-300 overflow-hidden">
+        <div className="h-full bg-[#121212] rounded transition-all duration-300 overflow-hidden">
           <div className="h-full overflow-y-auto custom-scrollbar">
             <Sidebar />
           </div>
         </div>
 
         {/* Main Display */}
-        <div className="h-full bg-[#121212] rounded-lg overflow-hidden">
+        <div className="h-full bg-[#121212] rounded overflow-hidden">
           <div className="h-full overflow-y-auto custom-scrollbar display-container">
             <Display />
           </div>
@@ -60,7 +60,7 @@ function Main() {
 
         {/* Right Sidebar */}
         {isRsbOpen && (
-          <div className="h-full bg-[#121212] rounded-lg transition-all duration-300 overflow-hidden">
+          <div className="h-full bg-[#121212] rounded transition-all duration-300 overflow-hidden">
             <div className="h-full overflow-y-auto custom-scrollbar">
               <RightSidebar />
             </div>

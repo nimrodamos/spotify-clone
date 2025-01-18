@@ -7,7 +7,7 @@ interface FollowersSectionProps {
 
 export const FollowersSection: React.FC<FollowersSectionProps> = ({ followers }) => {
   return (
-    <div className="absolute top-[1079px] left-0 bg-[#121212] w-full py-6" style={{ backdropFilter: "blur(4px)" }}>
+    <div className="top-[1079px] left-0 bg-[#121212] w-full py-6" style={{ backdropFilter: "blur(4px)" }}>
       <div className="w-full max-w pl-[37px]">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold mb-4 text-white">Followers</h2>

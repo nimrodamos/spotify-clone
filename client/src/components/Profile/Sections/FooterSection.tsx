@@ -2,7 +2,7 @@ import React from 'react';
 
 export const FooterSection: React.FC = () => {
   return (
-    <div className="absolute top-[1740px] left-0 bg-[#121212] w-full py-6 border-t border-gray-700">
+    <div className="top-[1740px] left-0 bg-[#121212] w-full py-6 border-t border-gray-700">
       <div className="w-full max-w-[970px] grid grid-cols-4 gap-8 pl-[37px]">
         {/* Company Column */}
         <div>

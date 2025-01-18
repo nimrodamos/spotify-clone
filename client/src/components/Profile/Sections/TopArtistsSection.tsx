@@ -9,7 +9,7 @@ interface TopArtistsSectionProps {
 
 export const TopArtistsSection: React.FC<TopArtistsSectionProps> = ({ artists }) => {
   return (
-    <div className="absolute top-[340px] left-0 bg-[#121212]/25 w-full" style={{ backdropFilter: "blur(4px)" }}>
+    <div className=" top-[340px] left-0 bg-[#121212]/25 w-full" style={{ backdropFilter: "blur(4px)" }}>
       <div className="w-full pl-[37px]">
         <PiDotsThree className="text-4xl mt-[32px] mb-[23px]" />
         <h2 className="text-2xl font-bold text-white">Top artists this month</h2>

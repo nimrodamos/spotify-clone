@@ -7,7 +7,7 @@ interface TopTracksSectionProps {
 
 export const TopTracksSection: React.FC<TopTracksSectionProps> = ({ tracks }) => {
   return (
-    <div className="absolute top-[764px] left-0 bg-[#121212] w-full" style={{ backdropFilter: "blur(4px)" }}>
+    <div className="top-[764px] left-0 bg-[#121212] w-full" style={{ backdropFilter: "blur(4px)" }}>
       <div className="w-full max-w pl-[37px]">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white">Top tracks this month</h2>
