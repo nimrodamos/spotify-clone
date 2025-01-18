@@ -37,7 +37,10 @@ const getLimitedArtists = async (req, res) => {
 
 const getArtistByName = async (req, res) => {
   try {
-    const artist = await Artist.findOne({ name: req.params.name });
+    const name = decodeURIComponent(req.params.name);
+    const artist = await Artist.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") },
+    });
     if (!artist) {
       return res.status(404).json({ message: "Artist not found" });
     }

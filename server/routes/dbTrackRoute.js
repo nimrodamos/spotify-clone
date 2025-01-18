@@ -4,6 +4,8 @@ import {
   getTrackById,
   getTracksByArtist,
 } from "../controllers/trackController.js";
+// import populateTracksDb from "../db/populateDb.js";
+// import { populateAlbumsFromTracks } from "../db/populateDb.js";
 
 const router = express.Router();
 
