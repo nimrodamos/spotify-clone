@@ -6,7 +6,7 @@ import DisplayArtist from "./Artists/DisplayArtist";
 import AllAlbums from "./Albums/AllAlbums";
 import AllArtists from "./Artists/AllArtists";
 import AllPlaylists from "./Playlists/AllPlaylists";
-import Profile from "./Profile";
+import Profile from "./Profile/Profile";
 import DisplayTrack from "./DisplayTrack";
 
 const Display: React.FC = () => {
