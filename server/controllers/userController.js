@@ -33,10 +33,19 @@ const getUserProfile = async (req, res) => {
 
 const signupUser = async (req, res) => {
   try {
-    const { displayName, email, password, dateOfBirth, gender, profilePicture } = req.body;
+    const {
+      displayName,
+      email,
+      password,
+      dateOfBirth,
+      gender,
+      profilePicture,
+    } = req.body;
 
     if (!dateOfBirth || !gender) {
-      return res.status(400).json({ error: "dateOfBirth and gender are required" });
+      return res
+        .status(400)
+        .json({ error: "dateOfBirth and gender are required" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -55,7 +64,9 @@ const signupUser = async (req, res) => {
     console.log("Fetching Spotify authorization code...");
     const authorizationCode = await getSpotifyAuthorizationCode();
     if (!authorizationCode) {
-      return res.status(500).json({ error: "Failed to fetch Spotify authorization code" });
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch Spotify authorization code" });
     }
 
     const { access_token, refresh_token, expires_in } = await exchangeAuthorizationCode(
@@ -138,7 +149,9 @@ const loginUser = async (req, res) => {
         console.log("Spotify tokens updated during login");
       } catch (error) {
         console.error("Error refreshing Spotify tokens:", error.message);
-        return res.status(500).json({ error: "Failed to refresh Spotify tokens" });
+        return res
+          .status(500)
+          .json({ error: "Failed to refresh Spotify tokens" });
       }
     }
 
@@ -156,7 +169,7 @@ const loginUser = async (req, res) => {
     console.error("Error during login:", error.message);
     res.status(500).json({ error: error.message });
   }
-};  
+};
 
 const logoutUser = (res) => {
   try {
@@ -174,10 +187,13 @@ const followUnFollowUser = async (req, res) => {
     const userToModify = await User.findById(id);
     const currentUser = await User.findById(req.user?._id);
 
-    if (!req.user) return res.status(400).json({ error: "User not authenticated" });
+    if (!req.user)
+      return res.status(400).json({ error: "User not authenticated" });
 
     if (id.toString() === req.user._id.toString())
-      return res.status(400).json({ error: "You cannot follow/unfollow yourself" });
+      return res
+        .status(400)
+        .json({ error: "You cannot follow/unfollow yourself" });
 
     if (!userToModify || !currentUser)
       return res.status(400).json({ error: "User not found" });
@@ -254,7 +270,9 @@ const updateUser = async (req, res) => {
     if (!user) return res.status(400).json({ error: "User not found" });
 
     if (req.params.id !== userId.toString())
-      return res.status(400).json({ error: "You cannot update other user's profile" });
+      return res
+        .status(400)
+        .json({ error: "You cannot update other user's profile" });
 
     if (password) {
       const salt = await bcrypt.genSalt(10);
@@ -288,4 +306,13 @@ const updateUser = async (req, res) => {
   }
 };
 
-export { getUserProfile, signupUser, loginUser, logoutUser, followUnFollowUser, upgradeToPremium, validateEmail, updateUser };
+export {
+  getUserProfile,
+  signupUser,
+  loginUser,
+  logoutUser,
+  followUnFollowUser,
+  upgradeToPremium,
+  validateEmail,
+  updateUser,
+};

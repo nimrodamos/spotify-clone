@@ -3,7 +3,10 @@ import { useUserContext } from "../Context/UserContext";
 import { useAppData } from "../Context/AppDataContext"; // Assuming isRsbOpen comes from AppDataContext
 import { IArtist, ITrack } from "@/types/types";
 import { api } from "@/api";
+
+//! icon imports
 import { PiDotsThree } from "react-icons/pi";
+import { AiFillPlayCircle } from "react-icons/ai";
 
 const Profile: React.FC = () => {
   const { user } = useUserContext();
@@ -28,7 +31,9 @@ const Profile: React.FC = () => {
       try {
         const response = await api.get("/api/artists");
         const artists: IArtist[] = response.data;
-        setTopArtists(artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit));
+        setTopArtists(
+          artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit)
+        );
       } catch (error) {
         console.error("Error fetching artists:", error);
       }
@@ -50,7 +55,9 @@ const Profile: React.FC = () => {
       try {
         const response = await api.get("/api/artists");
         const artists: IArtist[] = response.data;
-        setFollowers(artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit));
+        setFollowers(
+          artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit)
+        );
       } catch (error) {
         console.error("Error fetching followers:", error);
       }
@@ -61,7 +68,9 @@ const Profile: React.FC = () => {
       try {
         const response = await api.get("/api/artists");
         const artists: IArtist[] = response.data;
-        setFollowing(artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit));
+        setFollowing(
+          artists.sort(() => 0.5 - Math.random()).slice(0, displayLimit)
+        );
       } catch (error) {
         console.error("Error fetching following:", error);
       }
@@ -93,7 +102,9 @@ const Profile: React.FC = () => {
 
   if (!user) {
     return (
-      <p className="text-center text-lg text-white">Please log in to view your profile.</p>
+      <p className="text-center text-lg text-white">
+        Please log in to view your profile.
+      </p>
     );
   }
 
@@ -111,7 +122,10 @@ const Profile: React.FC = () => {
 
       {/* Profile Section */}
       <div className="relative bg-gradient-to-b from-[#B7DE72] to-black h-[572px] w-full">
-        <div className="flex pt-[85px] space-x-6 p-6 w-full" style={{ maxWidth: profileWidth }}>
+        <div
+          className="flex pt-[85px] space-x-6 p-6 w-full"
+          style={{ maxWidth: profileWidth }}
+        >
           <img
             src={user.profilePicture || "../../public/profilePic.jpeg"}
             alt={user.displayName}
@@ -126,138 +140,176 @@ const Profile: React.FC = () => {
       </div>
 
       {/* Top Artists Section */}
-      <div className="absolute top-[340px] left-0 bg-[#121212]/25 w-full" style={{ backdropFilter: "blur(4px)" }}>
+      <div
+        className="absolute top-[340px] left-0 bg-[#121212]/25 w-full"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
         <div className="w-full pl-[37px]">
-        <PiDotsThree className="text-4xl mt-[32px] mb-[23px]" />
-          <h2 className="text-2xl font-bold text-white">Top artists this month</h2>
+          <PiDotsThree className="text-4xl mt-[32px] mb-[23px]" />
+          <h2 className="text-2xl font-bold text-white">
+            Top artists this month
+          </h2>
           <div className="flex">
             {topArtists.map((artist) => (
               <div
                 key={artist._id}
-                className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+                className="group text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
               >
-                <img
-                  src={artist.images?.[0]?.url || "https://via.placeholder.com/150"}
-                  alt={artist.name}
-                  className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                />
-                <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
+                <div className="relative w-[160px] h-[160px] mx-auto">
+                  <img
+                    src={
+                      artist.images?.[0]?.url ||
+                      "https://via.placeholder.com/150"
+                    }
+                    alt={artist.name}
+                    className="w-full h-full object-cover rounded-full shadow-md"
+                  />
+                  <button className="absolute bottom-0 right-0 text-[#1ED760] text-6xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <AiFillPlayCircle />
+                  </button>
+                </div>
+                <p className="text-sm mt-2 text-white text-left">
+                  {artist.name}
+                </p>
                 <p className="text-sm text-gray-400 text-left">Artist</p>
               </div>
             ))}
           </div>
         </div>
       </div>
-{/* Top Tracks Section */}
-<div
-            className="absolute top-[764px] left-0 bg-[#121212] w-full "
-            style={{ backdropFilter: "blur(4px)" }}
-          >
-            <div className="w-full max-w pl-[37px]">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold  text-white">
-                  Top tracks this month
-                </h2>
-                <a href="/top-tracks" className="text-sm text-gray-400 hover:text-white">
-                  Show all
-                </a>
-              </div>
-              <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
-              <ul>
-                {topTracks.map((track, index) => (
-                  <li
-                    key={track._id}
-                    className="flex justify-between items-center py-2 hover:bg-[#1F1F1F] px-4 rounded-md"
-                  >
-                    <div className="flex items-center">
-                      <p className="text-sm text-gray-400 w-4">{index + 1}</p>
-                      <img
-                        src={track.albumCoverUrl || "https://via.placeholder.com/50"}
-                        alt={track.name}
-                        className="w-[40px] h-[40px] ml-4 object-cover rounded"
-                      />
-                      <div className="ml-4">
-                        <p className="text-sm text-white">{track.name}</p>
-                        <p className="text-xs text-gray-400">{track.artist}</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-400">{track.album}</p>
-                    <p className="text-sm text-gray-400">
-                      {(track.durationMs / 60000).toFixed(2)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+      {/* Top Tracks Section */}
+      <div
+        className="absolute top-[764px] left-0 bg-[#121212] w-full "
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <div className="w-full max-w pl-[37px]">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold  text-white">
+              Top tracks this month
+            </h2>
+            <a
+              href="/top-tracks"
+              className="text-sm text-gray-400 hover:text-white"
+            >
+              Show all
+            </a>
           </div>
-      
-          {/* Followers Section */}
-          <div
-            className="absolute top-[1079px] left-0 bg-[#121212] w-full py-6"
-            style={{ backdropFilter: "blur(4px)" }}
-          >
-            <div className="w-full max-w pl-[37px]">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold mb-4 text-white">Followers</h2>
-                <a href="/followers" className="text-sm text-gray-400 hover:text-white">
-                  Show all
-                </a>
-              </div>
-              <div className="flex">
-                {followers.map((artist) => (
-                  <div
-                    key={artist._id}
-                    className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
-                  >
-                    <img
-                      src={artist.images?.[0]?.url || "https://via.placeholder.com/50"}
-                      alt={artist.name}
-                      className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                    />
-                    <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
-                    <p className="text-sm text-gray-400 text-left">Profile</p>
+          <p className="text-sm text-gray-400 mb-4">Only visible to you</p>
+          <ul>
+            {topTracks.map((track, index) => (
+              <li
+                key={track._id}
+                className="flex justify-between items-center py-2 hover:bg-[#1F1F1F] px-4 rounded-md"
+              >
+                <div className="flex items-center">
+                  <p className="text-sm text-gray-400 w-4">{index + 1}</p>
+                  <img
+                    src={
+                      track.albumCoverUrl || "https://via.placeholder.com/50"
+                    }
+                    alt={track.name}
+                    className="w-[40px] h-[40px] ml-4 object-cover rounded"
+                  />
+                  <div className="ml-4">
+                    <p className="text-sm text-white">{track.name}</p>
+                    <p className="text-xs text-gray-400">{track.artist}</p>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+                <p className="text-sm text-gray-400">{track.album}</p>
+                <p className="text-sm text-gray-400">
+                  {(track.durationMs / 60000).toFixed(2)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Followers Section */}
+      <div
+        className="absolute top-[1079px] left-0 bg-[#121212] w-full py-6"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <div className="w-full max-w pl-[37px]">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold mb-4 text-white">Followers</h2>
+            <a
+              href="/followers"
+              className="text-sm text-gray-400 hover:text-white"
+            >
+              Show all
+            </a>
           </div>
-      
-          {/* Following Section */}
-          <div
-            className="absolute top-[1390px] left-0 bg-[#121212]/50 w-full py-6"
-            style={{ backdropFilter: "blur(4px)" }}
-          >
-            <div className="w-full max-w pl-[37px]">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold mb-4 text-white">Following</h2>
-                <a href="/following" className="text-sm text-gray-400 hover:text-white">
-                  Show all
-                </a>
+          <div className="flex">
+            {followers.map((artist) => (
+              <div
+                key={artist._id}
+                className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+              >
+                <img
+                  src={
+                    artist.images?.[0]?.url || "https://via.placeholder.com/50"
+                  }
+                  alt={artist.name}
+                  className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
+                />
+                <p className="text-sm mt-2 text-white text-left">
+                  {artist.name}
+                </p>
+                <p className="text-sm text-gray-400 text-left">Profile</p>
               </div>
-              <div className="flex">
-                {following.map((artist) => (
-                  <div
-                    key={artist._id}
-                    className="text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
-                  >
-                    <img
-                      src={artist.images?.[0]?.url || "https://via.placeholder.com/50"}
-                      alt={artist.name}
-                      className="w-[160px] h-[160px] object-cover rounded-full shadow-md"
-                    />
-                    <p className="text-sm mt-2 text-white text-left">{artist.name}</p>
-                    <p className="text-sm text-gray-400 text-left">Artist</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
-      
-          {/* Footer Section */}
-          <div
-            className="absolute top-[1740px] left-0 bg-[#121212] w-full py-6 border-t border-gray-700 "
-          >
-           <div className="w-full max-w-[970px]  grid grid-cols-4 gap-8 pl-[37px]">
+        </div>
+      </div>
+
+      {/* Following Section */}
+      <div
+        className="absolute top-[1390px] left-0 bg-[#121212]/50 w-full py-6"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <div className="w-full max-w pl-[37px]">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold mb-4 text-white">Following</h2>
+            <a
+              href="/following"
+              className="text-sm text-gray-400 hover:text-white"
+            >
+              Show all
+            </a>
+          </div>
+          <div className="flex">
+            {following.map((artist) => (
+              <div
+                key={artist._id}
+                className="group text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+              >
+                <div className="relative w-[160px] h-[160px] mx-auto">
+                  <img
+                    src={
+                      artist.images?.[0]?.url ||
+                      "https://via.placeholder.com/50"
+                    }
+                    alt={artist.name}
+                    className="w-full h-full object-cover rounded-full shadow-md"
+                  />
+                  <button className="absolute bottom-0 right-0 text-[#1ED760] text-6xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <AiFillPlayCircle />
+                  </button>
+                </div>
+                <p className="text-sm mt-2 text-white text-left">
+                  {artist.name}
+                </p>
+                <p className="text-sm text-gray-400 text-left">Artist</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Section */}
+      <div className="absolute top-[1740px] left-0 bg-[#121212] w-full py-6 border-t border-gray-700 ">
+        <div className="w-full max-w-[970px]  grid grid-cols-4 gap-8 pl-[37px]">
           {/* Column 1: Company */}
           <div>
             <h3 className="text-white font-bold mb-4">Company</h3>
