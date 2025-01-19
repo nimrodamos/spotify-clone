@@ -26,7 +26,7 @@ interface AppDataContextType {
 
 const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
 
-const SIDEBAR_CONSTRAINTS = {
+export const SIDEBAR_CONSTRAINTS = {
   MIN_WIDTH: 280,
   MAX_WIDTH: 420,
   COLLAPSED_WIDTH: 72,

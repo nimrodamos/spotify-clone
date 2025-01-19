@@ -75,7 +75,7 @@ import { useUserContext } from "../../Context/UserContext";
 import { useAppData } from "@/Context/AppDataContext";
 import SidebarPlaylistAndArtists from "./SidebarPlaylistAndArtists";
 import { useState, useEffect } from "react";
-
+import { SIDEBAR_CONSTRAINTS } from '../../Context/AppDataContext.tsx';
 const Sidebar: React.FC = () => {
   const { user } = useUserContext();
   const { 
@@ -100,25 +100,32 @@ const Sidebar: React.FC = () => {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isResizingLsb) {
-        const newWidth = e.clientX;
+        const newWidth = Math.max(
+          Math.min(
+            e.clientX, 
+            SIDEBAR_CONSTRAINTS.MAX_WIDTH
+          ), 
+          SIDEBAR_CONSTRAINTS.MIN_WIDTH
+        );
+        
         setLsbWidth(newWidth);
       }
     };
-
+  
     const handleMouseUp = () => {
       setIsResizingLsb(false);
     };
-
+  
     if (isResizingLsb) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-
+  
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizingLsb]);
+  }, [isResizingLsb, setIsResizingLsb, setLsbWidth]);
 
   return (
     <div 

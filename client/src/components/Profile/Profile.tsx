@@ -135,7 +135,7 @@
 
 // export default Profile
 //! // // // // // // // // 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useUserContext } from "../../Context/UserContext";
 import { useAppData } from "../../Context/AppDataContext";
 import { IArtist, ITrack } from "@/types/types";
@@ -152,139 +152,143 @@ import { FooterSection } from "./sections/FooterSection";
 
 const Profile: React.FC = () => {
   const { user } = useUserContext();
-  const { isRsbOpen } = useAppData();
-  const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const { isRsbOpen, isLsbOpen, lsbWidth, rsbWidth } = useAppData();
+  
+  const [scrollPosition, setScrollPosition] = useState(0);
 
-  const displayLimit = isRsbOpen ? 6 : 8;
-  const profileWidth = isRsbOpen ? "77.1%" : "81.4%";
-  // Artists Query
+  const { displayLimit, profileWidth } = useMemo(() => ({
+    displayLimit: isRsbOpen ? 6 : 8,
+    profileWidth: isRsbOpen ? "77.1%" : "81.4%"
+  }), [isRsbOpen]);
+
+  // Artists Query with memoized selection
   const {
     data: topArtists = [],
-    isLoading: artistsLoading,
-    error: artistsError
   } = useQuery({
-    queryKey: [queryKeys.topArtists],
+    queryKey: [queryKeys.topArtists, displayLimit],
     queryFn: fetchArtists,
-    select: (data) => {
-      console.log('Artists data received:', data);
-      return data.sort(() => 0.5 - Math.random()).slice(0, displayLimit);
-    },
-    staleTime: 5 * 60 * 1000,
-    enabled: !!user
+    select: useCallback((responseData) => {
+      const data = responseData.data || [];
+      return data
+        .sort(() => 0.5 - Math.random())
+        .slice(0, displayLimit);
+    }, [displayLimit]),
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    enabled: !!user,
   });
 
   // Tracks Query
   const {
     data: topTracks = [],
-    isLoading: tracksLoading,
-    error: tracksError
   } = useQuery({
     queryKey: [queryKeys.topTracks],
     queryFn: fetchTracks,
-    select: (data) => {
-      console.log('Tracks data received:', data);
-      return data.sort(() => 0.5 - Math.random()).slice(0, 4);
-    },
-    staleTime: 5 * 60 * 1000,
-    enabled: !!user
+    select: useCallback((responseData) => {
+      const data = responseData.data || [];
+      return data
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 4);
+    }, []),
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    enabled: !!user,
   });
 
   // Followers Query
   const {
     data: followers = [],
-    isLoading: followersLoading,
-    error: followersError
   } = useQuery({
-    queryKey: [queryKeys.followers],
+    queryKey: [queryKeys.followers, displayLimit],
     queryFn: fetchArtists,
-    select: (data) => {
-      console.log('Followers data received:', data);
-      return data.sort(() => 0.5 - Math.random()).slice(0, displayLimit);
-    },
-    staleTime: 5 * 60 * 1000,
-    enabled: !!user
+    select: useCallback((responseData) => {
+      const data = responseData.data || [];
+      return data
+        .sort(() => 0.5 - Math.random())
+        .slice(0, displayLimit);
+    }, [displayLimit]),
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    enabled: !!user,
   });
 
   // Following Query
   const {
     data: following = [],
-    isLoading: followingLoading,
-    error: followingError
   } = useQuery({
-    queryKey: [queryKeys.following],
+    queryKey: [queryKeys.following, displayLimit],
     queryFn: fetchArtists,
-    select: (data) => {
-      console.log('Following data received:', data);
-      return data.sort(() => 0.5 - Math.random()).slice(0, displayLimit);
-    },
-    staleTime: 5 * 60 * 1000,
-    enabled: !!user
+    select: useCallback((responseData) => {
+      const data = responseData.data || [];
+      return data
+        .sort(() => 0.5 - Math.random())
+        .slice(0, displayLimit);
+    }, [displayLimit]),
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    enabled: !!user,
   });
+  
 
-  // Debug logs for all queries
+    // Comprehensive scroll handling
   useEffect(() => {
-    console.log('User object:', user);
-    
-    if (artistsLoading) console.log('Artists loading...');
-    if (artistsError) console.error('Artists error:', artistsError);
-    
-    if (tracksLoading) console.log('Tracks loading...');
-    if (tracksError) console.error('Tracks error:', tracksError);
-    
-    if (followersLoading) console.log('Followers loading...');
-    if (followersError) console.error('Followers error:', followersError);
-    
-    if (followingLoading) console.log('Following loading...');
-    if (followingError) console.error('Following error:', followingError);
-  }, [
-    user,
-    artistsLoading, artistsError,
-    tracksLoading, tracksError,
-    followersLoading, followersError,
-    followingLoading, followingError
-  ]);
-
-  // Log data updates
-  useEffect(() => {
-    console.log('Current data state:', {
-      topArtists,
-      topTracks,
-      followers,
-      following
-    });
-  }, [topArtists, topTracks, followers, following]);
-  // Handle scroll for sticky header
-  useEffect(() => {
-    const handleScroll = (e: Event) => {
-      const container = e.target as HTMLElement;
-      setShowStickyHeader(container.scrollTop > 340);
+    const handleScroll = () => {
+      const displayContainer = document.querySelector('.display-container') as HTMLElement;
+      
+      if (displayContainer) {
+        const scrollTop = displayContainer.scrollTop;
+        setScrollPosition(scrollTop);
+      }
     };
 
     const displayContainer = document.querySelector('.display-container');
+    
     if (displayContainer) {
-      displayContainer.addEventListener('scroll', handleScroll);
+      displayContainer.addEventListener('scroll', handleScroll, { passive: true });
+      
       return () => {
         displayContainer.removeEventListener('scroll', handleScroll);
       };
     }
   }, []);
 
-  if (!user) {
-    return (
-      <p className="text-center text-lg text-white">
-        Please log in to view your profile.
-      </p>
-    );
-  }
+  // Calculate dynamic positioning based on sidebar states
+  const stickyHeaderStyle = useMemo(() => {
+    const basePadding = 8; // 2 * p-2 in the Main.tsx
+    const lsbWidth = isLsbOpen ? 
+      (document.querySelector('.display-container')?.parentElement?.querySelector(':first-child')?.clientWidth || 72) 
+      : 72;
 
-  return (
-    <div className="h-full overflow-y-auto custom-scrollbar">
-      {showStickyHeader && (
-        <div className="sticky top-0 h-[67px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-[100] rounded-t">
-          <h1 className="text-xl font-bold">{user.displayName}</h1>
-        </div>
-      )}
-      
+    return {
+      left: `${lsbWidth + basePadding}px`,
+      width: isRsbOpen 
+        ? `calc(100% - ${lsbWidth + (rsbWidth || 0) + 2 * basePadding}px)` 
+        : `calc(100% - ${lsbWidth + basePadding * 2}px)`
+    };
+  }, [isLsbOpen, isRsbOpen, rsbWidth]);
+
+  const ProfileContent = useMemo(() => {
+    if (!user) {
+      return (
+        <p className="text-center text-lg text-white">
+          Please log in to view your profile.
+        </p>
+      );
+    }
+
+    return (
       <div className="relative pb-[150px]">
         <ProfileSection user={user} profileWidth={profileWidth} />
         
@@ -308,7 +312,32 @@ const Profile: React.FC = () => {
           <FooterSection />
         </div>
       </div>
-    </div>
+    );
+  }, [
+    user, 
+    topArtists, 
+    topTracks, 
+    followers, 
+    following, 
+    profileWidth
+  ]);
+
+  return (
+    <>
+      {scrollPosition > 340 && (
+        <div 
+        className="fixed top-[72px] h-[67px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-[100] rounded-t"
+        style={{
+          left: `calc(9px + ${isLsbOpen ? lsbWidth : 72})px`,
+          width: `calc(100% - ${isLsbOpen ? lsbWidth : 72}px - ${isRsbOpen ? rsbWidth : 0}px - 32px)`
+        }}
+      >
+          <h1 className="text-xl font-bold text-white">{user?.displayName}</h1>
+        </div>
+      )}
+      
+      {ProfileContent}
+    </>
   );
 };
 
