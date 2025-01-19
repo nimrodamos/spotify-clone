@@ -44,7 +44,7 @@ const CarouselRecentlyPlayed: React.FC = () => {
   }
 
   return (
-    <div className="flex overflow-auto scrollbar-hide gap-4">
+    <div className="flex overflow-auto scrollbar-hide">
       {recentlyPlayed.map((track: any) => (
         <CardItem
           key={track.id}

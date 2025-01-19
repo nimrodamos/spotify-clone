@@ -40,7 +40,7 @@ const CarouselTopTracks: React.FC = () => {
   }
 
   return (
-    <div className="flex overflow-auto scrollbar-hide gap-4">
+    <div className="flex overflow-auto scrollbar-hide">
       {topTracks.map((track: any) => (
         <CardItem
           key={track.id}

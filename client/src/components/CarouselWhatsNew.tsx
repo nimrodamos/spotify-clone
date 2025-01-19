@@ -40,7 +40,7 @@ const CarouselWhatsNew: React.FC = () => {
   }
 
   return (
-    <div className="flex overflow-auto scrollbar-hide gap-4">
+    <div className="flex overflow-auto scrollbar-hide">
       {newReleases.map((release: any) => (
         <CardItem
           key={release.id}
