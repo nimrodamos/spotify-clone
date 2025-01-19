@@ -9,12 +9,18 @@ import AllPlaylists from "./Playlists/AllPlaylists";
 import Profile from "./Profile/Profile";
 import DisplayTrack from "./DisplayTrack";
 import SearchResults from "./DisplaySearch/SearchResults";
+import BrowseAll from "./Browse/BrowseAll";
+import CategoryPage from "./Browse/CategoryPage";
+import WhatsNew from "./WhatsNew";
 
 const Display: React.FC = () => {
   return (
     <div className="display-container">
       <Routes>
+        <Route path="/browse" element={<BrowseAll />} />
+        <Route path="/category/:id" element={<CategoryPage />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/whatsNew" element={<WhatsNew />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/" element={<DisplayHome />} />
         <Route path="/album/:id" element={<DisplayAlbum />} />

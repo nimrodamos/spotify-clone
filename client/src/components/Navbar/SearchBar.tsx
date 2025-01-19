@@ -31,7 +31,9 @@ const SearchBar: React.FC = () => {
       try {
         // Fetch search results from Spotify API
         const response = await fetch(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(value)}&type=track,artist&limit=5`,
+          `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+            value
+          )}&type=track,artist&limit=5`,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -46,7 +48,9 @@ const SearchBar: React.FC = () => {
         const data = await response.json();
 
         // Navigate to search results page with the fetched data
-        navigate(`/search?q=${encodeURIComponent(value)}`, { state: { results: data } });
+        navigate(`/search?q=${encodeURIComponent(value)}`, {
+          state: { results: data },
+        });
       } catch (error) {
         console.error("Error fetching search results:", error);
       }
@@ -109,7 +113,7 @@ const SearchBar: React.FC = () => {
           onChange={handleSearchChange}
         />
         <div className="flex items-center gap-2">
-            {!query && <div className="h-6 w-[0.1px] bg-currentColor"></div>}
+          {!query && <div className="h-6 w-[0.1px] bg-currentColor"></div>}
           {query ? (
             <>
               <HoverCard>
