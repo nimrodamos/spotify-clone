@@ -45,10 +45,10 @@ const UserActions: React.FC = () => {
     >
       {user ? (
         <>
-          <button className="text-black text-sm bg-white hover:bg-[#f0f0f0] hover:scale-[1.04] font-bold  rounded-3xl px-4 py-[0.4rem]">
+          <button className="text-black text-sm bg-white hover:bg-[#f0f0f0] hover:scale-[1.04] font-bold  rounded-3xl px-4 py-[0.4rem] min-w-[150px]">
             Explore Premium
           </button>
-          <button className="flex items-center bg-black text-white hover:scale-[1.04] font-extrabold text-[13px] rounded-2xl cursor-pointer gap-1">
+          <button className="flex items-center bg-black text-white hover:scale-[1.04] font-extrabold text-[13px] rounded-2xl cursor-pointer gap-1 min-w-[150px]">
             <GrInstallOption size={15} color="white" />
             Install App
           </button>
