@@ -228,7 +228,7 @@ const SongSidebar: React.FC = () => {
     >
       {/* Sticky Header */}
       <div
-        className="fixed top-[72px] right-[9px] h-[67px] bg-[#111213] flex items-center justify-between px-6 shadow-md z-50 rounded-t"
+        className="fixed top-[63px] right-[9px] h-[67px] bg-[#111213] flex items-center justify-between px-6 shadow-md z-50 rounded-t"
         style={{ 
           width: `${rsbWidth}px`, 
           color: "#fff" 
