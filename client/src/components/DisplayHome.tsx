@@ -88,19 +88,19 @@ const DisplayHome: React.FC = () => {
 
   return (
     <div className="min-h-full w-full text-white">
-      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full ">
+      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full pl-8">
         {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
         {user && (
-          <div className="mb-8">
-            <h1 className="px-4 my-5 font-bold text-2xl">
+          <div>
+            <h1 className="font-bold text-2xl pl-3">
               Made for {user.displayName}
             </h1>
             <PersonalizedPlaylists playlists={playlists} />
           </div>
         )}
 
-        <div className="flex justify-between items-center px-4 mb-4">
+        <div className="flex justify-between items-center pl-3">
           <h1
             className="font-bold text-2xl cursor-pointer hover:underline"
             onClick={() => navigate("/artists")}
@@ -115,7 +115,7 @@ const DisplayHome: React.FC = () => {
           <p className="text-center text-gray-400">No artists available</p>
         )}
 
-        <div className="flex justify-between items-center px-4 mb-4">
+        <div className="flex justify-between items-center pl-3">
           <h1
             className="font-bold text-2xl cursor-pointer hover:underline"
             onClick={() => navigate("/albums")}
