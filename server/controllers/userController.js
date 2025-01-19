@@ -103,28 +103,83 @@ const signupUser = async (req, res) => {
   }
 };
 
+//! Original login function for reference
+// const loginUser = async (req, res) => {
+//   try {
+//     const { email, password, spotifyAuthCode } = req.body;
+
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ error: "Invalid email or password" });
+//     }
+
+//     // Check if access token is expired and refresh it if necessary
+//     const currentTime = Math.floor(Date.now() / 1000);
+//     if (user.expiresIn < currentTime) {
+//       try {
+//         const { accessToken, expiresIn } = await refreshSpotifyToken(user.refreshToken);
+//         user.accessToken = accessToken;
+//         user.expiresIn = expiresIn;
+//         await user.save();
+//         console.log("Spotify access token refreshed during login");
+//       } catch (error) {
+//         console.error("Error refreshing Spotify access token:", error.message);
+//         return res.status(500).json({ error: "Failed to refresh Spotify access token" });
+//       }
+//     }
+
+//     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+//     if (!isPasswordCorrect) {
+//       return res.status(400).json({ error: "Invalid email or password" });
+//     }
+
+//     let access_token, refresh_token;
+//     // Exchange Spotify authorization code for tokens
+//     if (spotifyAuthCode) {
+//       try {
+//         const tokens = await exchangeAuthorizationCode(spotifyAuthCode);
+//         access_token = tokens.access_token;
+//         refresh_token = tokens.refresh_token;
+//         const expires_in = tokens.expires_in;
+
+//         user.accessToken = access_token;
+//         user.refreshToken = refresh_token;
+//         user.expiresIn = Math.floor(Date.now() / 1000) + expires_in;
+//         await user.save();
+
+//         console.log("Spotify tokens updated during login");
+//       } catch (error) {
+//         console.error("Error refreshing Spotify tokens:", error.message);
+//         return res
+//           .status(500)
+//           .json({ error: "Failed to refresh Spotify tokens" });
+//       }
+//     }
+
+//     // Generate a token and set it in a cookie
+//     generateTokenAndSetCookie(user._id, res);
+
+//     res.status(200).json({
+//       _id: user._id,
+//       displayName: user.displayName,
+//       email: user.email,
+//       accessToken: user.accessToken || access_token,
+//       refreshToken: user.refreshToken || refresh_token,
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error.message);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+// Temporary login function without Spotify validation
 const loginUser = async (req, res) => {
   try {
-    const { email, password, spotifyAuthCode } = req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password" });
-    }
-
-    // Check if access token is expired and refresh it if necessary
-    const currentTime = Math.floor(Date.now() / 1000);
-    if (user.expiresIn < currentTime) {
-      try {
-        const { accessToken, expiresIn } = await refreshSpotifyToken(user.refreshToken);
-        user.accessToken = accessToken;
-        user.expiresIn = expiresIn;
-        await user.save();
-        console.log("Spotify access token refreshed during login");
-      } catch (error) {
-        console.error("Error refreshing Spotify access token:", error.message);
-        return res.status(500).json({ error: "Failed to refresh Spotify access token" });
-      }
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -132,39 +187,19 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    let access_token, refresh_token;
-    // Exchange Spotify authorization code for tokens
-    if (spotifyAuthCode) {
-      try {
-        const tokens = await exchangeAuthorizationCode(spotifyAuthCode);
-        access_token = tokens.access_token;
-        refresh_token = tokens.refresh_token;
-        const expires_in = tokens.expires_in;
-
-        user.accessToken = access_token;
-        user.refreshToken = refresh_token;
-        user.expiresIn = Math.floor(Date.now() / 1000) + expires_in;
-        await user.save();
-
-        console.log("Spotify tokens updated during login");
-      } catch (error) {
-        console.error("Error refreshing Spotify tokens:", error.message);
-        return res
-          .status(500)
-          .json({ error: "Failed to refresh Spotify tokens" });
-      }
-    }
-
     // Generate a token and set it in a cookie
     generateTokenAndSetCookie(user._id, res);
 
+    // Return user data without Spotify token validation
     res.status(200).json({
       _id: user._id,
       displayName: user.displayName,
       email: user.email,
-      accessToken: user.accessToken || access_token,
-      refreshToken: user.refreshToken || refresh_token,
+      accessToken: "mock_access_token", // Temporary mock token
+      refreshToken: "mock_refresh_token", // Temporary mock token
+      profilePicture: user.profilePicture
     });
+    
   } catch (error) {
     console.error("Error during login:", error.message);
     res.status(500).json({ error: error.message });
