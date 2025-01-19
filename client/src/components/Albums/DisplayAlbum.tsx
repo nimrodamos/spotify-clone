@@ -13,7 +13,9 @@ const fetchAlbumById = async (id: string): Promise<IAlbum> => {
   const response = await api.get(`/api/albums/${id}`);
   const album = response.data;
 
-  album.artist = album.artist.split(/,\s*/).map((artist: string) => artist.trim());
+  album.artist = album.artist
+    .split(/,\s*/)
+    .map((artist: string) => artist.trim());
   return album;
 };
 
@@ -40,7 +42,11 @@ const DisplayAlbum: React.FC = () => {
   const [added, setAdded] = useState<boolean>(false);
 
   // Fetch album details
-  const { data: album, isLoading: loadingAlbum, error: albumError } = useQuery({
+  const {
+    data: album,
+    isLoading: loadingAlbum,
+    error: albumError,
+  } = useQuery({
     queryKey: ["album", id],
     queryFn: () => fetchAlbumById(id as string),
     enabled: Boolean(id),
@@ -52,8 +58,12 @@ const DisplayAlbum: React.FC = () => {
     isLoading: loadingArtists,
     error: artistsError,
   } = useQuery({
-    queryKey: ["artists", Array.isArray(album?.artist) ? album.artist.join(",") : ""],
-    queryFn: () => fetchArtistByName(Array.isArray(album?.artist) ? album.artist : []),
+    queryKey: [
+      "artists",
+      Array.isArray(album?.artist) ? album.artist.join(",") : "",
+    ],
+    queryFn: () =>
+      fetchArtistByName(Array.isArray(album?.artist) ? album.artist : []),
     enabled: Boolean(album?.artist),
   });
 
@@ -71,7 +81,9 @@ const DisplayAlbum: React.FC = () => {
   // Update background color based on album cover
   useEffect(() => {
     if (album?.albumCoverUrl) {
-      getDominantColor(album.albumCoverUrl).then((color) => setBackground(color));
+      getDominantColor(album.albumCoverUrl).then((color) =>
+        setBackground(color)
+      );
     }
   }, [album?.albumCoverUrl]);
 
@@ -135,7 +147,7 @@ const DisplayAlbum: React.FC = () => {
       </div>
 
       <div className="mx-8 flex gap-4 items-center">
-        <AiFillPlayCircle size={70} color="LimeGreen" />
+        <AiFillPlayCircle size={70} color="#1ed760" />
         <button onClick={() => setAdded(!added)} className="focus:outline-none">
           {added ? (
             <FaCheckCircle size={32} color="LimeGreen" />
