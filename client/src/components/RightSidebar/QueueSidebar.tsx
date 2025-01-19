@@ -1,67 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, {useRef,useCallback ,useMemo ,useEffect}from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAppData } from "@/Context/AppDataContext";
 import { HiMiniXMark } from "react-icons/hi2";
-import { api } from "@/api"; // Import API abstraction
-import { ITrack } from "@/types/types"; // Import track type
+import { api } from "@/api";
+import { ITrack } from "@/types/types";
+import { SIDEBAR_CONSTRAINTS } from "@/Context/AppDataContext";
+// Define query keys
+export const queryKeys = {
+  queueTracks: "queueTracks"
+};
+
+// Fetch tracks function
+export const fetchQueueTracks = async () => {
+  try {
+    const response = await api.get("/api/tracks/offset?offset=0&limit=21");
+    console.log('Queue Tracks API Response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('Queue Tracks API Error:', error);
+    throw error;
+  }
+};
 
 const QueueSidebar: React.FC = () => {
-  const { isRsbOpen, setIsRsbOpen } = useAppData(); // Access RSB state
-  const [sidebarWidth, setSidebarWidth] = useState(285); // Default RSB width
-  const [currentSong, setCurrentSong] = useState<ITrack | null>(null); // Current song
-  const [nextSongs, setNextSongs] = useState<ITrack[]>([]); // 20 next songs
+  const { 
+    isRsbOpen, 
+    setIsRsbOpen, 
+    rsbWidth 
+  } = useAppData();
 
-  useEffect(() => {
-    // Dynamically adjust width if RSB is resizable
-    const currentWidth = isRsbOpen ? 285 : 0;
-    setSidebarWidth(currentWidth);
-  }, [isRsbOpen]);
+  // Tracks Query with memoized selection
+  const {
+    data: trackData = [],
+  } = useQuery({
+    queryKey: [queryKeys.queueTracks],
+    queryFn: fetchQueueTracks,
+    select: useCallback((responseData) => {
+      const data = responseData.data || [];
+      return data
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 21);
+    }, []),
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
 
-  useEffect(() => {
-    // Fetch random songs
-    async function fetchSongs() {
-      try {
-        const response = await api.get("/api/tracks");
-        const tracks: ITrack[] = response.data;
+  // Derive current song and next songs
+  const { currentSong, nextSongs } = useMemo(() => ({
+    currentSong: trackData[0] || null,
+    nextSongs: trackData.slice(1, 21)
+  }), [trackData]);
 
-        if (tracks.length > 0) {
-          const shuffledTracks = tracks.sort(() => 0.5 - Math.random());
-          setCurrentSong(shuffledTracks[0]);
-          setNextSongs(shuffledTracks.slice(1, 21)); // Get 20 songs
-        }
-      } catch (error) {
-        console.error("Error fetching tracks:", error);
-      }
-    }
+  // Dynamic width calculations
+  const contentWidth = useMemo(() => {
+    return Math.max(
+      SIDEBAR_CONSTRAINTS.MIN_WIDTH, 
+      Math.min(rsbWidth, SIDEBAR_CONSTRAINTS.MAX_WIDTH)
+    ) - 40; // Subtract padding
+  }, [rsbWidth]);
 
-    fetchSongs();
-  }, []);
-
-  return (
-    <div
-      className="queue-sidebar-container relative h-full overflow-y-auto bg-[#111213] text-white"
-      style={{ width: `${sidebarWidth}px` }}
-    >
-      {/* Sticky Header */}
-      <div
-        className="fixed top-[8.2%] right-0 h-[67px] bg-[#111213] flex items-center justify-between px-6 shadow-md z-50 rounded-t"
-        style={{ width: `${sidebarWidth}px`, color: "#fff" }}
-      >
-        <h1 className="text-lg font-bold">Queue</h1>
-        <HiMiniXMark
-          className="text-[#B3B3B3] text-2xl cursor-pointer h-8 w-8 p-1 rounded-full hover:bg-[#1B1B1B]"
-          onClick={() => {
-            // Close the sidebar
-            setIsRsbOpen(false);
-          }}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="p-4 mt-[67px]">
+  // Memoize sidebar content
+  const SidebarContent = useMemo(() => {
+    return (
+      <div className="p-4 mt-[67px]" style={{ width: `${contentWidth}px` }}>
         {/* Now Playing Section */}
         <h2 className="text-md font-bold text-[#EAEAEA] mb-4">Now playing</h2>
         {currentSong && (
-          <div className="h-[60px] w-[250px] hover:bg-[#1C1C1C] rounded flex items-center p-2">
+          <div 
+            className="hover:bg-[#1C1C1C] rounded flex items-center p-2"
+            style={{ 
+              width: `${contentWidth}px`,
+              height: '60px'
+            }}
+          >
             <img
               src={currentSong.albumCoverUrl || "https://via.placeholder.com/50"}
               alt={currentSong.name}
@@ -83,8 +97,12 @@ const QueueSidebar: React.FC = () => {
         <div className="space-y-1">
           {nextSongs.map((song, index) => (
             <div
-              key={index}
-              className="h-[60px] w-[250px] hover:bg-[#1C1C1C] rounded flex items-center p-2"
+              key={song.id || index}
+              className="hover:bg-[#1C1C1C] rounded flex items-center p-2"
+              style={{ 
+                width: `${contentWidth}px`,
+                height: '60px'
+              }}
             >
               <img
                 src={song.albumCoverUrl || "https://via.placeholder.com/50"}
@@ -101,6 +119,48 @@ const QueueSidebar: React.FC = () => {
           ))}
         </div>
       </div>
+    );
+  }, [currentSong, nextSongs, contentWidth]);
+
+  // Scroll handling effect
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleScroll = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const currentRef = scrollContainerRef.current;
+    if (currentRef) {
+      currentRef.addEventListener('scroll', handleScroll, { passive: false });
+      
+      return () => {
+        currentRef.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
+
+  return (
+    <div
+      ref={scrollContainerRef}
+      className="queue-sidebar-container relative h-full overflow-y-auto bg-[#111213] text-white"
+      style={{ width: `${rsbWidth}px` }}
+    >
+      {/* Sticky Header */}
+      <div
+        className="fixed top-[72px] right-[9px] h-[67px] bg-[#111213] flex items-center justify-between px-6 shadow-md z-50 rounded-t"
+        style={{ 
+          width: `${rsbWidth}px`, 
+          color: "#fff" 
+        }}
+      >
+        <h1 className="text-lg font-bold">Queue</h1>
+        <HiMiniXMark
+          className="text-[#B3B3B3] text-2xl cursor-pointer h-8 w-8 p-1 rounded-full hover:bg-[#1B1B1B]"
+          onClick={() => setIsRsbOpen(false)}
+        />
+      </div>
+      
+      {SidebarContent}
     </div>
   );
 };
