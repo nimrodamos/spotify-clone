@@ -28,7 +28,7 @@ function Player() {
           const playerInstance = new Spotify.Player({
             name: "My Spotify App",
             getOAuthToken: (cb) => cb(user.accessToken),
-            volume: 0.8,
+            volume: 0.5,
           });
 
           playerInstance.addListener("ready", ({ device_id }) => {
@@ -37,7 +37,7 @@ function Player() {
             setActiveDevice(device_id);
         
             // Set initial volume
-            playerInstance.setVolume(0.8).then(() => {
+            playerInstance.setVolume(0.5).then(() => {
                 console.log("Volume set to 80%");
             });
         });
