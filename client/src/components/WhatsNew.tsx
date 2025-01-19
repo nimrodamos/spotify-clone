@@ -5,7 +5,7 @@ import { useUserContext } from "@/Context/UserContext";
 
 const fetchNewReleases = async (accessToken: string) => {
   const response = await api.get(
-    "https://api.spotify.com/v1/browse/new-releases?limit=2",
+    "https://api.spotify.com/v1/browse/new-releases?limit=10",
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
