@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IAlbum } from "@/types/types";
 import CarouselWhatsNew from "./CarouselWhatsNew";
+import CarouselTopTracks from "./CarouselTopTracks";
+import CarouselRecentlyPlayed from "./CarouselRecentlyPlayed";
 
 const ShowAllButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <button onClick={onClick} className="hover:underline text-sm mb-2">
@@ -141,6 +143,27 @@ const DisplayHome: React.FC = () => {
           ) : (
             <p className="text-center text-gray-400">No albums available</p>
           )}
+          <div className="flex justify-between items-center pl-3 py-3">
+            <h1
+              className="font-bold text-2xl cursor-pointer hover:underline"
+              onClick={() => navigate("/top-tracks")}
+            >
+              Top Tracks
+            </h1>
+            <ShowAllButton onClick={() => navigate("/top-tracks")} />
+          </div>
+          <CarouselTopTracks />
+
+          <div className="flex justify-between items-center pl-3 py-3">
+            <h1
+              className="font-bold text-2xl cursor-pointer hover:underline"
+              onClick={() => navigate("/recently-played")}
+            >
+              Recently Played
+            </h1>
+            <ShowAllButton onClick={() => navigate("/recently-played")} />
+          </div>
+          <CarouselRecentlyPlayed />
         </div>
       </div>
     </div>
