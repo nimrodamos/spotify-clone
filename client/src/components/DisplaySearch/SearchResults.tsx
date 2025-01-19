@@ -7,7 +7,7 @@ import { useUserContext } from "@/Context/UserContext.tsx";
 
 const SearchResults: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // React Router's navigation hook
+  const navigate = useNavigate();
   const { user } = useUserContext();
   const { results } = location.state || {};
 
@@ -25,6 +25,18 @@ const SearchResults: React.FC = () => {
     currentFilter === "All" || currentFilter === "Songs" ? tracks?.items || [] : [];
   const filteredArtists =
     currentFilter === "All" || currentFilter === "Artists" ? artists?.items || [] : [];
+
+  // Extract Artist ID from Spotify URL
+  const extractArtistId = (spotifyUrl: string) => {
+    const parts = spotifyUrl.split("/");
+    return parts[parts.length - 1]; // Get the last part of the URL
+  };
+
+  // Handle Artist Click
+  const handleArtistClick = (spotifyUrl: string) => {
+    const artistId = extractArtistId(spotifyUrl);
+    navigate(`/artist/${artistId}`); // Navigate to the artist's page using the extracted ID
+  };
 
   // Play/Pause Handler
   const handlePlayPause = async (trackUri: string | null) => {
@@ -58,10 +70,6 @@ const SearchResults: React.FC = () => {
     } catch (error) {
       console.error("Error controlling playback:", error);
     }
-  };
-
-  const handleArtistClick = (artistId: string) => {
-    navigate(`/artist/${artistId}`); // Navigate to the artist's page by ID
   };
 
   return (
@@ -115,7 +123,9 @@ const SearchResults: React.FC = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <p
-                  onClick={() => handleArtistClick(filteredArtists[0]?.id)} // Navigate on click using ID
+                  onClick={() =>
+                    handleArtistClick(filteredArtists[0]?.external_urls?.spotify || "")
+                  } // Navigate using Spotify URL
                   className={`text-3xl font-bold cursor-pointer hover:underline ${
                     currentlyPlaying === filteredArtists[0]?.uri ? "text-green-500" : ""
                   }`}
