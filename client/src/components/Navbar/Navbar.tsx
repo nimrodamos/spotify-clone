@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="flex items-center justify-between bg-black p-1">
+    <nav className="flex items-center justify-between bg-black ">
       <Logo />
       <SearchBar />
       <UserActions />
