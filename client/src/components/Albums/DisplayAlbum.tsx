@@ -105,20 +105,20 @@ const DisplayAlbum: React.FC = () => {
     tracks?.filter((track) => track.album === album.name) || [];
 
   return (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="min-h-screen w-full">
       <div
-        className="p-5"
+        className="px-5"
         style={{
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           <img
             className="w-48 h-48 object-cover rounded-md shadow-md"
             src={album.albumCoverUrl}
             alt={album.name}
           />
-          <div className="m-5">
+          <div className="mx-3 mt-10">
             <span>Album</span>
             <h2
               style={{
@@ -129,7 +129,7 @@ const DisplayAlbum: React.FC = () => {
               {album.name}
             </h2>
             {artists?.map((artist) => (
-              <div key={artist.name} className="flex items-center space-x-2">
+              <div key={artist.name} className="flex items-center">
                 {artist.images?.[0]?.url && (
                   <img
                     className="w-12 h-12 object-cover rounded-full"

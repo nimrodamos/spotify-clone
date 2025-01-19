@@ -87,47 +87,49 @@ const DisplayHome: React.FC = () => {
     return <div className="text-center text-red-500">Failed to load data</div>;
 
   return (
-    <div className="min-h-full w-full text-white ">
-      {user && <FilterButtons filter={filter} setFilter={setFilter} />}
-      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full pl-8 pr-4">
-        {user && (
-          <div>
-            <h1 className="font-bold text-2xl pl-3 py-3">
-              Made for {user.displayName}
+    <div className="min-h-full w-full text-white">
+      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full">
+        {user && <FilterButtons filter={filter} setFilter={setFilter} />}
+        <div className=" pl-8 pr-4">
+          {user && (
+            <div>
+              <h1 className="font-bold text-2xl pl-3 py-3">
+                Made for {user.displayName}
+              </h1>
+              <PersonalizedPlaylists playlists={playlists} />
+            </div>
+          )}
+
+          <div className="flex justify-between items-center pl-3 py-3">
+            <h1
+              className="font-bold text-2xl cursor-pointer hover:underline"
+              onClick={() => navigate("/artists")}
+            >
+              Popular Artists
             </h1>
-            <PersonalizedPlaylists playlists={playlists} />
+            <ShowAllButton onClick={() => navigate("/artists")} />
           </div>
-        )}
+          {Array.isArray(artists.data) && artists.data.length > 0 ? (
+            <CarouselArtists artists={artists.data} />
+          ) : (
+            <p className="text-center text-gray-400">No artists available</p>
+          )}
 
-        <div className="flex justify-between items-center pl-3 py-3">
-          <h1
-            className="font-bold text-2xl cursor-pointer hover:underline"
-            onClick={() => navigate("/artists")}
-          >
-            Popular Artists
-          </h1>
-          <ShowAllButton onClick={() => navigate("/artists")} />
+          <div className="flex justify-between items-center pl-3 py-3">
+            <h1
+              className="font-bold text-2xl cursor-pointer hover:underline"
+              onClick={() => navigate("/albums")}
+            >
+              Featured Albums
+            </h1>
+            <ShowAllButton onClick={() => navigate("/albums")} />
+          </div>
+          {Array.isArray(filteredAlbums) && filteredAlbums.length > 0 ? (
+            <CarouselAlbums albums={filteredAlbums} />
+          ) : (
+            <p className="text-center text-gray-400">No albums available</p>
+          )}
         </div>
-        {Array.isArray(artists.data) && artists.data.length > 0 ? (
-          <CarouselArtists artists={artists.data} />
-        ) : (
-          <p className="text-center text-gray-400">No artists available</p>
-        )}
-
-        <div className="flex justify-between items-center pl-3 py-3">
-          <h1
-            className="font-bold text-2xl cursor-pointer hover:underline"
-            onClick={() => navigate("/albums")}
-          >
-            Featured Albums
-          </h1>
-          <ShowAllButton onClick={() => navigate("/albums")} />
-        </div>
-        {Array.isArray(filteredAlbums) && filteredAlbums.length > 0 ? (
-          <CarouselAlbums albums={filteredAlbums} />
-        ) : (
-          <p className="text-center text-gray-400">No albums available</p>
-        )}
       </div>
     </div>
   );
