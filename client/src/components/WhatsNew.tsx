@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { useUserContext } from "@/Context/UserContext";
+import { IoPlayCircleSharp } from "react-icons/io5";
 
 const fetchNewReleases = async (accessToken: string) => {
   const response = await api.get(
@@ -39,23 +40,23 @@ const WhatsNew: React.FC = () => {
   }
 
   return (
-    <div className="px-12 py-10 text-white">
-      <h1 className="text-4xl font-bold mb-2">What's New</h1>
-      <p className="text-gray-400 mb-6">
+    <div className="pl-28 py-16 text-white ">
+      <h1 className="text-3xl font-bold mb-1">What's New</h1>
+      <p className="text-textSubdued mb-4">
         The latest releases from artists, podcasts, and shows you follow.
       </p>
-      <div className="flex gap-4 mb-6">
-        <button className="bg-gray-700 text-white py-2 px-4 rounded-full focus:outline-none">
+      <div className="flex gap-2 mb-6">
+        <button className="bg-[#2b2929] text-white py-2 px-4 rounded-full focus:outline-none">
           Music
         </button>
-        <button className="bg-gray-700 text-white py-2 px-4 rounded-full focus:outline-none">
+        <button className="bg-[#2b2929] text-white py-2 px-4 rounded-full focus:outline-none">
           Podcast & Shows
         </button>
       </div>
-      <h2 className="text-2xl font-bold mb-4">New</h2>
+      <h2 className="text-2xl font-bold mb-4">Earlier</h2>
       {songs.map((song: any) => (
         <div key={song.id} className="border-t border-gray-600 pt-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 mb-4">
             <img
               src={song.images[0]?.url || "/default-image.jpg"}
               alt={song.name}
@@ -63,12 +64,12 @@ const WhatsNew: React.FC = () => {
             />
             <div>
               <p className="text-lg font-bold">{song.name}</p>
-              <p className="text-gray-400">{song.artists[0]?.name}</p>
-              <p className="text-gray-400">
-                Album • {new Date(song.release_date).toDateString()}
+              <p className="">{song.artists[0]?.name}</p>
+              <p className="">
+                single • {new Date(song.release_date).toDateString()}
               </p>
             </div>
-            <button className="ml-auto text-white text-2xl">▶</button>
+            <IoPlayCircleSharp size={"40px"} />
           </div>
         </div>
       ))}
