@@ -91,7 +91,7 @@ const DisplayArtist: React.FC = () => {
             <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
             Verified Artist
           </div>
-          <h2 className="text-8xl font-bold">{artist.name}</h2>
+          <h2 className="text-8xl text-white font-bold">{artist.name}</h2>
           <p className="text-l pt-2">
             {artist.followers?.total?.toLocaleString() || "0"} monthly listeners
           </p>
