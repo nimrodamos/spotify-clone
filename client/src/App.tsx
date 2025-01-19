@@ -108,7 +108,7 @@
 // export default App;
 // //!
 
-import { UserProvider, useUserContext } from "./Context/UserContext";
+import { UserProvider } from "./Context/UserContext";
 import { AppDataProvider } from "./Context/AppDataContext";
 import Navbar from "./components/Navbar/Navbar";
 import Main from "./pages/Main";
@@ -120,7 +120,6 @@ import Player from "./components/Player";
 
 const App = () => {
   const location = useLocation();
-  const { user } = useUserContext();
   const isFullPage = ["/login", "/signup", "/password-reset"].includes(
     location.pathname
   );
@@ -133,7 +132,7 @@ const App = () => {
           h-screen 
           overflow-hidden
           bg-black 
-          ${isFullPage ? "" : "grid grid-rows-[55px_1fr_102px] gap-[9px]"}
+          ${isFullPage ? "" : "grid grid-rows-[55px_1fr_102px]"}
         `}
         >
           {!isFullPage && (
