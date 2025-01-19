@@ -54,8 +54,8 @@ const UserActions: React.FC = () => {
           </button>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <button onClick={() => navigate("/content-feed")}>
-                {window.location.pathname === "/content-feed" ? (
+              <button onClick={() => navigate("/whatsNew")}>
+                {window.location.pathname === "/whatsNew" ? (
                   <GoBellFill
                     size={17}
                     className="text-white hover:scale-[1.04] hover:text-textBase"
