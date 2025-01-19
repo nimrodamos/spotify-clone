@@ -326,7 +326,7 @@ const Profile: React.FC = () => {
     <>
       {scrollPosition > 340 && (
         <div 
-        className="fixed top-[72px] h-[67px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-[100] rounded-t"
+        className="fixed top-[63px] h-[67px] bg-[#4A5A2D] flex items-center px-6 shadow-md z-[100] rounded-t"
         style={{
           left: `calc(9px + ${isLsbOpen ? lsbWidth : 72})px`,
           width: `calc(100% - ${isLsbOpen ? lsbWidth : 72}px - ${isRsbOpen ? rsbWidth : 0}px - 32px)`

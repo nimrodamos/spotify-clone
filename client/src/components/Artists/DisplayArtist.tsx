@@ -92,14 +92,22 @@ const DisplayArtist: React.FC = () => {
             Verified Artist
           </div>
           <h2 className="text-8xl text-white font-bold">{artist.name}</h2>
-          <p className="text-l pt-2 text-background">
+          <p className="text-l pt-7 text-background ">
             {artist.followers?.total?.toLocaleString() || "0"} monthly listeners
           </p>
         </div>
       </div>
 
       <div className="m-4 flex gap-4 items-center ">
-        <AiFillPlayCircle size={"70px"} color="#1ed760" />
+        <div className="relative inline-flex items-center justify-center">
+          <div className="absolute bg-black w-[50px] h-[50px] rounded-full opacity-80"></div>
+          <AiFillPlayCircle
+            size={"65px"}
+            color="#1ed760"
+            className="relative"
+          />
+        </div>
+
         <button className="bg-transparent  border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
           Follow
         </button>

@@ -6,7 +6,7 @@ interface CardItemProps {
   name: string;
   desc: string;
   id: string;
-  type: "album" | "artist" | "playlist";
+  type: "album" | "artist" | "playlist" | "track";
 }
 
 const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
