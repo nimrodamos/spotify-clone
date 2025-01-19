@@ -17,7 +17,7 @@ const CarouselArtists: React.FC<CarouselArtistsProps> = ({ artists }) => {
   }
 
   return (
-    <div className="flex overflow-auto">
+    <div className="flex overflow-auto scrollbar-hide">
       {artists.map((artist) => (
         <CardItem
           key={artist._id}
