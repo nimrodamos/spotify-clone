@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import CarouselArtists from "./Artists/CarouselArtists";
@@ -7,27 +7,25 @@ import FilterButtons from "./FilterButtons";
 import PersonalizedPlaylists from "./Playlists/PersonalizedPlaylists";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
-import { IAlbum, IArtist, IPlaylist } from "@/types/types";
+import { IAlbum } from "@/types/types";
 
-// כפתור "Show All" להצגת כל הפריטים
 const ShowAllButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <button onClick={onClick} className="hover:underline text-sm mb-2">
     Show All
   </button>
 );
 
-// פונקציות לקבלת נתונים מהשרת
-const fetchAlbums = async (): Promise<IAlbum[]> => {
+const fetchAlbums = async () => {
   const response = await api.get("/api/albums/offset?offset=0&limit=20");
   return response.data;
 };
 
-const fetchArtists = async (): Promise<IArtist[]> => {
+const fetchArtists = async () => {
   const response = await api.get("/api/artists/offset?offset=0&limit=20");
   return response.data;
 };
 
-const fetchPlaylists = async (): Promise<IPlaylist[]> => {
+const fetchPlaylists = async () => {
   const response = await api.get("/api/playlists");
   return response.data;
 };
@@ -36,7 +34,6 @@ const DisplayHome: React.FC = () => {
   const { user } = useUserContext();
   const navigate = useNavigate();
 
-  // שליפת נתונים באמצעות React Query
   const {
     data: albums = [],
     isLoading: loadingAlbums,
@@ -55,34 +52,32 @@ const DisplayHome: React.FC = () => {
     error: playlistsError,
   } = useQuery({ queryKey: ["playlists"], queryFn: fetchPlaylists });
 
-  // חישוב מצבי טעינה ושגיאות
+  useEffect(() => {
+    console.log("Fetched albums:", albums);
+    console.log("Fetched artists:", artists);
+    console.log("Fetched playlists:", playlists);
+  }, [albums, artists, playlists]);
+
   const loading = loadingAlbums || loadingArtists || loadingPlaylists;
   const error = albumsError || artistsError || playlistsError;
 
-  // ניהול מצב סינון
   const [filter, setFilter] = React.useState<"all" | "music" | "podcast">(
     "all"
   );
 
   const filteredAlbums = React.useMemo(() => {
+    if (!albums?.data || !Array.isArray(albums.data)) return [];
     if (filter === "music")
-      return albums.filter((album) => album.genres.includes("music"));
+      return albums.data.filter((album: IAlbum) =>
+        album.genres?.includes("music")
+      );
     if (filter === "podcast") return [];
-    return albums;
+    return albums.data;
   }, [filter, albums]);
 
-  const filteredArtists = React.useMemo(() => {
-    if (filter === "podcast") return [];
-    return artists;
-  }, [filter, artists]);
-
-  const filteredPlaylists = React.useMemo(() => {
-    if (filter === "music")
-      return playlists.filter((playlist) => playlist.type === "music");
-    if (filter === "podcast")
-      return playlists.filter((playlist) => playlist.type === "podcast");
-    return playlists;
-  }, [filter, playlists]);
+  useEffect(() => {
+    console.log("Filtered albums:", filteredAlbums);
+  }, [filteredAlbums]);
 
   if (loading) return <div className="text-center text-white">Loading...</div>;
   if (error)
@@ -98,7 +93,7 @@ const DisplayHome: React.FC = () => {
             <h1 className="px-4 my-5 font-bold text-2xl">
               Made for {user.displayName}
             </h1>
-            <PersonalizedPlaylists playlists={filteredPlaylists} />
+            <PersonalizedPlaylists playlists={playlists} />
           </div>
         )}
 
@@ -111,7 +106,11 @@ const DisplayHome: React.FC = () => {
           </h1>
           <ShowAllButton onClick={() => navigate("/artists")} />
         </div>
-        <CarouselArtists artists={filteredArtists} />
+        {Array.isArray(artists) && artists.length > 0 ? (
+          <CarouselArtists artists={artists} />
+        ) : (
+          <p className="text-center text-gray-400">No artists available</p>
+        )}
 
         <div className="flex justify-between items-center px-4 mb-4">
           <h1
@@ -122,7 +121,11 @@ const DisplayHome: React.FC = () => {
           </h1>
           <ShowAllButton onClick={() => navigate("/albums")} />
         </div>
-        <CarouselAlbums albums={filteredAlbums} />
+        {Array.isArray(filteredAlbums) && filteredAlbums.length > 0 ? (
+          <CarouselAlbums albums={filteredAlbums} />
+        ) : (
+          <p className="text-center text-gray-400">No albums available</p>
+        )}
       </div>
     </div>
   );
