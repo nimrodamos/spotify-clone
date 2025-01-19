@@ -99,7 +99,7 @@ const DisplayArtist: React.FC = () => {
       </div>
 
       <div className="m-4 flex gap-4 items-center ">
-        <AiFillPlayCircle size={"70px"} color="LimeGreen" />
+        <AiFillPlayCircle size={"70px"} color="#1ed760" />
         <button className="bg-transparent  border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
           Follow
         </button>

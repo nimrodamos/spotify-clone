@@ -13,7 +13,9 @@ const fetchAlbumById = async (id: string): Promise<IAlbum> => {
   const response = await api.get(`/api/albums/${id}`);
   const album = response.data;
 
-  album.artist = album.artist.split(/,\s*/).map((artist: string) => artist.trim());
+  album.artist = album.artist
+    .split(/,\s*/)
+    .map((artist: string) => artist.trim());
   return album;
 };
 
@@ -40,7 +42,11 @@ const DisplayAlbum: React.FC = () => {
   const [added, setAdded] = useState<boolean>(false);
 
   // Fetch album details
-  const { data: album, isLoading: loadingAlbum, error: albumError } = useQuery({
+  const {
+    data: album,
+    isLoading: loadingAlbum,
+    error: albumError,
+  } = useQuery({
     queryKey: ["album", id],
     queryFn: () => fetchAlbumById(id as string),
     enabled: Boolean(id),
@@ -52,8 +58,12 @@ const DisplayAlbum: React.FC = () => {
     isLoading: loadingArtists,
     error: artistsError,
   } = useQuery({
-    queryKey: ["artists", Array.isArray(album?.artist) ? album.artist.join(",") : ""],
-    queryFn: () => fetchArtistByName(Array.isArray(album?.artist) ? album.artist : []),
+    queryKey: [
+      "artists",
+      Array.isArray(album?.artist) ? album.artist.join(",") : "",
+    ],
+    queryFn: () =>
+      fetchArtistByName(Array.isArray(album?.artist) ? album.artist : []),
     enabled: Boolean(album?.artist),
   });
 
@@ -71,7 +81,9 @@ const DisplayAlbum: React.FC = () => {
   // Update background color based on album cover
   useEffect(() => {
     if (album?.albumCoverUrl) {
-      getDominantColor(album.albumCoverUrl).then((color) => setBackground(color));
+      getDominantColor(album.albumCoverUrl).then((color) =>
+        setBackground(color)
+      );
     }
   }, [album?.albumCoverUrl]);
 
@@ -93,9 +105,9 @@ const DisplayAlbum: React.FC = () => {
     tracks?.filter((track) => track.album === album.name) || [];
 
   return (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="min-h-screen w-full">
       <div
-        className="p-5"
+        className="px-5"
         style={{
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
@@ -106,7 +118,7 @@ const DisplayAlbum: React.FC = () => {
             src={album.albumCoverUrl}
             alt={album.name}
           />
-          <div className="m-5">
+          <div className="mx-3 mt-10">
             <span>Album</span>
             <h2
               style={{
@@ -116,26 +128,28 @@ const DisplayAlbum: React.FC = () => {
             >
               {album.name}
             </h2>
-            {artists?.map((artist) => (
-              <div key={artist.name} className="flex items-center space-x-2">
-                {artist.images?.[0]?.url && (
-                  <img
-                    className="w-12 h-12 object-cover rounded-full"
-                    src={artist.images[0].url}
-                    alt={artist.name}
-                  />
-                )}
-                <p className="text-lg text-gray-300">{artist.name}</p>
-              </div>
-            ))}
-            <p className="text-sm text-gray-400">{album.releaseDate}</p>
-            <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
+            <div className="flex flex-wrap items-center gap-4">
+              {artists?.map((artist) => (
+                <div key={artist.name} className="flex items-center space-x-2">
+                  {artist.images?.[0]?.url && (
+                    <img
+                      className="w-12 h-12 object-cover rounded-full"
+                      src={artist.images[0].url}
+                      alt={artist.name}
+                    />
+                  )}
+                  <p className="text-lg text-gray-300">{artist.name}</p>
+                </div>
+              ))}
+              <p className="text-sm text-gray-400">{album.releaseDate}</p>
+              <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="mx-8 flex gap-4 items-center">
-        <AiFillPlayCircle size={70} color="LimeGreen" />
+        <AiFillPlayCircle size={70} color="#1ed760" />
         <button onClick={() => setAdded(!added)} className="focus:outline-none">
           {added ? (
             <FaCheckCircle size={32} color="LimeGreen" />

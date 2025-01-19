@@ -86,7 +86,7 @@ const DisplayTrack: React.FC = () => {
         </div>
 
         <div className="mt-8 flex gap-4 items-center">
-          <AiFillPlayCircle size={70} color="LimeGreen" />
+          <AiFillPlayCircle size={70} color="#1ed760" />
           <button
             onClick={() => setAdded(!added)}
             className="focus:outline-none"
