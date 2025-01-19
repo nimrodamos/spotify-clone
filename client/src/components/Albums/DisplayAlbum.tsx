@@ -1,83 +1,72 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IAlbum, ITrack, IArtist } from "../../types/types";
-import { useAppData } from "@/Context/AppDataContext";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
 import { BiPlusCircle } from "react-icons/bi";
 import { getDominantColor } from "@/lib/getDominantColor";
 
+// פונקציה לשליפת פרטי אלבום
+const fetchAlbumById = async (id: string): Promise<IAlbum> => {
+  const response = await api.get(`/api/albums/${id}`);
+  return response.data;
+};
+
+// פונקציה לשליפת פרטי אמן
+const fetchArtistByName = async (artistName: string): Promise<IArtist> => {
+  const response = await api.get(
+    `/api/artists/name/${encodeURIComponent(artistName)}`
+  );
+  return response.data;
+};
+
+// פונקציה לשליפת השירים של האלבום
+const fetchTracksByArtist = async (artistName: string): Promise<ITrack[]> => {
+  const response = await api.get(
+    `/api/tracks/artist/${encodeURIComponent(artistName)}`
+  );
+  return response.data;
+};
+
 const DisplayAlbum: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const {
-    albums,
-    fetchAlbumById,
-    loading: contextLoading,
-    error: contextError,
-  } = useAppData();
-  const [album, setAlbum] = useState<IAlbum | null>(null);
-  const [artist, setArtist] = useState<IArtist | null>(null);
-  const [filteredTracks, setFilteredTracks] = useState<ITrack[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [added, setAdded] = useState<boolean>(false);
   const [background, setBackground] = useState<string>("#121212");
+  const [added, setAdded] = useState<boolean>(false);
 
-  useEffect(() => {
-    async function fetchAlbumAndArtist() {
-      try {
-        setLoading(true);
+  // שליפת האלבום
+  const {
+    data: album,
+    isLoading: loadingAlbum,
+    error: albumError,
+  } = useQuery({
+    queryKey: ["album", id],
+    queryFn: () => fetchAlbumById(id as string),
+    enabled: Boolean(id),
+  });
 
-        // חיפוש האלבום בקונטקסט
-        let currentAlbum: IAlbum | undefined | null = albums.find(
-          (a) => a.spotifyAlbumId === id
-        );
+  // שליפת האמן
+  const {
+    data: artist,
+    isLoading: loadingArtist,
+    error: artistError,
+  } = useQuery({
+    queryKey: ["artist", album?.artist],
+    queryFn: () => fetchArtistByName(album?.artist as string),
+    enabled: Boolean(album?.artist),
+  });
 
-        // אם האלבום לא נמצא, מבצעים קריאה לשרת
-        if (!currentAlbum) {
-          currentAlbum = await fetchAlbumById(id!);
-        }
-
-        if (!currentAlbum) {
-          setError("Album not found.");
-          return;
-        }
-
-        setAlbum(currentAlbum);
-
-        // טעינת אמן
-        try {
-          const artistResponse = await api.get(
-            `/api/artists/name/${encodeURIComponent(currentAlbum.artist)}`
-          );
-          setArtist(artistResponse.data);
-        } catch {
-          console.warn(`Artist not found: ${currentAlbum.artist}`);
-        }
-
-        // טעינת שירים
-        try {
-          const tracksResponse = await api.get(
-            `/api/tracks/artist/${encodeURIComponent(currentAlbum.artist)}`
-          );
-          const albumTracks = tracksResponse.data.filter(
-            (track: ITrack) => track.album === currentAlbum.name
-          );
-          setFilteredTracks(albumTracks);
-        } catch {
-          console.warn(`Tracks not found for artist: ${currentAlbum.artist}`);
-          setFilteredTracks([]); // אם אין שירים, קבע מערך ריק
-        }
-      } catch (err) {
-        setError("Failed to load album or artist data.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchAlbumAndArtist();
-  }, [id, albums, fetchAlbumById]);
+  // שליפת השירים של האלבום
+  const {
+    data: tracks,
+    isLoading: loadingTracks,
+    error: tracksError,
+  } = useQuery({
+    queryKey: ["tracks", album?.artist],
+    queryFn: () => fetchTracksByArtist(album?.artist as string),
+    enabled: Boolean(album?.artist),
+  });
 
   useEffect(() => {
     if (album?.albumCoverUrl) {
@@ -85,17 +74,23 @@ const DisplayAlbum: React.FC = () => {
         setBackground(color);
       });
     }
-  }, [album]);
+  }, [album?.albumCoverUrl]);
 
-  if (contextLoading || loading)
+  if (loadingAlbum || loadingArtist || loadingTracks)
     return <p className="text-center text-xl">Loading...</p>;
-  if (contextError || error)
+
+  if (albumError || artistError || tracksError)
     return (
       <p className="text-center text-xl text-red-500">
-        {contextError || error}
+        Failed to load album or artist data.
       </p>
     );
+
   if (!album) return <p className="text-center text-xl">Album not found</p>;
+
+  // סינון השירים לפי האלבום
+  const filteredTracks =
+    tracks?.filter((track) => track.album === album.name) || [];
 
   return (
     <div className="max-w-screen-lg mx-auto">
@@ -115,7 +110,7 @@ const DisplayAlbum: React.FC = () => {
             <span>Album</span>
             <h2
               style={{
-                fontSize: `${Math.max(24, 60 - album.name.length)}px`, // מינימום 24px, מקסימום 60px
+                fontSize: `${Math.max(24, 60 - album.name.length)}px`,
               }}
               className="font-bold text-white mb-2"
             >
@@ -137,6 +132,7 @@ const DisplayAlbum: React.FC = () => {
           </div>
         </div>
       </div>
+
       <div className="mx-8 flex gap-4 items-center ">
         <AiFillPlayCircle size={70} color="LimeGreen" />
         <button onClick={() => setAdded(!added)} className="focus:outline-none">
@@ -151,7 +147,7 @@ const DisplayAlbum: React.FC = () => {
 
       <h3 className="font-semibold text-white m-4 mt-5"># title</h3>
       <div className="space-y-4">
-        {filteredTracks && filteredTracks.length > 0 ? (
+        {filteredTracks.length > 0 ? (
           filteredTracks.map((track) => (
             <div
               key={track.spotifyTrackId}

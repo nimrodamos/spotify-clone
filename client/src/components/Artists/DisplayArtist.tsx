@@ -1,49 +1,53 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppData } from "@/Context/AppDataContext";
-import { ITrack, IArtist } from "@/types/types";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
+import { ITrack, IArtist } from "@/types/types";
 import { VscVerifiedFilled } from "react-icons/vsc";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { getDominantColor } from "@/lib/getDominantColor";
 
+// פונקציה לשליפת פרטי אמן לפי ID
+const fetchArtistById = async (id: string): Promise<IArtist> => {
+  const response = await api.get(`/api/artists/${id}`);
+  return response.data;
+};
+
+// פונקציה לשליפת השירים של האמן
+const fetchTracksByArtist = async (artistName: string): Promise<ITrack[]> => {
+  const response = await api.get(
+    `/api/tracks/artist/${encodeURIComponent(artistName)}`
+  );
+  return response.data;
+};
+
 const DisplayArtist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const {
-    artists,
-    loading: contextLoading,
-    error: contextError,
-  } = useAppData();
-  const [tracks, setTracks] = useState<ITrack[]>([]);
-  const [artist, setArtist] = useState<IArtist | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] =
     useState<string>("rgb(0, 0, 0)");
 
-  useEffect(() => {
-    const fetchArtist = async () => {
-      try {
-        setLoading(true);
-        const foundArtist = artists.find((a) => a._id === id);
-        if (foundArtist) {
-          setArtist(foundArtist);
-        } else {
-          const response = await api.get(`/api/artists/${id}`);
-          setArtist(response.data);
-        }
-      } catch (err) {
-        setError("Failed to fetch artist data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // שליפת פרטי האמן
+  const {
+    data: artist,
+    isLoading: loadingArtist,
+    error: artistError,
+  } = useQuery({
+    queryKey: ["artist", id],
+    queryFn: () => fetchArtistById(id as string),
+    enabled: Boolean(id),
+  });
 
-    if (!contextLoading) {
-      fetchArtist();
-    }
-  }, [id, artists, contextLoading]);
+  // שליפת שירי האמן
+  const {
+    data: tracks,
+    isLoading: loadingTracks,
+    error: tracksError,
+  } = useQuery({
+    queryKey: ["tracks", artist?.name],
+    queryFn: () => fetchTracksByArtist(artist!.name),
+    enabled: Boolean(artist?.name),
+  });
 
   useEffect(() => {
     if (artist?.images?.[0]?.url) {
@@ -55,18 +59,17 @@ const DisplayArtist: React.FC = () => {
     }
   }, [artist]);
 
-  useEffect(() => {
-    if (artist) {
-      api
-        .get(`/api/tracks/artist/${artist.name}`)
-        .then((response) => setTracks(response.data))
-        .catch(() => console.error("Failed to fetch tracks for this artist."));
-    }
-  }, [artist]);
+  if (loadingArtist || loadingTracks)
+    return <p className="text-center text-xl">Loading...</p>;
 
-  if (loading) return <p>Loading artist...</p>;
-  if (error || contextError) return <p>{error || contextError}</p>;
-  if (!artist) return <p>Artist not found</p>;
+  if (artistError || tracksError)
+    return (
+      <p className="text-center text-xl text-red-500">
+        Failed to load artist data
+      </p>
+    );
+
+  if (!artist) return <p className="text-center text-xl">Artist not found</p>;
 
   return (
     <div
@@ -78,7 +81,7 @@ const DisplayArtist: React.FC = () => {
       {/* Artist Image */}
       <div className="relative">
         <img
-          src={artist.images?.[0]?.url}
+          src={artist.images?.[0]?.url || "/default-artist.jpg"}
           alt={artist.name}
           className="w-full h-96 object-cover"
         />
@@ -90,12 +93,10 @@ const DisplayArtist: React.FC = () => {
           </div>
           <h2 className="text-8xl font-bold">{artist.name}</h2>
           <p className="text-l pt-2">
-            {artist.followers.total.toLocaleString()} monthly listeners
+            {artist.followers?.total?.toLocaleString() || "0"} monthly listeners
           </p>
         </div>
       </div>
-
-      {/* Background with Dynamic Gradient */}
 
       <div className="m-4 flex gap-4 items-center ">
         <AiFillPlayCircle size={"70px"} color="LimeGreen" />
@@ -106,9 +107,9 @@ const DisplayArtist: React.FC = () => {
       </div>
 
       <div className="m-4">
-        <h3 className="text-2xl font-semibold mb-4">Popular </h3>
+        <h3 className="text-2xl font-semibold mb-4">Popular</h3>
         <ul>
-          {tracks.length > 0 ? (
+          {tracks && tracks.length > 0 ? (
             tracks.map((track, index) => (
               <li
                 key={track.spotifyTrackId}
