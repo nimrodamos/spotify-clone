@@ -51,7 +51,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
 
   // LSB states
   const [isLsbOpen, setIsLsbOpen] = useState(true);
-  const [lsbWidth, setLsbWidth] = useState(SIDEBAR_CONSTRAINTS.MIN_WIDTH);
+  const [lsbWidth, setLsbWidth] = useState(SIDEBAR_CONSTRAINTS.MAX_WIDTH);
   const [isResizingLsb, setIsResizingLsb] = useState(false);
 
   // RSB states
@@ -66,7 +66,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
     setLsbWidth(
       isLsbOpen
         ? SIDEBAR_CONSTRAINTS.COLLAPSED_WIDTH
-        : SIDEBAR_CONSTRAINTS.MIN_WIDTH
+        : SIDEBAR_CONSTRAINTS.MAX_WIDTH
     );
   };
 
