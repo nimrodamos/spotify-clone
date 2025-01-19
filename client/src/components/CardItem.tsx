@@ -29,8 +29,12 @@ const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
         alt={name}
       />
       <div className="absolute inset-0 flex items-center justify-end pr-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
-        <AiFillPlayCircle size={70} color="#1ed760" />
+        <div className="relative">
+          <div className="absolute bg-black w-[40px] h-[40px] rounded opacity-80 right-3 top-3"></div>
+          <AiFillPlayCircle size={70} color="#1ed760" className="relative" />
+        </div>
       </div>
+
       <p className="font-bold mt-2 mb-1">{name}</p>
       <p className="text-sm text-textSubdued">{desc}</p>
     </div>
