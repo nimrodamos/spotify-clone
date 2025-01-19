@@ -33,7 +33,7 @@ const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
       />
 
       <p className="font-bold mt-2 mb-1">{name}</p>
-      <p className="text-slate-200 text-sm">{desc}</p>
+      <p className="text-sm text-textSubdued">{desc}</p>
     </div>
   );
 };

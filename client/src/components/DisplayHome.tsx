@@ -87,7 +87,7 @@ const DisplayHome: React.FC = () => {
     return <div className="text-center text-red-500">Failed to load data</div>;
 
   return (
-    <div className="min-h-full w-full">
+    <div className="min-h-full w-full text-white">
       <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full ">
         {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
