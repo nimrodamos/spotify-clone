@@ -83,7 +83,7 @@ const DisplayArtist: React.FC = () => {
         <img
           src={artist.images?.[0]?.url || "/default-artist.jpg"}
           alt={artist.name}
-          className="w-full h-96 object-cover"
+          className="w-full h-[300px] object-cover"
         />
         <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-[#16151575] to-transparent w-full">
           <div className="mb-6"></div>

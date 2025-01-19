@@ -52,11 +52,11 @@ const DisplayHome: React.FC = () => {
     error: playlistsError,
   } = useQuery({ queryKey: ["playlists"], queryFn: fetchPlaylists });
 
-  useEffect(() => {
-    console.log("Fetched albums:", albums);
-    console.log("Fetched artists:", artists);
-    console.log("Fetched playlists:", playlists);
-  }, [albums, artists, playlists]);
+  // useEffect(() => {
+  //   console.log("Fetched albums:", albums);
+  //   console.log("Fetched artists:", artists);
+  //   console.log("Fetched playlists:", playlists);
+  // }, [albums, artists, playlists]);
 
   useEffect(() => {
     if (albumsError) console.error("Albums fetch error:", albumsError);
@@ -88,7 +88,7 @@ const DisplayHome: React.FC = () => {
 
   return (
     <div className="min-h-full w-full">
-      <div className="bg-gradient-to-b from-[#141b14] via-backgroundBase/100 to-backgroundBase w-full p-4">
+      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full p-4">
         {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
         {user && (
