@@ -4,16 +4,20 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IAlbum } from "@/types/types";
 
-// פונקציה לשליפת האלבומים
-const fetchAlbums = async (): Promise<IAlbum[]> => {
-  const response = await api.get("/api/albums/offset?offset=0&limit=50");
+// פונקציה לשליפת האלבומים עם בדיקת מבנה הנתונים
+const fetchAlbums = async (): Promise<{
+  data: IAlbum[];
+  total: number;
+  hasMore: boolean;
+}> => {
+  const response = await api.get("/api/albums/offset?offset=0&limit=20");
   return response.data;
 };
 
 const AllAlbums: React.FC = () => {
-  // שליפת נתונים באמצעות React Query
+  // שליפת נתונים באמצעות React Query עם מבנה מותאם
   const {
-    data: albums = [],
+    data: albumsResponse = { data: [], total: 0, hasMore: false },
     isLoading,
     error,
   } = useQuery({
@@ -21,9 +25,15 @@ const AllAlbums: React.FC = () => {
     queryFn: fetchAlbums,
   });
 
+  // חילוץ הנתונים מתוך האובייקט
+  const albums = albumsResponse.data || [];
+
   useEffect(() => {
-    console.log("Fetched albums:", albums);
-  }, [albums]);
+    console.log("Fetched albums:", albumsResponse);
+    if (albums.length > 0) {
+      console.log("First album:", albums[0]);
+    }
+  }, [albumsResponse]);
 
   if (isLoading) return <p className="text-center text-white">Loading...</p>;
   if (error) {
@@ -32,18 +42,20 @@ const AllAlbums: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
       {Array.isArray(albums) && albums.length > 0 ? (
-        albums.map((album) => (
-          <CardItem
-            key={album.spotifyAlbumId}
-            name={album.name}
-            desc={album.artist}
-            id={album.spotifyAlbumId}
-            image={album.albumCoverUrl || "/default-album.jpg"}
-            type="album"
-          />
-        ))
+        albums.map((album) =>
+          album?.spotifyAlbumId && album?.name ? (
+            <CardItem
+              key={album.spotifyAlbumId}
+              name={album.name}
+              desc={album.artist || "Unknown Artist"}
+              id={album.spotifyAlbumId}
+              image={album.albumCoverUrl || "/default-album.jpg"}
+              type="album"
+            />
+          ) : null
+        )
       ) : (
         <p className="text-center text-gray-400">No albums available</p>
       )}

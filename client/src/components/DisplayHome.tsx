@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import CarouselArtists from "./Artists/CarouselArtists";
@@ -35,13 +35,13 @@ const DisplayHome: React.FC = () => {
   const navigate = useNavigate();
 
   const {
-    data: albums = [],
+    data: albums = { data: [], total: 0, hasMore: false },
     isLoading: loadingAlbums,
     error: albumsError,
   } = useQuery({ queryKey: ["albums"], queryFn: fetchAlbums });
 
   const {
-    data: artists = [],
+    data: artists = { data: [], total: 0, hasMore: false },
     isLoading: loadingArtists,
     error: artistsError,
   } = useQuery({ queryKey: ["artists"], queryFn: fetchArtists });
@@ -58,12 +58,13 @@ const DisplayHome: React.FC = () => {
     console.log("Fetched playlists:", playlists);
   }, [albums, artists, playlists]);
 
-  const loading = loadingAlbums || loadingArtists || loadingPlaylists;
-  const error = albumsError || artistsError || playlistsError;
+  useEffect(() => {
+    if (albumsError) console.error("Albums fetch error:", albumsError);
+    if (artistsError) console.error("Artists fetch error:", artistsError);
+    if (playlistsError) console.error("Playlists fetch error:", playlistsError);
+  }, [albumsError, artistsError, playlistsError]);
 
-  const [filter, setFilter] = React.useState<"all" | "music" | "podcast">(
-    "all"
-  );
+  const [filter, setFilter] = useState<"all" | "music" | "podcast">("all");
 
   const filteredAlbums = React.useMemo(() => {
     if (!albums?.data || !Array.isArray(albums.data)) return [];
@@ -73,14 +74,16 @@ const DisplayHome: React.FC = () => {
       );
     if (filter === "podcast") return [];
     return albums.data;
-  }, [filter, albums]);
+  }, [filter, albums.data]);
 
   useEffect(() => {
     console.log("Filtered albums:", filteredAlbums);
   }, [filteredAlbums]);
 
-  if (loading) return <div className="text-center text-white">Loading...</div>;
-  if (error)
+  if (loadingAlbums || loadingArtists || loadingPlaylists)
+    return <div className="text-center text-white">Loading...</div>;
+
+  if (albumsError || artistsError || playlistsError)
     return <div className="text-center text-red-500">Failed to load data</div>;
 
   return (
@@ -106,8 +109,8 @@ const DisplayHome: React.FC = () => {
           </h1>
           <ShowAllButton onClick={() => navigate("/artists")} />
         </div>
-        {Array.isArray(artists) && artists.length > 0 ? (
-          <CarouselArtists artists={artists} />
+        {Array.isArray(artists.data) && artists.data.length > 0 ? (
+          <CarouselArtists artists={artists.data} />
         ) : (
           <p className="text-center text-gray-400">No artists available</p>
         )}
