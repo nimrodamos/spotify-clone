@@ -61,7 +61,7 @@ const DisplayTrack: React.FC = () => {
   if (!artist) return <p>Artist not found</p>;
 
   return (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="min-h-screen w-full">
       <div
         className="p-5"
         style={{
