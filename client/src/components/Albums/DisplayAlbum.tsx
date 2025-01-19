@@ -8,21 +8,27 @@ import { FaCheckCircle } from "react-icons/fa";
 import { BiPlusCircle } from "react-icons/bi";
 import { getDominantColor } from "@/lib/getDominantColor";
 
-// פונקציה לשליפת פרטי אלבום
+// Fetch album details by ID
 const fetchAlbumById = async (id: string): Promise<IAlbum> => {
   const response = await api.get(`/api/albums/${id}`);
-  return response.data;
+  const album = response.data;
+
+  album.artist = album.artist
+    .split(/,\s*/)
+    .map((artist: string) => artist.trim());
+  return album;
 };
 
-// פונקציה לשליפת פרטי אמן
-const fetchArtistByName = async (artistName: string): Promise<IArtist> => {
-  const response = await api.get(
-    `/api/artists/name/${encodeURIComponent(artistName)}`
+// Fetch artist details by name
+const fetchArtistByName = async (artistNames: string[]): Promise<IArtist[]> => {
+  const artistPromises = artistNames.map((artistName) =>
+    api.get(`/api/artists/name/${encodeURIComponent(artistName)}`)
   );
-  return response.data;
+  const responses = await Promise.all(artistPromises);
+  return responses.map((response) => response.data);
 };
 
-// פונקציה לשליפת השירים של האלבום
+// Fetch tracks by artist name
 const fetchTracksByArtist = async (artistName: string): Promise<ITrack[]> => {
   const response = await api.get(
     `/api/tracks/artist/${encodeURIComponent(artistName)}`
@@ -35,7 +41,7 @@ const DisplayAlbum: React.FC = () => {
   const [background, setBackground] = useState<string>("#121212");
   const [added, setAdded] = useState<boolean>(false);
 
-  // שליפת האלבום
+  // Fetch album details
   const {
     data: album,
     isLoading: loadingAlbum,
@@ -46,67 +52,73 @@ const DisplayAlbum: React.FC = () => {
     enabled: Boolean(id),
   });
 
-  // שליפת האמן
+  // Fetch artist details
   const {
-    data: artist,
-    isLoading: loadingArtist,
-    error: artistError,
+    data: artists,
+    isLoading: loadingArtists,
+    error: artistsError,
   } = useQuery({
-    queryKey: ["artist", album?.artist],
-    queryFn: () => fetchArtistByName(album?.artist as string),
+    queryKey: [
+      "artists",
+      Array.isArray(album?.artist) ? album.artist.join(",") : "",
+    ],
+    queryFn: () =>
+      fetchArtistByName(Array.isArray(album?.artist) ? album.artist : []),
     enabled: Boolean(album?.artist),
   });
 
-  // שליפת השירים של האלבום
+  // Fetch album tracks
   const {
     data: tracks,
     isLoading: loadingTracks,
     error: tracksError,
   } = useQuery({
     queryKey: ["tracks", album?.artist],
-    queryFn: () => fetchTracksByArtist(album?.artist as string),
+    queryFn: () => fetchTracksByArtist(album?.artist?.[0] || ""),
     enabled: Boolean(album?.artist),
   });
 
+  // Update background color based on album cover
   useEffect(() => {
     if (album?.albumCoverUrl) {
-      getDominantColor(album.albumCoverUrl).then((color) => {
-        setBackground(color);
-      });
+      getDominantColor(album.albumCoverUrl).then((color) =>
+        setBackground(color)
+      );
     }
   }, [album?.albumCoverUrl]);
 
-  if (loadingAlbum || loadingArtist || loadingTracks)
+  // Handle loading and error states
+  if (loadingAlbum || loadingArtists || loadingTracks) {
     return <p className="text-center text-xl">Loading...</p>;
-
-  if (albumError || artistError || tracksError)
+  }
+  if (albumError || artistsError || tracksError) {
     return (
       <p className="text-center text-xl text-red-500">
         Failed to load album or artist data.
       </p>
     );
-
+  }
   if (!album) return <p className="text-center text-xl">Album not found</p>;
 
-  // סינון השירים לפי האלבום
+  // Filter tracks by album name
   const filteredTracks =
     tracks?.filter((track) => track.album === album.name) || [];
 
   return (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="min-h-screen w-full">
       <div
-        className="p-5"
+        className="px-5"
         style={{
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           <img
             className="w-48 h-48 object-cover rounded-md shadow-md"
             src={album.albumCoverUrl}
             alt={album.name}
           />
-          <div className="m-5">
+          <div className="mx-3 mt-10">
             <span>Album</span>
             <h2
               style={{
@@ -116,25 +128,26 @@ const DisplayAlbum: React.FC = () => {
             >
               {album.name}
             </h2>
-
-            <div className="flex items-center space-x-4">
-              {artist?.images?.[0]?.url && (
-                <img
-                  className="w-12 h-12 object-cover rounded-full"
-                  src={artist.images[0].url}
-                  alt={artist.name}
-                />
-              )}
-              <p className="text-lg text-gray-300">{album.artist}</p>
-              <p className="text-sm text-gray-400">{album.releaseDate}</p>
-              <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
-            </div>
+            {artists?.map((artist) => (
+              <div key={artist.name} className="flex items-center">
+                {artist.images?.[0]?.url && (
+                  <img
+                    className="w-12 h-12 object-cover rounded-full"
+                    src={artist.images[0].url}
+                    alt={artist.name}
+                  />
+                )}
+                <p className="text-lg text-gray-300">{artist.name}</p>
+              </div>
+            ))}
+            <p className="text-sm text-gray-400">{album.releaseDate}</p>
+            <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
           </div>
         </div>
       </div>
 
-      <div className="mx-8 flex gap-4 items-center ">
-        <AiFillPlayCircle size={70} color="LimeGreen" />
+      <div className="mx-8 flex gap-4 items-center">
+        <AiFillPlayCircle size={70} color="#1ed760" />
         <button onClick={() => setAdded(!added)} className="focus:outline-none">
           {added ? (
             <FaCheckCircle size={32} color="LimeGreen" />

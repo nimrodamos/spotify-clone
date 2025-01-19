@@ -1,8 +1,17 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import { ITrack } from "@/types/types";
 
 type RsbMode = "queue" | "song";
 
 interface AppDataContextType {
+  // Track data
+  tracks: ITrack[];
+  loading: boolean;
+  error: string | null;
+  setTracks: (tracks: ITrack[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+
   // LSB states
   isLsbOpen: boolean;
   lsbWidth: number;
@@ -35,6 +44,11 @@ export const SIDEBAR_CONSTRAINTS = {
 export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  // Track states
+  const [tracks, setTracks] = useState<ITrack[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
   // LSB states
   const [isLsbOpen, setIsLsbOpen] = useState(true);
   const [lsbWidth, setLsbWidth] = useState(SIDEBAR_CONSTRAINTS.MIN_WIDTH);
@@ -68,6 +82,13 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <AppDataContext.Provider
       value={{
+        tracks,
+        loading,
+        error,
+        setTracks,
+        setLoading,
+        setError,
+
         isLsbOpen,
         lsbWidth,
         setLsbWidth,

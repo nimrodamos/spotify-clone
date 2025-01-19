@@ -35,7 +35,12 @@ function Player() {
             console.log("Player is ready with Device ID:", device_id);
             setIsReady(true);
             setActiveDevice(device_id);
-          });
+        
+            // Set initial volume
+            playerInstance.setVolume(0.8).then(() => {
+                console.log("Volume set to 80%");
+            });
+        });
 
           playerInstance.addListener("not_ready", ({ device_id }) => {
             console.warn("Device ID has gone offline:", device_id);

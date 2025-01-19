@@ -13,7 +13,7 @@ interface PersonalizedPlaylistsProps {
 const PersonalizedPlaylists: React.FC<PersonalizedPlaylistsProps> = ({
   playlists,
 }) => (
-  <div className="flex overflow-auto px-8">
+  <div className="flex overflow-auto scrollbar-hide">
     {playlists.map((playlist) => (
       <CardItem
         key={playlist._id}

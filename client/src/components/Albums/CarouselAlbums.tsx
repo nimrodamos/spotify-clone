@@ -18,7 +18,7 @@ const CarouselAlbums: React.FC<CarouselAlbumsProps> = ({ albums }) => {
   }
 
   return (
-    <div className="flex overflow-auto px-8">
+    <div className="flex overflow-auto scrollbar-hide">
       {albums.map((album) => (
         <CardItem
           key={album.spotifyAlbumId}

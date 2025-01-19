@@ -7,40 +7,45 @@ import { AiFillPlayCircle } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
 import { BiPlusCircle } from "react-icons/bi";
 import { getDominantColor } from "@/lib/getDominantColor";
+import { useQuery } from "@tanstack/react-query";
 
 const DisplayTrack: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { tracks, loading: contextLoading, error: contextError } = useAppData();
-  const [track, setTrack] = useState<ITrack | null>(null);
-  const [artist, setArtist] = useState<IArtist | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [added, setAdded] = useState<boolean>(false);
   const [background, setBackground] = useState<string>("#121212");
 
-  useEffect(() => {
-    const fetchTrack = async () => {
-      try {
-        setLoading(true);
-        const foundTrack = tracks.find((t) => t._id === id);
-        if (foundTrack) {
-          setTrack(foundTrack);
-        } else {
-          const response = await api.get(`/api/tracks/${id}`);
-          setTrack(response.data);
-        }
-      } catch (err) {
-        setError("Failed to fetch track data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch track data with React Query
+  const {
+    data: track,
+    isLoading: trackLoading,
+    error: trackError,
+  } = useQuery<ITrack>({
+    queryKey: ["track", id],
+    queryFn: async () => {
+      const foundTrack = tracks.find((t) => t._id === id);
+      if (foundTrack) return foundTrack;
+      const response = await api.get(`/api/tracks/${id}`);
+      return response.data;
+    },
+    enabled: !contextLoading, // Ensure the query runs only after context data loads
+  });
 
-    if (!contextLoading) {
-      fetchTrack();
-    }
-  }, [id, tracks, contextLoading]);
+  // Fetch artist data with React Query
+  const {
+    data: artist,
+    isLoading: artistLoading,
+    error: artistError,
+  } = useQuery<IArtist>({
+    queryKey: ["artist", track?.artist],
+    queryFn: async () => {
+      const response = await api.get(`/api/artists/name/${track?.artist}`);
+      return response.data;
+    },
+    enabled: !!track?.artist, // Run only if track data is available
+  });
 
+  // Get dominant color from album cover
   useEffect(() => {
     if (track?.albumCoverUrl) {
       getDominantColor(track.albumCoverUrl).then((color) => {
@@ -49,27 +54,9 @@ const DisplayTrack: React.FC = () => {
     }
   }, [track]);
 
-  useEffect(() => {
-    const fetchArtist = async () => {
-      try {
-        if (track?.artist) {
-          const artistResponse = await api.get(
-            `/api/artists/name/${track.artist}`
-          );
-          setArtist(artistResponse.data);
-        }
-      } catch (err) {
-        setError("Failed to fetch artist data");
-      }
-    };
-
-    if (track) {
-      fetchArtist();
-    }
-  }, [track]);
-
-  if (loading) return <p>Loading track...</p>;
-  if (error || contextError) return <p>{error || contextError}</p>;
+  if (trackLoading || artistLoading) return <p>Loading track...</p>;
+  if (trackError || artistError || contextError)
+    return <p>Failed to load data</p>;
   if (!track) return <p>Track not found</p>;
   if (!artist) return <p>Artist not found</p>;
 
@@ -99,7 +86,7 @@ const DisplayTrack: React.FC = () => {
         </div>
 
         <div className="mt-8 flex gap-4 items-center">
-          <AiFillPlayCircle size={70} color="LimeGreen" />
+          <AiFillPlayCircle size={70} color="#1ed760" />
           <button
             onClick={() => setAdded(!added)}
             className="focus:outline-none"
@@ -112,17 +99,19 @@ const DisplayTrack: React.FC = () => {
           </button>
           <div className="text-white text-2xl cursor-pointer">&#8230;</div>
         </div>
+
         <div className="mt-8 flex items-center gap-4">
           <img
-            src={artist.images[0].url}
+            src={artist.images?.[0]?.url || "/default-artist.jpg"}
             alt={track.name}
             className="w-[70px] h-[70px] object-cover rounded-full"
           />
           <div className="flex flex-col">
-            <h1 className="text-l font-bold ">artist</h1>
-            <h1 className="text-l font-bold ">{track.artist}</h1>
+            <h1 className="text-l font-bold">Artist</h1>
+            <h1 className="text-l font-bold">{track.artist}</h1>
           </div>
         </div>
+
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Recommended</h2>
           {/* Render recommended tracks here if available */}

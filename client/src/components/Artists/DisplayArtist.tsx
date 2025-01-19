@@ -73,7 +73,7 @@ const DisplayArtist: React.FC = () => {
 
   return (
     <div
-      className="relative"
+      className="relative text-white"
       style={{
         background: `linear-gradient(to bottom, ${backgroundColor}, #121212)`,
       }}
@@ -91,19 +91,19 @@ const DisplayArtist: React.FC = () => {
             <VscVerifiedFilled size={"25px"} color="DeepSkyBlue" />
             Verified Artist
           </div>
-          <h2 className="text-8xl font-bold">{artist.name}</h2>
-          <p className="text-l pt-2">
+          <h2 className="text-8xl text-white font-bold">{artist.name}</h2>
+          <p className="text-l pt-2 text-background">
             {artist.followers?.total?.toLocaleString() || "0"} monthly listeners
           </p>
         </div>
       </div>
 
       <div className="m-4 flex gap-4 items-center ">
-        <AiFillPlayCircle size={"70px"} color="LimeGreen" />
-        <button className="bg-transparent text-white border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
+        <AiFillPlayCircle size={"70px"} color="#1ed760" />
+        <button className="bg-transparent  border border-white py-1 px-4 rounded-full hover:bg-white hover:text-black transition">
           Follow
         </button>
-        <div className="text-white text-2xl cursor-pointer">&#8230;</div>
+        <div className=" text-2xl cursor-pointer">&#8230;</div>
       </div>
 
       <div className="m-4">
