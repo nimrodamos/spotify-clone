@@ -8,6 +8,7 @@ import PersonalizedPlaylists from "./Playlists/PersonalizedPlaylists";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IAlbum } from "@/types/types";
+import CarouselWhatsNew from "./CarouselWhatsNew";
 
 const ShowAllButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <button onClick={onClick} className="hover:underline text-sm mb-2">
@@ -99,6 +100,17 @@ const DisplayHome: React.FC = () => {
               <PersonalizedPlaylists playlists={playlists} />
             </div>
           )}
+
+          <div className="flex justify-between items-center pl-3 py-3">
+            <h1
+              className="font-bold text-2xl cursor-pointer hover:underline"
+              onClick={() => navigate("/whats-new")}
+            >
+              What's New
+            </h1>
+            <ShowAllButton onClick={() => navigate("/whats-new")} />
+          </div>
+          <CarouselWhatsNew />
 
           <div className="flex justify-between items-center pl-3 py-3">
             <h1
