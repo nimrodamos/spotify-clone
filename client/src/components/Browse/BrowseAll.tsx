@@ -68,7 +68,7 @@ const BrowseAll: React.FC = () => {
 
   return (
     <div className="px-10 py-8">
-      <h1 className="text-white text-5xl font-bold mb-12">Browse all</h1>
+      <h1 className="text-white text-2xl font-bold mb-4">Browse all</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {categories?.map((category: any, index: number) => (
           <div
