@@ -14,7 +14,9 @@ function Player() {
 
   useEffect(() => {
     if (!user) {
-      console.error("User not authenticated. Cannot initialize Spotify player.");
+      console.error(
+        "User not authenticated. Cannot initialize Spotify player."
+      );
       return;
     }
 
@@ -35,12 +37,12 @@ function Player() {
             console.log("Player is ready with Device ID:", device_id);
             setIsReady(true);
             setActiveDevice(device_id);
-        
+
             // Set initial volume
-            playerInstance.setVolume(0.8).then(() => {
-                console.log("Volume set to 80%");
+            playerInstance.setVolume(0.1).then(() => {
+              console.log("Volume set to 10%");
             });
-        });
+          });
 
           playerInstance.addListener("not_ready", ({ device_id }) => {
             console.warn("Device ID has gone offline:", device_id);
@@ -106,13 +108,18 @@ function Player() {
       );
 
       if (response.status === 204) {
-        console.log("Playback successfully transferred to the Web Playback SDK device.");
+        console.log(
+          "Playback successfully transferred to the Web Playback SDK device."
+        );
       } else {
         console.error("Failed to transfer playback:", response.data);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Error transferring playback:", error.response?.data || error.message);
+        console.error(
+          "Error transferring playback:",
+          error.response?.data || error.message
+        );
       } else {
         console.error("Error transferring playback:", error);
       }
@@ -184,7 +191,11 @@ function Player() {
         </div>
         <div className="flex flex-col items-center gap-1 m-auto">
           <div className="flex gap-4">
-            <img className="w-4 cursor-pointer" src={assets.shuffle_icon} alt="" />
+            <img
+              className="w-4 cursor-pointer"
+              src={assets.shuffle_icon}
+              alt=""
+            />
             <img className="w-4 cursor-pointer" src={assets.prev_icon} alt="" />
             <img
               className={`w-4 cursor-pointer ${!isReady ? "opacity-50" : ""}`}
