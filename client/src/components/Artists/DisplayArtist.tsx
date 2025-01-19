@@ -92,7 +92,7 @@ const DisplayArtist: React.FC = () => {
             Verified Artist
           </div>
           <h2 className="text-8xl text-white font-bold">{artist.name}</h2>
-          <p className="text-l pt-2 text-background">
+          <p className="text-l pt-7 text-background ">
             {artist.followers?.total?.toLocaleString() || "0"} monthly listeners
           </p>
         </div>
