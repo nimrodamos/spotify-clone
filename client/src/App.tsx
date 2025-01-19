@@ -148,16 +148,9 @@ const App = () => {
                 <Main />
               </div>
 
-              {/* Player */}
-              {user ? (
-                <div className="w-full bg-black">
-                  <Player />
-                </div>
-              ) : (
-                <p className="text-center text-gray-400">
-                  Please log in to use the player.
-                </p>
-              )}
+              <div className="w-full bg-black">
+                <Player />
+              </div>
             </>
           )}
 
