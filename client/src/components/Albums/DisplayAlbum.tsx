@@ -112,7 +112,7 @@ const DisplayAlbum: React.FC = () => {
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
       >
-        <div className="flex items-center w-full">
+        <div className="flex items-center">
           <img
             className="w-48 h-48 object-cover rounded-md shadow-md"
             src={album.albumCoverUrl}
@@ -128,20 +128,22 @@ const DisplayAlbum: React.FC = () => {
             >
               {album.name}
             </h2>
-            {artists?.map((artist) => (
-              <div key={artist.name} className="flex items-center">
-                {artist.images?.[0]?.url && (
-                  <img
-                    className="w-12 h-12 object-cover rounded-full"
-                    src={artist.images[0].url}
-                    alt={artist.name}
-                  />
-                )}
-                <p className="text-lg text-gray-300">{artist.name}</p>
-              </div>
-            ))}
-            <p className="text-sm text-gray-400">{album.releaseDate}</p>
-            <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
+            <div className="flex flex-wrap items-center gap-4">
+              {artists?.map((artist) => (
+                <div key={artist.name} className="flex items-center space-x-2">
+                  {artist.images?.[0]?.url && (
+                    <img
+                      className="w-12 h-12 object-cover rounded-full"
+                      src={artist.images[0].url}
+                      alt={artist.name}
+                    />
+                  )}
+                  <p className="text-lg text-gray-300">{artist.name}</p>
+                </div>
+              ))}
+              <p className="text-sm text-gray-400">{album.releaseDate}</p>
+              <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
+            </div>
           </div>
         </div>
       </div>
