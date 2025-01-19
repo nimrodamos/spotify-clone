@@ -64,7 +64,7 @@ const DisplayHome: React.FC = () => {
     if (playlistsError) console.error("Playlists fetch error:", playlistsError);
   }, [albumsError, artistsError, playlistsError]);
 
-  const [filter, setFilter] = useState<"all" | "music" | "podcast">("all");
+  const [filter, setFilter] = useState<"all" | "music" | "podcasts">("all");
 
   const filteredAlbums = React.useMemo(() => {
     if (!albums?.data || !Array.isArray(albums.data)) return [];
@@ -72,7 +72,7 @@ const DisplayHome: React.FC = () => {
       return albums.data.filter((album: IAlbum) =>
         album.genres?.includes("music")
       );
-    if (filter === "podcast") return [];
+    if (filter === "podcasts") return [];
     return albums.data;
   }, [filter, albums.data]);
 
@@ -88,7 +88,7 @@ const DisplayHome: React.FC = () => {
 
   return (
     <div className="min-h-full w-full">
-      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full p-4">
+      <div className="bg-gradient-to-b from-[#1b1b1b] via-backgroundBase/100 to-backgroundBase w-full ">
         {user && <FilterButtons filter={filter} setFilter={setFilter} />}
 
         {user && (
