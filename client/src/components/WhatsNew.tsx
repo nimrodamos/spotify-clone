@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { useUserContext } from "@/Context/UserContext";
 import { IoPlayCircleSharp } from "react-icons/io5";
+import { FaCheckCircle } from "react-icons/fa";
+import { BiPlusCircle } from "react-icons/bi";
 
 const fetchNewReleases = async (accessToken: string) => {
   const response = await api.get(
@@ -18,6 +20,7 @@ const fetchNewReleases = async (accessToken: string) => {
 
 const WhatsNew: React.FC = () => {
   const { user } = useUserContext();
+  const [added, setAdded] = useState<boolean>(false);
 
   const {
     data: songs,
@@ -70,6 +73,16 @@ const WhatsNew: React.FC = () => {
               </p>
             </div>
             <IoPlayCircleSharp size={"40px"} />
+            <button
+              onClick={() => setAdded(!added)}
+              className="focus:outline-none"
+            >
+              {added ? (
+                <FaCheckCircle size={32} color="LimeGreen" />
+              ) : (
+                <BiPlusCircle size={32} />
+              )}
+            </button>
           </div>
         </div>
       ))}
