@@ -86,13 +86,15 @@ const getArtistById = async (req, res) => {
 
 const getArtistBySpotifyUrl = async (req, res) => {
   try {
-    const spotifyUrl = decodeURIComponent(req.params.spotifyUrl);
+    const spotifyId = req.params.spotifyUrl;
     const artist = await Artist.findOne({
-      "external_urls.spotify": spotifyUrl,
+      "external_urls.spotify": { $regex: new RegExp(`${spotifyId}$`, "i") },
     });
+
     if (!artist) {
       return res.status(404).json({ message: "Artist not found" });
     }
+
     res.status(200).json(artist);
   } catch (error) {
     res.status(500).json({ message: error.message });
