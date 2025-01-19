@@ -35,6 +35,28 @@ const getLimitedArtists = async (req, res) => {
   }
 };
 
+const getArtistsWithOffset = async (req, res) => {
+  try {
+    const { offset = 0, limit = 200 } = req.query;
+
+    const artists = await Artist.find({})
+      .skip(parseInt(offset))
+      .limit(parseInt(limit));
+
+    const totalArtists = await Artist.countDocuments({});
+    const hasMore = parseInt(offset) + parseInt(limit) < totalArtists;
+
+    res.status(200).json({
+      data: artists,
+      total: totalArtists,
+      hasMore,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 const getArtistByName = async (req, res) => {
   try {
     const name = decodeURIComponent(req.params.name);
@@ -62,4 +84,4 @@ const getArtistById = async (req, res) => {
   }
 };
 
-export { getArtists, getArtistById, getArtistByName, getLimitedArtists };
+export { getArtists, getArtistById, getArtistByName, getLimitedArtists, getArtistsWithOffset };

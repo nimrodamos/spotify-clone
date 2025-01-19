@@ -11,6 +11,28 @@ const getAlbums = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const getAlbumsWithOffset = async (req, res) => {
+  try {
+    const { offset = 0, limit = 200 } = req.query;
+
+    const albums = await Album.find({})
+      .skip(parseInt(offset))
+      .limit(parseInt(limit));
+
+    const totalAlbums = await Album.countDocuments({});
+    const hasMore = parseInt(offset) + parseInt(limit) < totalAlbums;
+
+    res.status(200).json({
+      data: albums,
+      total: totalAlbums,
+      hasMore,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Get limited albums
 // @route   GET /api/albums/limited
 const getLimitedAlbums = async (req, res) => {
@@ -78,4 +100,4 @@ const getAlbumByName = async (req, res) => {
   }
 };
 
-export { getAlbums, getAlbumById, getAlbumByName, getLimitedAlbums };
+export { getAlbums, getAlbumById, getAlbumByName, getLimitedAlbums, getAlbumsWithOffset };

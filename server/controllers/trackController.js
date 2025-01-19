@@ -10,6 +10,30 @@ const getTracks = async (req, res) => {
   }
 };
 
+const getTracksWithOffset = async (req, res) => {
+  try {
+    const { offset = 0, limit = 200 } = req.query;
+
+    const tracks = await Track.find({})
+      .skip(parseInt(offset))
+      .limit(parseInt(limit));
+
+    const totalTracks = await Track.countDocuments({});
+    const hasMore = parseInt(offset) + parseInt(limit) < totalTracks;
+
+    res.status(200).json({
+      data: tracks,
+      total: totalTracks,
+      hasMore,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
 const getTrackById = async (req, res) => {
   try {
     const { spotifyTrackId } = req.params;
@@ -48,4 +72,4 @@ const getTracksByArtist = async (req, res) => {
   }
 };
 
-export { getTracks, getTrackById, getTracksByArtist };
+export { getTracks, getTrackById, getTracksByArtist, getTracksWithOffset };
