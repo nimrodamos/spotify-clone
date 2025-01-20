@@ -42,23 +42,28 @@ const AllAlbums: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
-      {Array.isArray(albums) && albums.length > 0 ? (
-        albums.map((album) =>
-          album?.spotifyAlbumId && album?.name ? (
-            <CardItem
-              key={album.spotifyAlbumId}
-              name={album.name}
-              desc={album.artist || "Unknown Artist"}
-              id={album.spotifyAlbumId}
-              image={album.albumCoverUrl || "/default-album.jpg"}
-              type="album"
-            />
-          ) : null
-        )
-      ) : (
-        <p className="text-center text-gray-400">No albums available</p>
-      )}
+    <div className="px-12 py-10">
+      <h1 className="text-white text-4xl font-bold mb-6">All Albums</h1>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {Array.isArray(albums) && albums.length > 0 ? (
+          albums.map((album) =>
+            album?.spotifyAlbumId && album?.name ? (
+              <CardItem
+                key={album.spotifyAlbumId}
+                name={album.name}
+                desc={album.artist || "Unknown Artist"}
+                id={album.spotifyAlbumId}
+                image={album.albumCoverUrl || "/default-album.jpg"}
+                type="album"
+              />
+            ) : null
+          )
+        ) : (
+          <p className="text-center text-gray-400 col-span-full">
+            No albums available
+          </p>
+        )}
+      </div>
     </div>
   );
 };
