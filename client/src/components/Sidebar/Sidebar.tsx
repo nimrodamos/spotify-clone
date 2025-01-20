@@ -126,26 +126,26 @@ const Sidebar: React.FC = () => {
             }`}
           >
             {isLsbOpen ? (
-              <div className={`h-fit overflow-auto bg-backgroundBase transition-opacity duration-300`}>
-                {user?.playlists ? (
+                <div className={`h-fit overflow-auto bg-backgroundBase transition-opacity duration-300`}>
+                {user?.playlists && user.playlists.length > 0 ? (
                   <SidebarPlaylistAndArtists
-                    filter={filter}
-                    searchQuery={searchQuery}
-                    sidebarFilter={sidebarFilter}
-                    setFilter={setFilter}
-                    setSidebarFilter={setSidebarFilter}
-                    setSearchQuery={setSearchQuery}
-                    clearFilter={clearFilter}
+                  filter={filter}
+                  searchQuery={searchQuery}
+                  sidebarFilter={sidebarFilter}
+                  setFilter={setFilter}
+                  setSidebarFilter={setSidebarFilter}
+                  setSearchQuery={setSearchQuery}
+                  clearFilter={clearFilter}
                   />
                 ) : (
                   <>
-                    <SidebarPlaylistPrompt />
-                    <SidebarPodcastPrompt />
-                    <SidebarLinks />
-                    <SidebarLanguageSelector />
+                  <SidebarPlaylistPrompt />
+                  <SidebarPodcastPrompt />
+                  <SidebarLinks />
+                  <SidebarLanguageSelector />
                   </>
                 )}
-              </div>
+                </div>
             ) : (
               <div className="h-full overflow-y-auto no-scrollbar">
                 {randomArtists.map((artist, index) => (
