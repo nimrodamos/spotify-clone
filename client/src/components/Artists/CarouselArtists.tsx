@@ -3,7 +3,7 @@ import CardItem from "../CardItem";
 
 interface CarouselArtistsProps {
   artists?: Array<{
-    _id: string;
+    external_urls: { spotify: string };
     name: string;
     genres: string[];
     images: { url: string }[];
@@ -20,14 +20,14 @@ const CarouselArtists: React.FC<CarouselArtistsProps> = ({ artists }) => {
     <div className="flex overflow-auto scrollbar-hide">
       {artists.map((artist) => (
         <CardItem
-          key={artist._id}
+          key={artist.external_urls.spotify.split("/").pop()}
           name={artist.name}
           desc={
             artist.genres.length > 0
               ? artist.genres.join(", ")
               : "No genres available"
           }
-          id={artist._id}
+          id={artist.external_urls.spotify.split("/").pop() || "default-id"}
           image={artist.images?.[0]?.url || "/default-artist.jpg"}
           type="artist"
         />
