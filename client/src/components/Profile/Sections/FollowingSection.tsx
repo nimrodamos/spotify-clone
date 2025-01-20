@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { IArtist } from "@/types/types";
 import { AiFillPlayCircle } from "react-icons/ai";
 
@@ -9,6 +10,21 @@ interface FollowingSectionProps {
 export const FollowingSection: React.FC<FollowingSectionProps> = ({
   following,
 }) => {
+  const navigate = useNavigate();
+
+  // Extract Spotify ID from the artist's external_urls.spotify
+  const extractSpotifyId = (artist: IArtist) => {
+    return artist.external_urls?.spotify?.split("/").pop() || "";
+  };
+
+  // Handle Artist Click
+  const handleArtistClick = (artist: IArtist) => {
+    const spotifyId = extractSpotifyId(artist);
+    if (spotifyId) {
+      navigate(`/artist/${spotifyId}`);
+    }
+  };
+
   return (
     <div
       className="top-[1390px] left-0 bg-[#121212]/50 w-full py-6"
@@ -28,13 +44,12 @@ export const FollowingSection: React.FC<FollowingSectionProps> = ({
           {following.map((artist) => (
             <div
               key={artist._id}
-              className="group text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2"
+              className="group text-center hover:bg-[#1F1F1F] h-[235px] w-[180px] rounded px-2 py-2 cursor-pointer"
+              onClick={() => handleArtistClick(artist)}
             >
               <div className="relative w-[160px] h-[160px] mx-auto">
                 <img
-                  src={
-                    artist.images?.[0]?.url || "https://via.placeholder.com/50"
-                  }
+                  src={artist.images?.[0]?.url || "https://via.placeholder.com/50"}
                   alt={artist.name}
                   className="w-full h-full object-cover rounded-full shadow-md"
                 />
