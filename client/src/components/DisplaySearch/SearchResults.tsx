@@ -7,6 +7,7 @@ import SongsSection from "./SongSection";
 import MoreFrom from "./MoreFrom";
 import RelatedArtists from "./RelatedArtists";
 import Albums from "./Albums";
+import { FooterSection } from "../Profile/sections/FooterSection";
 
 const SearchResults: React.FC = () => {
     const location = useLocation();
@@ -121,6 +122,7 @@ const SearchResults: React.FC = () => {
                 currentlyPlaying={currentlyPlaying}
                 handlePlayPause={handlePlayPause}
             />
+            <FooterSection />
         </div>
     );
 };

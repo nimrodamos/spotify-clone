@@ -104,7 +104,7 @@ const RelatedArtists: React.FC<RelatedArtistsProps> = ({
                 {currentIndex > 0 && (
                     <button
                         onClick={handlePrev}
-                        className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 text-white p-2 shadow hover:bg-gray-700"
+                        className="absolute left-0 top-1/2 rounded-full transform -translate-y-1/2 z-10 bg-gray-800 text-white p-2 shadow hover:bg-gray-700"
                     >
                         <ChevronLeft size={24} />
                     </button>

@@ -45,9 +45,9 @@ const CarouselRecentlyPlayed: React.FC = () => {
 
   return (
     <div className="flex overflow-auto scrollbar-hide">
-      {recentlyPlayed.map((track: any) => (
+      {recentlyPlayed.map((track: any, index: number) => (
         <CardItem
-          key={track.id}
+          key={`${track.id || "track"}-${index}`} // Ensure unique keys by appending the index
           name={track.name}
           desc={track.artists.map((artist: any) => artist.name).join(", ")}
           id={track.id}

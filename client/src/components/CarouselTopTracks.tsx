@@ -41,9 +41,9 @@ const CarouselTopTracks: React.FC = () => {
 
   return (
     <div className="flex overflow-auto scrollbar-hide">
-      {topTracks.map((track: any) => (
+      {topTracks.map((track: any, index: number) => (
         <CardItem
-          key={track.id}
+          key={`${track.id || "topTrack"}-${index}`} // Ensure unique keys by appending the index
           name={track.name}
           desc={track.artists.map((artist: any) => artist.name).join(", ")}
           id={track.id}

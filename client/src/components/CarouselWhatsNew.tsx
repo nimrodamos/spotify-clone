@@ -4,7 +4,7 @@ import { api } from "@/api";
 import { useUserContext } from "@/Context/UserContext";
 import CardItem from "./CardItem";
 
-const fetchNewReleases = async (accessToken: string) => {
+const fetchWhatsNew = async (accessToken: string) => {
   const response = await api.get(
     "https://api.spotify.com/v1/browse/new-releases?limit=10",
     {
@@ -20,34 +20,34 @@ const CarouselWhatsNew: React.FC = () => {
   const { user } = useUserContext();
 
   const {
-    data: newReleases,
+    data: whatsNew,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["newReleases"],
-    queryFn: () => fetchNewReleases(user?.accessToken as string),
+    queryKey: ["whatsNew"],
+    queryFn: () => fetchWhatsNew(user?.accessToken as string),
     enabled: Boolean(user?.accessToken),
   });
 
   if (isLoading) {
-    return <p className="text-center text-gray-400">Loading new releases...</p>;
+    return <p className="text-center text-gray-400">Loading what's new...</p>;
   }
 
-  if (error || !newReleases) {
+  if (error || !whatsNew) {
     return (
-      <p className="text-center text-red-500">Failed to load new releases</p>
+      <p className="text-center text-red-500">Failed to load what's new</p>
     );
   }
 
   return (
     <div className="flex overflow-auto scrollbar-hide">
-      {newReleases.map((release: any) => (
+      {whatsNew.map((album: any, index: number) => (
         <CardItem
-          key={release.id}
-          name={release.name}
-          desc={release.artists.map((artist: any) => artist.name).join(", ")}
-          id={release.id}
-          image={release.images[0]?.url || "/default-image.jpg"}
+          key={`${album.id || "newAlbum"}-${index}`} // Ensure unique keys by appending the index
+          name={album.name}
+          desc={album.artists.map((artist: any) => artist.name).join(", ")}
+          id={album.id}
+          image={album.images[0]?.url || "/default-image.jpg"}
           type="album"
         />
       ))}
