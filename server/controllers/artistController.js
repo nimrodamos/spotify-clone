@@ -56,7 +56,6 @@ const getArtistsWithOffset = async (req, res) => {
   }
 };
 
-
 const getArtistByName = async (req, res) => {
   try {
     const name = decodeURIComponent(req.params.name);
@@ -87,6 +86,9 @@ const getArtistById = async (req, res) => {
 const getArtistBySpotifyUrl = async (req, res) => {
   try {
     const spotifyId = req.params.spotifyUrl;
+
+    console.log("Received Spotify ID:", spotifyId);
+
     const artist = await Artist.findOne({
       "external_urls.spotify": { $regex: new RegExp(`${spotifyId}$`, "i") },
     });
@@ -101,4 +103,11 @@ const getArtistBySpotifyUrl = async (req, res) => {
   }
 };
 
-export { getArtists, getArtistById, getArtistByName, getLimitedArtists, getArtistsWithOffset, getArtistBySpotifyUrl };
+export {
+  getArtists,
+  getArtistById,
+  getArtistByName,
+  getLimitedArtists,
+  getArtistsWithOffset,
+  getArtistBySpotifyUrl,
+};

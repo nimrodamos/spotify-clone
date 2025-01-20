@@ -7,13 +7,13 @@ import { VscVerifiedFilled } from "react-icons/vsc";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { getDominantColor } from "@/lib/getDominantColor";
 
-// פונקציה לשליפת פרטי אמן לפי ID
-const fetchArtistById = async (id: string): Promise<IArtist> => {
-  const response = await api.get(`/api/artists/${id}`);
+const fetchArtistBySpotifyUrl = async (
+  spotifyUrl: string
+): Promise<IArtist> => {
+  const response = await api.get(`/api/artists/spotify/${spotifyUrl}`);
   return response.data;
 };
 
-// פונקציה לשליפת השירים של האמן
 const fetchTracksByArtist = async (artistName: string): Promise<ITrack[]> => {
   const response = await api.get(
     `/api/tracks/artist/${encodeURIComponent(artistName)}`
@@ -27,18 +27,24 @@ const DisplayArtist: React.FC = () => {
   const [backgroundColor, setBackgroundColor] =
     useState<string>("rgb(0, 0, 0)");
 
-  // שליפת פרטי האמן
+  const extractSpotifyId = (url: string) => {
+    return url.split("/").pop();
+  };
+
   const {
     data: artist,
     isLoading: loadingArtist,
     error: artistError,
   } = useQuery({
     queryKey: ["artist", id],
-    queryFn: () => fetchArtistById(id as string),
+    queryFn: () =>
+      id
+        ? fetchArtistBySpotifyUrl(extractSpotifyId(id)!)
+        : Promise.reject("No ID provided"),
+
     enabled: Boolean(id),
   });
 
-  // שליפת שירי האמן
   const {
     data: tracks,
     isLoading: loadingTracks,
@@ -78,7 +84,6 @@ const DisplayArtist: React.FC = () => {
         background: `linear-gradient(to bottom, ${backgroundColor}, #121212)`,
       }}
     >
-      {/* Artist Image */}
       <div className="relative">
         <img
           src={artist.images?.[0]?.url || "/default-artist.jpg"}
