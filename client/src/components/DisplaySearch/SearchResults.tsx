@@ -1,212 +1,128 @@
-import { CirclePlus, Ellipsis } from "lucide-react";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoIosPause } from "react-icons/io";
-import { FaPlay } from "react-icons/fa";
 import { useUserContext } from "@/Context/UserContext.tsx";
+import FilterButtons from "./FilterButtons";
+import TopResult from "./TopResult";
+import SongsSection from "./SongSection";
+import MoreFrom from "./MoreFrom";
+import RelatedArtists from "./RelatedArtists";
+import Albums from "./Albums";
 
 const SearchResults: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user } = useUserContext();
-  const { results } = location.state || {};
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { user } = useUserContext();
+    const { results } = location.state || {};
 
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
-  const [currentFilter, setCurrentFilter] = useState("All");
+    const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+    const [currentFilter, setCurrentFilter] = useState("All");
 
-  if (!results) {
-    return <p className="text-white">No search results available. Try searching again.</p>;
-  }
-
-  const { tracks, artists } = results;
-
-  // Filter logic
-  const filteredTracks =
-    currentFilter === "All" || currentFilter === "Songs" ? tracks?.items || [] : [];
-  const filteredArtists =
-    currentFilter === "All" || currentFilter === "Artists" ? artists?.items || [] : [];
-
-  // Extract Artist ID from Spotify URL
-  const extractArtistId = (spotifyUrl: string) => {
-    const parts = spotifyUrl.split("/");
-    return parts[parts.length - 1]; // Get the last part of the URL
-  };
-
-  // Handle Artist Click
-  const handleArtistClick = (spotifyUrl: string) => {
-    const artistId = extractArtistId(spotifyUrl);
-    navigate(`/artist/${artistId}`); // Navigate to the artist's page using the extracted ID
-  };
-
-  // Play/Pause Handler
-  const handlePlayPause = async (trackUri: string | null) => {
-    if (!user || !user.accessToken) {
-      console.error("User not authenticated");
-      return;
+    if (!results) {
+        return <p className="text-white">No search results available. Try searching again.</p>;
     }
 
-    try {
-      if (currentlyPlaying === trackUri) {
-        await fetch("https://api.spotify.com/v1/me/player/pause", {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-          },
-        });
-        setCurrentlyPlaying(null);
-      } else {
-        await fetch("https://api.spotify.com/v1/me/player/play", {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            uris: trackUri ? [trackUri] : [],
-          }),
-        });
-        setCurrentlyPlaying(trackUri);
-      }
-    } catch (error) {
-      console.error("Error controlling playback:", error);
-    }
-  };
+    const { tracks, artists } = results;
 
-  return (
-    <div className="p-6 text-white">
-      {/* Filter Buttons */}
-      <div className="flex gap-4 flex-wrap mb-8">
-        {["All", "Artists", "Songs", "Playlists", "Albums", "Profiles", "Podcasts & Shows"].map(
-          (filter) => (
-            <button
-              key={filter}
-              onClick={() => setCurrentFilter(filter)}
-              className={`py-2 px-4 rounded-full transition ${
-                currentFilter === filter
-                  ? "bg-[#ffff] text-black"
-                  : "bg-[#181818] text-white hover:bg-[#282828]"
-              }`}
-            >
-              {filter}
-            </button>
-          )
-        )}
-      </div>
+    const filteredTracks =
+        currentFilter === "All" || currentFilter === "Songs" ? tracks?.items || [] : [];
+    const filteredArtists =
+        currentFilter === "All" || currentFilter === "Artists" ? artists?.items || [] : [];
 
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Top Result */}
-        {filteredArtists?.length > 0 && (
-          <div>
-            <h2 className="text-2xl font-semibold lg:mb-0 pb-4">Top result</h2>
-            <div className="bg-[#181818] rounded p-6 shadow-md w-full flex flex-col gap-4 relative group hover:bg-[#282828] transition">
-              <div className="relative">
-                <img
-                  src={filteredArtists[0]?.images?.[0]?.url || "/placeholder.jpg"}
-                  alt={filteredArtists[0]?.name || "Artist"}
-                  className="w-[120px] h-[120px] rounded-full object-cover"
+    const extractArtistId = (spotifyUrl: string) => {
+        const parts = spotifyUrl.split("/");
+        return parts[parts.length - 1];
+    };
+
+    const handleArtistClick = (spotifyUrl: string) => {
+        const artistId = extractArtistId(spotifyUrl);
+        navigate(`/artist/${artistId}`);
+    };
+
+    const handlePlayPause = async (uri: string | null, isAlbum: boolean = false) => {
+        if (!user || !user.accessToken) {
+            console.error("User not authenticated");
+            return;
+        }
+    
+        if (!uri) {
+            console.error("Invalid Spotify URI");
+            return;
+        }
+    
+        try {
+            if (currentlyPlaying === uri) {
+                await fetch("https://api.spotify.com/v1/me/player/pause", {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${user.accessToken}`,
+                    },
+                });
+                setCurrentlyPlaying(null);
+            } else {
+                const body = isAlbum
+                    ? { context_uri: uri }
+                    : { uris: [uri] };
+    
+                await fetch("https://api.spotify.com/v1/me/player/play", {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${user.accessToken}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(body),
+                });
+                setCurrentlyPlaying(uri);
+            }
+        } catch (error) {
+            console.error("Error controlling playback:", error);
+        }
+    };
+
+    return (
+        <div className="p-6 text-white bg-backgroundBase">
+            <div className="sticky top-0 p-1 z-50 bg-backgroundBase">
+            <FilterButtons currentFilter={currentFilter} setCurrentFilter={setCurrentFilter} />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {filteredArtists?.length > 0 && (
+                <TopResult
+                artist={filteredArtists[0]}
+                currentlyPlaying={currentlyPlaying}
+                handlePlayPause={handlePlayPause}
+                handleArtistClick={handleArtistClick}
                 />
-                {/* Play Button */}
-                <div
-                  className="absolute mt-6 right-2 bg-green-500 text-black rounded-full p-4 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 ease-in-out cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePlayPause(filteredArtists[0]?.uri);
-                  }}
-                >
-                  {currentlyPlaying === filteredArtists[0]?.uri ? (
-                    <IoIosPause className="text-xl" />
-                  ) : (
-                    <FaPlay className="text-xl" />
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <p
-                  onClick={() =>
-                    handleArtistClick(filteredArtists[0]?.external_urls?.spotify || "")
-                  } // Navigate using Spotify URL
-                  className={`text-3xl font-bold cursor-pointer hover:underline ${
-                    currentlyPlaying === filteredArtists[0]?.uri ? "text-green-500" : ""
-                  }`}
-                >
-                  {filteredArtists[0]?.name || "Unknown Artist"}
-                </p>
-                <p className="text-sm font-bold text-gray-400">Artist</p>
-              </div>
+            )}
+            {filteredTracks?.length > 0 && (
+                <SongsSection
+                tracks={filteredTracks}
+                currentlyPlaying={currentlyPlaying}
+                handlePlayPause={handlePlayPause}
+                />
+            )}
             </div>
-          </div>
-        )}
-
-        {/* Songs Section */}
-        {filteredTracks?.length > 0 && (
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-semibold lg:mb-0 pb-4">Songs</h2>
-            <div className="flex flex-col gap-3">
-              {filteredTracks.slice(0, 4).map((track) => (
-                <div
-                  key={track.id}
-                  className="group flex items-center justify-between hover:bg-[#282828] transition pr-4 rounded relative"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="relative">
-                      <img
-                        src={track.album?.images?.[0]?.url || "/placeholder.jpg"}
-                        alt={track.name || "Song"}
-                        className="w-[50px] h-[50px] rounded-lg object-cover"
-                      />
-                      {/* Play/Pause on Hover */}
-                      <div
-                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePlayPause(track.uri);
-                        }}
-                      >
-                        {currentlyPlaying === track.uri ? (
-                          <IoIosPause className="text-white text-2xl" />
-                        ) : (
-                          <FaPlay size={14} className="text-white text-2xl" />
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <p
-                        className={`text-sm font-semibold truncate ${
-                          currentlyPlaying === track.uri ? "text-green-500" : "text-white"
-                        } hover:underline cursor-pointer`}
-                      >
-                        {track.name || "Unknown Track"}
-                      </p>
-                      <p className="text-sm text-gray-400 truncate hover:underline cursor-pointer">
-                        {track.artists?.map((artist) => artist.name).join(", ") || "Unknown Artist"}
-                      </p>
-                    </div>
-                  </div>
-                  {/* Duration and Hover Icons */}
-                  <div className="flex items-center gap-3 text-sm text-gray-400">
-                    <CirclePlus
-                      size={15}
-                      className="opacity-0 group-hover:opacity-100 hover:scale-[1.04] mr-6 transition-opacity cursor-pointer"
-                    />
-                    <span>{formatDuration(track.duration_ms)}</span>
-                    <Ellipsis className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Helper function to format track duration
-const formatDuration = (ms: number) => {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000).toString().padStart(2, "0");
-  return `${minutes}:${seconds}`;
+            <MoreFrom
+            artistId={filteredArtists[0].id}
+            artistName={filteredArtists[0].name}
+            accessToken={user?.accessToken || ""}
+            currentlyPlaying={currentlyPlaying}
+            handlePlayPause={handlePlayPause}
+            />
+            <RelatedArtists
+                artistId={filteredArtists[0].id}
+                artistName={filteredArtists[0].name}
+                accessToken={user?.accessToken || ""}
+                currentlyPlaying={currentlyPlaying}
+                handlePlayPause={handlePlayPause}
+            />
+            <Albums
+                artistId={filteredArtists[0].id}
+                artistName={filteredArtists[0].name}
+                accessToken={user?.accessToken || ""}
+                currentlyPlaying={currentlyPlaying}
+                handlePlayPause={handlePlayPause}
+            />
+        </div>
+    );
 };
 
 export default SearchResults;
