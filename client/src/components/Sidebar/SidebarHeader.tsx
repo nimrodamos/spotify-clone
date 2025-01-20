@@ -283,17 +283,21 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   };
 
   return (
-    <div className={`p-2 ml-1 flex flex-col gap-3 transition-all duration-300 ${
-      !isLsbOpen ? 'items-center' : ''
-    }`}>
+    <div
+      className={`p-2 ml-1 flex flex-col gap-3 transition-all duration-300 ${
+        !isLsbOpen ? "items-center" : ""
+      }`}
+    >
       {/* Header Section */}
-      <div className={`flex items-center p-2 gap-2 w-full ${
-        !isLsbOpen ? 'justify-center' : ''
-      }`}>
+      <div
+        className={`flex items-center p-2 gap-2 w-full ${
+          !isLsbOpen ? "justify-center" : ""
+        }`}
+      >
         <img
           title="Collapse your library"
           className={`w-6 cursor-pointer ml-1 mt-1 transition-transform duration-300 ${
-            !isLsbOpen ? 'rotate-180' : ''
+            !isLsbOpen ? "rotate-180" : ""
           }`}
           src={assets.stack_icon}
           alt=""
@@ -301,7 +305,9 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
         />
         {isLsbOpen && (
           <>
-            <p className="font-semibold cursor-pointer ml-1">Your Library</p>
+            <p className="font-semibold cursor-pointer ml-1 text-textSubdued">
+              Your Library
+            </p>
             <div className="flex-grow"></div>
             <div className="flex items-center cursor-pointer mr-2">
               <HoverCard>
@@ -330,7 +336,9 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
                           Create a new playlist
                         </div>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => console.log("Create folder")}>
+                      <DropdownMenuItem
+                        onSelect={() => console.log("Create folder")}
+                      >
                         <div className="flex items-center gap-2 p-2 hover:bg-essentialSubdued rounded-[2px]">
                           <FaRegFolder size={"1.4rem"} />
                           Create a folder

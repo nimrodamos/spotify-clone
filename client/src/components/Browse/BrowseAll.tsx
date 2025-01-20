@@ -32,7 +32,7 @@ const BrowseAll: React.FC = () => {
     }
 
     const response = await api.get(
-      "https://api.spotify.com/v1/browse/categories?limit=20",
+      "https://api.spotify.com/v1/browse/categories?limit=50",
       {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,

@@ -56,7 +56,6 @@ const getArtistsWithOffset = async (req, res) => {
   }
 };
 
-
 const getArtistByName = async (req, res) => {
   try {
     const name = decodeURIComponent(req.params.name);
@@ -84,4 +83,31 @@ const getArtistById = async (req, res) => {
   }
 };
 
-export { getArtists, getArtistById, getArtistByName, getLimitedArtists, getArtistsWithOffset };
+const getArtistBySpotifyUrl = async (req, res) => {
+  try {
+    const spotifyId = req.params.spotifyUrl;
+
+    console.log("Received Spotify ID:", spotifyId);
+
+    const artist = await Artist.findOne({
+      "external_urls.spotify": { $regex: new RegExp(`${spotifyId}$`, "i") },
+    });
+
+    if (!artist) {
+      return res.status(404).json({ message: "Artist not found" });
+    }
+
+    res.status(200).json(artist);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export {
+  getArtists,
+  getArtistById,
+  getArtistByName,
+  getLimitedArtists,
+  getArtistsWithOffset,
+  getArtistBySpotifyUrl,
+};
