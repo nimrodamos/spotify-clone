@@ -78,7 +78,7 @@ const RightSidebar: React.FC = () => {
       />
       {/* Content Container */}
       <div className="flex-1 h-full overflow-hidden">
-        <div className="h-full overflow-y-auto custom-scrollbar">
+        <div className="h-full overflow-y-auto no-scrollbar">
           {rsbMode === "queue" ? <QueueSidebar /> : <SongSidebar />}
         </div>
       </div>

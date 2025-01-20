@@ -142,7 +142,7 @@ const QueueSidebar: React.FC = () => {
   return (
     <div
       ref={scrollContainerRef}
-      className="queue-sidebar-container relative h-full overflow-y-auto bg-[#111213] text-white"
+      className="queue-sidebar-container relative h-full overflow-y-auto bg-[#111213] text-white no-scrollbar"
       style={{ width: `${rsbWidth}px` }}
     >
       {/* Sticky Header */}
