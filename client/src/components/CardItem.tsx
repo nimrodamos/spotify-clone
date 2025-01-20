@@ -21,17 +21,19 @@ const CardItem: React.FC<CardItemProps> = ({ image, name, desc, id, type }) => {
   return (
     <div
       onClick={handleClick}
-      className="relative min-w-[180px] max-h-[300px] overflow-hidden p-2 px-3 rounded cursor-pointer hover:bg-[#ffffff26] transition-all duration-300"
+      className="relative min-w-[180px] max-h-[300px] p-2 px-3 rounded cursor-pointer group hover:bg-[#ffffff26] transition-all duration-300"
     >
-      <img
-        className="w-[180px] aspect-square object-cover rounded"
-        src={image}
-        alt={name}
-      />
-      <div className="absolute inset-0 flex items-center justify-end pr-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
-        <div className="relative">
-          <div className="absolute bg-black w-[40px] h-[40px] rounded opacity-80 right-3 top-3"></div>
-          <AiFillPlayCircle size={70} color="#1ed760" className="relative" />
+      <div className="relative">
+        <img
+          className="w-[180px] aspect-square object-cover rounded"
+          src={image}
+          alt={name}
+        />
+        <div className="absolute bottom-1 right-2 opacity-0 translate-y-6 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
+          <div className="relative">
+            <div className="absolute bg-black w-[50px] h-[50px] rounded-full opacity-80"></div>
+            <AiFillPlayCircle size={50} color="#1ed760" className="relative" />
+          </div>
         </div>
       </div>
 
