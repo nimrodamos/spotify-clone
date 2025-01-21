@@ -9,6 +9,7 @@ function Player() {
   const { user } = useUserContext();
   const navigate = useNavigate();
   const { toggleRsb } = useAppData();
+
   const [player, setPlayer] = useState<Spotify.Player | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
@@ -19,33 +20,30 @@ function Player() {
   const [isMuted, setIsMuted] = useState(false);
   const [previousVolume, setPreviousVolume] = useState(0.5);
 
-  if (!user) {
-    return (
-      <div className="bg-black mx-2 mt-4">
-        <div
-          className="text-textBase bg-gradient-to-r from-[#af2896] to-[#509bf5] p-2 pl-4 flex w-full h-full flex-row items-center justify-between cursor-pointer gap-6 mt-[-0.25rem] relative z-10"
-          data-testid="signup-bar"
-        >
-          <div className="flex flex-col">
-            <p className="text-sm font-bold" data-encore-id="text">
-              Preview of Spotify
-            </p>
-            <p className="text-base" data-encore-id="text">
-              Sign up to get unlimited songs and podcasts with occasional ads.
-              No credit card needed.
-            </p>
-          </div>
-          <button
-            data-encore-id="buttonPrimary"
-            className="bg-textBase text-black p-4 mr-4 mt-2 rounded-3xl py-3 px-8 text-base font-bold"
-            onClick={() => navigate("/signup")}
-          >
-            Sign up free
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const initializePlayer = (accessToken: string) => {
+    const playerInstance = new Spotify.Player({
+      name: "My Spotify App",
+      getOAuthToken: (cb) => cb(accessToken),
+      volume: 0.5,
+    });
+
+    playerInstance.addListener("ready", ({ device_id }) => {
+      setIsReady(true);
+      setActiveDevice(device_id);
+    });
+
+    playerInstance.addListener("player_state_changed", (state) => {
+      if (state) {
+        setIsPlaying(!state.paused);
+        setCurrentTrack(state.track_window.current_track);
+        setProgressMs(state.position);
+        setDurationMs(state.duration);
+      }
+    });
+
+    playerInstance.connect();
+    return playerInstance;
+  };
 
   useEffect(() => {
     if (!user) {
@@ -53,48 +51,21 @@ function Player() {
       return;
     }
 
-    const loadSpotifySDK = () => {
-      if (!window.onSpotifyWebPlaybackSDKReady) {
-        window.onSpotifyWebPlaybackSDKReady = () => {
-          const playerInstance = new Spotify.Player({
-            name: "My Spotify App",
-            getOAuthToken: (cb) => cb(user.accessToken),
-            volume: 0.5,
-          });
-
-          playerInstance.addListener("ready", ({ device_id }) => {
-            setIsReady(true);
-            setActiveDevice(device_id);
-          });
-
-          playerInstance.addListener("player_state_changed", (state) => {
-            if (!state) return;
-            setIsPlaying(!state.paused);
-            setCurrentTrack(state.track_window.current_track);
-            setProgressMs(state.position);
-            setDurationMs(state.duration);
-          });
-
-          playerInstance.connect().then((success) => {
-            if (!success) console.error("Failed to connect to Spotify Player");
-          });
-
-          setPlayer(playerInstance);
-        };
-      }
+    if (!window.onSpotifyWebPlaybackSDKReady) {
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        const newPlayer = initializePlayer(user.accessToken);
+        setPlayer(newPlayer);
+      };
 
       const script = document.createElement("script");
       script.src = "https://sdk.scdn.co/spotify-player.js";
       script.async = true;
       document.body.appendChild(script);
-    };
-
-    loadSpotifySDK();
+    }
 
     return () => {
       if (player) {
         player.disconnect();
-        setPlayer(null);
       }
     };
   }, [user]);
@@ -118,28 +89,17 @@ function Player() {
 
   const togglePlayPause = () => {
     if (player) {
-      if (isPlaying) {
-        player.pause();
-      } else {
-        player.resume();
-      }
+      isPlaying ? player.pause() : player.resume();
     }
   };
 
-  const skipToNext = () => {
-    if (player) player.nextTrack();
-  };
-
-  const skipToPrevious = () => {
-    if (player) player.previousTrack();
-  };
+  const skipToNext = () => player?.nextTrack();
+  const skipToPrevious = () => player?.previousTrack();
 
   const changeVolume = (value: number) => {
     if (player) {
       player.setVolume(value).then(() => setVolume(value));
-      if (value > 0) {
-        setIsMuted(false);
-      }
+      setIsMuted(value === 0);
     }
   };
 
@@ -176,6 +136,25 @@ function Player() {
     return () => clearInterval(interval);
   }, [player, isPlaying, durationMs]);
 
+  if (!user) {
+    return (
+      <div className="bg-black mx-2 mt-4">
+        <div className="text-textBase bg-gradient-to-r from-[#af2896] to-[#509bf5] p-2 pl-4 flex w-full h-full flex-row items-center justify-between cursor-pointer gap-6 mt-[-0.25rem] relative z-10">
+          <div className="flex flex-col">
+            <p className="text-sm font-bold">Preview of Spotify</p>
+            <p className="text-base">Sign up to get unlimited songs and podcasts with occasional ads. No credit card needed.</p>
+          </div>
+          <button
+            className="bg-textBase text-black p-4 mr-4 mt-2 rounded-3xl py-3 px-8 text-base font-bold"
+            onClick={() => navigate("/signup")}
+          >
+            Sign up free
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-black text-white flex justify-between items-center px-4 py-3">
       {/* Left: Track Info */}
@@ -190,9 +169,7 @@ function Player() {
         <div>
           <p className="font-semibold text-sm">{currentTrack?.name || "No track playing"}</p>
           <p className="text-xs text-gray-400">
-            {currentTrack?.artists
-              ?.map((artist: any) => artist.name)
-              .join(", ") || "Unknown Artist"}
+            {currentTrack?.artists?.map((artist: any) => artist.name).join(", ") || "Unknown Artist"}
           </p>
         </div>
       </div>
@@ -200,30 +177,22 @@ function Player() {
       {/* Center: Playback Controls */}
       <div className="flex flex-col items-center gap-2 w-1/3">
         <div className="flex items-center justify-center gap-4">
-          <Shuffle className="text-gray-400 hover:text-white cursor-pointer" size={18} />
-          <SkipBack
-            className="text-gray-400 fill-gray-400 hover:scale-[1.04] hover:fill-white hover:text-white cursor-pointer"
-            size={20}
-            onClick={skipToPrevious}
-          />
+          <Shuffle className="text-gray-400 hover:text-white hover:scale-[1.04] hover:fill-white  cursor-pointer" size={18} />
+          <SkipBack className="text-gray-400 fill-gray-400 hover:text-white hover:fill-white hover:scale-[1.04] cursor-pointer" size={20} onClick={skipToPrevious} />
           <div
             onClick={togglePlayPause}
-            className="bg-white text-black w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+            className="bg-white text-black w-10 h-10 rounded-full hover:scale-[1.04] flex items-center justify-center cursor-pointer"
           >
-            {isPlaying ? <Pause className="fill-black" size={20} /> : <Play className="fill-black hover:scale-[1.04]" size={20} />}
+            {isPlaying ? <Pause size={20} className="fill-black  " /> : <Play className="fill-black " size={20} />}
           </div>
-          <SkipForward
-            className="text-gray-400 fill-gray-400 hover:scale-[1.04] hover:fill-white hover:text-white cursor-pointer"
-            size={20}
-            onClick={skipToNext}
-          />
-          <Repeat className="text-gray-400 hover:text-white cursor-pointer" size={18} />
+          <SkipForward className="text-gray-400 fill-gray-400 hover:scale-[1.04] hover:text-white hover:fill-white cursor-pointer" size={20} onClick={skipToNext} />
+          <Repeat className="text-gray-400 hover:text-white cursor-pointer hover:scale-[1.04]" size={18} />
         </div>
         <div className="flex items-center gap-2 w-full">
           <span className="text-xs">{formatTime(progressMs)}</span>
           <input
             type="range"
-            className="w-full h-[0.3rem] rounded-full bg-gray-400 accent-white hover:accent-green-500 cursor-pointer outline-none"
+            className="w-full h-[0.4rem] bg-gray-400  rounded-full accent-white hover:accent-green-500 cursor-pointer"
             min={0}
             max={durationMs}
             value={progressMs}
@@ -236,25 +205,17 @@ function Player() {
       {/* Right: Volume Control */}
       <div className="flex items-center justify-end gap-2 w-1/3">
         {isMuted ? (
-          <VolumeX
-            className="text-gray-400 hover:text-white cursor-pointer"
-            size={20}
-            onClick={muteUnmute}
-          />
+          <VolumeX className="text-gray-400 hover:text-white cursor-pointer" size={20} onClick={muteUnmute} />
         ) : (
-          <Volume2
-            className="text-gray-400 hover:text-white cursor-pointer"
-            size={20}
-            onClick={muteUnmute}
-          />
+          <Volume2 className="text-gray-400 hover:text-white cursor-pointer" size={20} onClick={muteUnmute} />
         )}
         <input
           type="range"
-          className="w-24 h-[0.2rem] rounded-full bg-gray-400 accent-white hover:accent-green-500 cursor-pointer outline-none"
+          className="w-24 h-[0.2rem] bg-gray-400 rounded-full accent-white hover:accent-green-500 cursor-pointer"
           min={0}
           max={1}
           step={0.01}
-          value={isMuted ? 0 : volume} // Reflect muted state
+          value={isMuted ? 0 : volume}
           onChange={(e) => changeVolume(Number(e.target.value))}
         />
       </div>
