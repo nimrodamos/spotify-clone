@@ -245,7 +245,7 @@ function Player() {
             <HoverCardTrigger asChild>
               <div className="relative">
                 <Shuffle
-                  className={`text-gray-400 hover:text-white hover:scale-[1.04] cursor-pointer ${isShuffling ? "text-textPositive" : ""}`}
+                  className={`text-gray-400 hover:text-white hover:scale-[1.04] cursor-pointer ${isShuffling ? "text-textPositive hover:text-textPositive" : ""}`}
                   size={18}
                   onClick={toggleShuffle}
                 />
@@ -308,13 +308,13 @@ function Player() {
               <div className="relative">
                 {repeatState === "track" ? (
                   <RiRepeatOneLine
-                    className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
+                    className="text-textPositive hover:text-textPositive cursor-pointer hover:scale-[1.04]"
                     size={20}
                     onClick={toggleRepeat}
                   />
                 ) : repeatState === "context" ? (
                   <RiRepeat2Fill
-                    className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
+                    className="text-textPositive hover:text-textPositive cursor-pointer hover:scale-[1.04]"
                     size={20}
                     onClick={toggleRepeat}
                   />
@@ -326,11 +326,11 @@ function Player() {
                   />
                 )}
                 {repeatState !== "off" && (
-                  <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+                  <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default "></div>
                 )}
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200 " side="top">
               Repeat Mode
             </HoverCardContent>
           </HoverCard>
