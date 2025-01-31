@@ -1,17 +1,32 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Shuffle, SkipBack, Play, Pause, SkipForward, Volume2, VolumeX, LucideMonitorSpeaker } from "lucide-react";
+import {
+  Shuffle,
+  SkipBack,
+  Play,
+  Pause,
+  SkipForward,
+  Volume2,
+  VolumeX,
+  LucideMonitorSpeaker,
+} from "lucide-react";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { useAppData } from "@/Context/AppDataContext";
+// import { useAppData } from "@/Context/AppDataContext";
 import { TbMicrophone2, TbWindowMinimize } from "react-icons/tb";
 import { RiRepeat2Fill, RiRepeatOneLine } from "react-icons/ri";
+import { CgArrowsExpandRight } from "react-icons/cg";
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@radix-ui/react-hover-card";
 import { HiOutlineQueueList } from "react-icons/hi2";
 
 function Player() {
   const { user } = useUserContext();
   const navigate = useNavigate();
-  const { toggleRsb } = useAppData();
+  // const { toggleRsb } = useAppData();
   
   const [repeatState, setRepeatState] = useState<"off" | "context" | "track">("off");
   const [player, setPlayer] = useState<Spotify.Player | null>(null);
@@ -130,9 +145,7 @@ function Player() {
       console.error("Error toggling repeat:", error);
     }
   };
-
-
-
+  
   const togglePlayPause = () => {
     if (player) {
       if (isPlaying) {
@@ -219,63 +232,114 @@ function Player() {
         <div>
           <p className="font-semibold text-sm">{currentTrack?.name || "No track playing"}</p>
           <p className="text-xs text-gray-400">
-            {currentTrack?.artists?.map((artist: {name: string}) => artist.name).join(", ") || "Unknown Artist"}
+            {currentTrack?.artists?.map((artist: { name: string }) => artist.name).join(", ") || "Unknown Artist"}
           </p>
         </div>
       </div>
-
+  
       {/* Center: Playback Controls */}
       <div className="flex flex-col items-center gap-2 w-1/3">
         <div className="flex items-center justify-center gap-4">
-          <div className="relative">
-            <Shuffle
-              className={`text-gray-400 hover:text-white hover:scale-[1.04] cursor-pointer ${isShuffling ? "text-textPositive" : ""}`}
-              size={18}
-              onClick={toggleShuffle}
-            />
-            {isShuffling && (
-              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
-            )}
-          </div>
-          <SkipBack className="text-gray-400 fill-gray-400 hover:text-white hover:fill-white hover:scale-[1.04] cursor-pointer" size={20} onClick={skipToPrevious} />
-          <div
-            onClick={togglePlayPause}
-            className="bg-white text-black w-10 h-10 rounded-full hover:scale-[1.04] flex items-center justify-center cursor-pointer"
-          >
-            {isPlaying ? <Pause size={20} className="fill-black  " /> : <Play className="fill-black " size={20} />}
-          </div>
-          <SkipForward className="text-gray-400 fill-gray-400 hover:scale-[1.04] hover:text-white hover:fill-white cursor-pointer" size={20} onClick={skipToNext} />
-          {repeatState === "track" ? (
-            <div className="relative">
-              <RiRepeatOneLine
-          className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
-          size={20}
-          onClick={toggleRepeat}
+          {/* Shuffle */}
+          <HoverCard openDelay={300} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <div className="relative">
+                <Shuffle
+                  className={`text-gray-400 hover:text-white hover:scale-[1.04] cursor-pointer ${isShuffling ? "text-textPositive" : ""}`}
+                  size={18}
+                  onClick={toggleShuffle}
+                />
+                {isShuffling && (
+                  <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+                )}
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+              Shuffle
+            </HoverCardContent>
+          </HoverCard>
+  
+          {/* Previous */}
+          <HoverCard openDelay={300} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <SkipBack
+                className="text-gray-400 fill-gray-400 hover:text-white hover:fill-white hover:scale-[1.04] cursor-pointer"
+                size={20}
+                onClick={skipToPrevious}
               />
-              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
-            </div>
-          ) : repeatState === "context" ? (
-            <div className="relative">
-              <RiRepeat2Fill
-          className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
-          size={20}
-          onClick={toggleRepeat}
+            </HoverCardTrigger>
+            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+              Previous
+            </HoverCardContent>
+          </HoverCard>
+  
+          {/* Play/Pause */}
+          <HoverCard openDelay={300} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <div
+                onClick={togglePlayPause}
+                className="bg-white text-black w-10 h-10 rounded-full hover:scale-[1.04] flex items-center justify-center cursor-pointer"
+              >
+                {isPlaying ? <Pause size={20} className="fill-black" /> : <Play size={20} className="fill-black" />}
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+              {isPlaying ? "Pause" : "Play"}
+            </HoverCardContent>
+          </HoverCard>
+  
+          {/* Next */}
+          <HoverCard openDelay={300} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <SkipForward
+                className="text-gray-400 fill-gray-400 hover:scale-[1.04] hover:text-white hover:fill-white cursor-pointer"
+                size={20}
+                onClick={skipToNext}
               />
-              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
-            </div>
-          ) : (
-            <RiRepeat2Fill
-              className="text-gray-400 hover:text-white cursor-pointer hover:scale-[1.04]"
-              size={20}
-              onClick={toggleRepeat}
-            />
-          )}
+            </HoverCardTrigger>
+            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+              Next
+            </HoverCardContent>
+          </HoverCard>
+  
+          {/* Repeat */}
+          <HoverCard openDelay={300} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <div className="relative">
+                {repeatState === "track" ? (
+                  <RiRepeatOneLine
+                    className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
+                    size={20}
+                    onClick={toggleRepeat}
+                  />
+                ) : repeatState === "context" ? (
+                  <RiRepeat2Fill
+                    className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
+                    size={20}
+                    onClick={toggleRepeat}
+                  />
+                ) : (
+                  <RiRepeat2Fill
+                    className="text-gray-400 hover:text-white cursor-pointer hover:scale-[1.04]"
+                    size={20}
+                    onClick={toggleRepeat}
+                  />
+                )}
+                {repeatState !== "off" && (
+                  <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+                )}
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+              Repeat Mode
+            </HoverCardContent>
+          </HoverCard>
         </div>
         <div className="flex items-center gap-2 w-full">
           <span className="text-xs">{formatTime(progressMs)}</span>
           <input
             type="range"
-            className="w-full h-[0.4rem] bg-gray-400  rounded-full accent-white hover:accent-green-500 cursor-pointer"
+            className="w-full h-[0.4rem] bg-gray-400 rounded-full accent-white hover:accent-green-500 cursor-pointer"
             min={0}
             max={durationMs}
             value={progressMs}
@@ -284,31 +348,76 @@ function Player() {
           <span className="text-xs">{formatTime(durationMs)}</span>
         </div>
       </div>
-      {/* Right: Volume Control */}
-      <div className="flex items-center justify-end gap-2 w-1/3 cursor-pointer ">
-        <div className="relative">
-          <TbMicrophone2 
-        className={`text-gray-400 hover:text-white hover:scale-[1.04] ${window.location.pathname === "/lyrics" ? "text-textPositive hover:text-textPositive hover:scale-[1.04]" : ""}`}
-        size={20}
-        onClick={() => {
-          if (window.location.pathname === "/lyrics") {
-            navigate(-1);
-          } else {
-            navigate("/lyrics");
-          }
-        }}
-          />
-          {window.location.pathname === "/lyrics" && (
-        <div className="absolute bottom-[-8px] left-2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
-          )}
-        </div>
-        <LucideMonitorSpeaker className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
-        <HiOutlineQueueList className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
-        {isMuted ? (
-          <VolumeX className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} onClick={muteUnmute} />
-        ) : (
-          <Volume2 className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} onClick={muteUnmute} />
-        )}
+  
+      {/* Right: Controls */}
+      <div className="flex items-center justify-end gap-3 w-1/3 cursor-pointer">
+        {/* Lyrics */}
+        <HoverCard openDelay={300} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <div className="relative">
+              <TbMicrophone2
+              className={`hover:text-white hover:scale-[1.04] ${window.location.pathname === "/lyrics" ? "text-green-500" : "text-gray-400"}`}
+              size={20}
+              onClick={() => {
+                if (window.location.pathname === "/lyrics") {
+                  navigate(-1);
+                } else {
+                  navigate("/lyrics");
+                }
+              }}
+              />
+              {window.location.pathname === "/lyrics" && (
+              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full cursor-default"></div>
+              )}
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+            Lyrics
+          </HoverCardContent>
+        </HoverCard>
+          
+        {/* Queue */}
+        <HoverCard openDelay={300} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <div>
+              <HiOutlineQueueList
+                className="text-gray-400 hover:text-white hover:scale-[1.04]"
+                size={20}
+              />
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+            Queue
+          </HoverCardContent>
+        </HoverCard>
+
+        {/* Connect to a Device */}
+        <HoverCard openDelay={300} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <div>
+              <LucideMonitorSpeaker className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+            Connect to a Device
+          </HoverCardContent>
+        </HoverCard>
+  
+        {/* Mute/Unmute */}
+        <HoverCard openDelay={300} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            {isMuted ? (
+              <VolumeX className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} onClick={muteUnmute} />
+            ) : (
+              <Volume2 className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} onClick={muteUnmute} />
+            )}
+          </HoverCardTrigger>
+          <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+            {isMuted ? "Unmute" : "Mute"}
+          </HoverCardContent>
+        </HoverCard>
+  
+        {/* Volume Input Restored */}
         <input
           type="range"
           className="w-24 h-[0.2rem] bg-gray-400 rounded-full accent-white hover:accent-green-500 cursor-pointer"
@@ -318,7 +427,30 @@ function Player() {
           value={isMuted ? 0 : volume}
           onChange={(e) => changeVolume(Number(e.target.value))}
         />
-        <TbWindowMinimize className="-rotate-90 text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
+  
+        {/* Open Mini Player */}
+        <HoverCard openDelay={300} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <div>
+              <TbWindowMinimize className="-rotate-90 text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200" side="top">
+            Open Miniplayer
+          </HoverCardContent>
+        </HoverCard>
+  
+        {/* Full Screen */}
+        <HoverCard openDelay={300} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <div>
+              <CgArrowsExpandRight className="text-gray-400 hover:text-white hover:scale-[1.04]" size={18} />
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="bg-backgroundElevatedHighlight text-white text-sm font-medium rounded shadow-lg p-2 mb-2 transition ease-in duration-200 mb-4" side="top">
+            Full Screen
+          </HoverCardContent>
+        </HoverCard>
       </div>
     </div>
   );

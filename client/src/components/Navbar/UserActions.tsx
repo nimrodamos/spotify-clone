@@ -52,7 +52,7 @@ const UserActions: React.FC = () => {
             <GrInstallOption size={15} color="white" />
             Install App
           </button>
-          <HoverCard>
+          <HoverCard >
             <HoverCardTrigger asChild>
               <button onClick={() => navigate("/whatsNew")}>
                 {window.location.pathname === "/whatsNew" ? (

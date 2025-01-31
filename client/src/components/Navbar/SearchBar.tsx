@@ -70,7 +70,7 @@ const SearchBar: React.FC = () => {
     >
       <div className="bg-backgroundElevatedBase rounded-full p-[0.7rem] mt-1 hover:scale-[1.04]">
         <Link to="/">
-          <HoverCard>
+          <HoverCard openDelay={300} closeDelay={100}>
             <HoverCardTrigger asChild>
               <div className="cursor-pointer">
                 {isHome ? (
@@ -91,7 +91,7 @@ const SearchBar: React.FC = () => {
         </Link>
       </div>
       <div className="flex items-center bg-backgroundElevatedBase hover:bg-backgroundElevatedHighlight text-textBase rounded-full px-2 py-2 flex-grow mr-[1.1rem]  focus-within:outline focus-within:outline-white focus-within:outline-3 focus-within:text-textBase  transition-all ease-in-out duration-150">
-        <HoverCard>
+        <HoverCard openDelay={300} closeDelay={100}>
           <HoverCardTrigger asChild>
             <div className="cursor-pointer">
               <FiSearch
@@ -116,7 +116,7 @@ const SearchBar: React.FC = () => {
           {!query && <div className="h-6 w-[0.1px] bg-currentColor"></div>}
           {query ? (
             <>
-              <HoverCard>
+              <HoverCard openDelay={300} closeDelay={100}>
                 <HoverCardTrigger asChild>
                   <div
                     className="cursor-pointer hover:scale-[1.04] hover:text-white"
@@ -138,7 +138,7 @@ const SearchBar: React.FC = () => {
             </>
           ) : (
             <button>
-              <HoverCard>
+              <HoverCard openDelay={300} closeDelay={100}>
                 <HoverCardTrigger asChild>
                   <div className="cursor-pointer">
                     <Link to="/browse">
