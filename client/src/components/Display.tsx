@@ -12,12 +12,14 @@ import SearchResults from "./DisplaySearch/SearchResults";
 import BrowseAll from "./Browse/BrowseAll";
 import CategoryPage from "./Browse/CategoryPage";
 import WhatsNew from "./WhatsNew";
+import DisplayLyrics from "./DisplayLyrics";
 
 const Display: React.FC = () => {
   return (
     <div className="display-container">
       <Routes>
         <Route path="/browse" element={<BrowseAll />} />
+        <Route path="/Lyrics" element={<DisplayLyrics />} />
         <Route path="/category/:id" element={<CategoryPage />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/whatsNew" element={<WhatsNew />} />
