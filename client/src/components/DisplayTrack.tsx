@@ -14,6 +14,7 @@ const DisplayTrack: React.FC = () => {
   const { tracks, loading: contextLoading, error: contextError } = useAppData();
   const [added, setAdded] = useState<boolean>(false);
   const [background, setBackground] = useState<string>("#121212");
+  const [isHovered, setIsHovered] = useState(false);
 
   // Fetch track data with React Query
   const {
@@ -61,7 +62,7 @@ const DisplayTrack: React.FC = () => {
   if (!artist) return <p>Artist not found</p>;
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full text-white">
       <div
         className="p-5"
         style={{
@@ -96,15 +97,23 @@ const DisplayTrack: React.FC = () => {
           </div>
           <button
             onClick={() => setAdded(!added)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             className="focus:outline-none"
           >
             {added ? (
-              <FaCheckCircle size={32} color="LimeGreen" />
+              isHovered ? (
+                <FaCheckCircle size={32} color="lime" />
+              ) : (
+                <FaCheckCircle size={32} color="LimeGreen" />
+              )
+            ) : isHovered ? (
+              <BiPlusCircle size={32} color="white" />
             ) : (
-              <BiPlusCircle size={32} />
+              <BiPlusCircle size={32} color="darkgrey" />
             )}
           </button>
-          <div className="text-white text-2xl cursor-pointer">&#8230;</div>
+          <div className="text-white text-2xl cursor-pointer mb-3">&#8230;</div>
         </div>
 
         <div className="mt-8 flex items-center gap-4">

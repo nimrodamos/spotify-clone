@@ -107,18 +107,18 @@ const DisplayAlbum: React.FC = () => {
   return (
     <div className="min-h-screen w-full">
       <div
-        className="px-5"
+        className="p-5"
         style={{
           background: `linear-gradient(to bottom, ${background}, #121212)`,
         }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center ">
           <img
             className="w-48 h-48 object-cover rounded-md shadow-md"
             src={album.albumCoverUrl}
             alt={album.name}
           />
-          <div className="mx-3 mt-10">
+          <div className="mx-3 mt-10 p-2">
             <span>Album</span>
             <h2
               style={{
@@ -141,7 +141,9 @@ const DisplayAlbum: React.FC = () => {
                   <p className="text-lg text-gray-300">{artist.name}</p>
                 </div>
               ))}
-              <p className="text-sm text-gray-400">{album.releaseDate}</p>
+              <p className="text-sm text-gray-400">
+                {album.releaseDate.split("-")[0]}
+              </p>
               <p className="text-sm text-gray-400">{album.totalTracks} songs</p>
             </div>
           </div>

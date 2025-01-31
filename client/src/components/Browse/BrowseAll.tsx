@@ -66,18 +66,18 @@
 //       </p>
 //     );
 //     return (
-//       <div 
-//         className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-6 
-//                    w-full overflow-x-hidden overflow-y-auto 
+//       <div
+//         className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-6
+//                    w-full overflow-x-hidden overflow-y-auto
 //                    px-4 py-4"
 //       >
 //         {categories?.map((category: any, index: number) => (
-//           <div 
+//           <div
 //             key={category.id}
 //             onClick={() => navigate(`/category/${category.id}`)}
-//             className="cursor-pointer transition-all duration-300 
-                       
-//                        rounded- overflow-hidden shadow-md 
+//             className="cursor-pointer transition-all duration-300
+
+//                        rounded- overflow-hidden shadow-md
 //                        relative flex flex-col justify-between"
 //             style={{
 //               backgroundColor: getCategoryColor(index),
@@ -102,7 +102,7 @@
 //       </div>
 //     );
 //   };
-  
+
 //   export default BrowseAll;
 
 import React from "react";
@@ -172,42 +172,42 @@ const BrowseAll: React.FC = () => {
         Failed to load categories: {error instanceof Error ? error.message : ""}
       </p>
     );
-    return (
-      <div 
-        className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-6 
+  return (
+    <div
+      className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-6 
                    w-full overflow-x-hidden overflow-y-auto 
                    px-4 py-4"
-      >
-        {categories?.map((category: any, index: number) => (
-          <div 
-            key={category.id}
-            onClick={() => navigate(`/category/${category.id}`)}
-            className="cursor-pointer transition-all duration-300 
+    >
+      {categories?.map((category: any, index: number) => (
+        <div
+          key={category.id}
+          onClick={() => navigate(`/category/${category.id}`)}
+          className="cursor-pointer transition-all duration-300 
                        
                        rounded-xl overflow-hidden shadow-md 
                        relative flex flex-col justify-between"
-            style={{
-              backgroundColor: getCategoryColor(index),
-              minHeight: '130px',
-              maxHeight: '200px',
-              minWidth: '230px',
-              maxWidth: '355px',
-            }}
-          >
-            <div className="p-4 text-white font-semibold text-lg">
-              {category.name}
-            </div>
-            {category.icons?.[0]?.url && (
-              <img
-                src={category.icons[0].url}
-                alt={category.name}
-                className="absolute bottom-0 right-0 w-32 rotate-12 shadow-lg"
-              />
-            )}
+          style={{
+            backgroundColor: getCategoryColor(index),
+            minHeight: "130px",
+            maxHeight: "200px",
+            minWidth: "230px",
+            maxWidth: "355px",
+          }}
+        >
+          <div className="p-4 text-white font-semibold text-lg z-10">
+            {category.name}
           </div>
-        ))}
-      </div>
-    );
-  };
-  
-  export default BrowseAll;
+          {category.icons?.[0]?.url && (
+            <img
+              src={category.icons[0].url}
+              alt={category.name}
+              className="absolute bottom-0 right-0 w-32 rotate-12 shadow-lg"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default BrowseAll;
