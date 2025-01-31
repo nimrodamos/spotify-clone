@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Shuffle, SkipBack, Play, Pause, SkipForward, Repeat, Volume2, VolumeX } from "lucide-react";
+import { Shuffle, SkipBack, Play, Pause, SkipForward, Volume2, VolumeX, LucideMonitorSpeaker } from "lucide-react";
 import { useUserContext } from "@/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useAppData } from "@/Context/AppDataContext";
+import { TbMicrophone2, TbWindowMinimize } from "react-icons/tb";
+import { RiRepeat2Fill, RiRepeatOneLine } from "react-icons/ri";
+import { HiOutlineQueueList } from "react-icons/hi2";
 
 function Player() {
   const { user } = useUserContext();
   const navigate = useNavigate();
   const { toggleRsb } = useAppData();
-
+  
+  const [repeatState, setRepeatState] = useState<"off" | "context" | "track">("off");
   const [player, setPlayer] = useState<Spotify.Player | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState<any>(null);
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState<Spotify.Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progressMs, setProgressMs] = useState(0);
   const [durationMs, setDurationMs] = useState(0);
@@ -68,7 +73,7 @@ function Player() {
         player.disconnect();
       }
     };
-  }, [user]);
+  }, [user, player]);
 
   const setActiveDevice = async (deviceId: string) => {
     try {
@@ -87,9 +92,54 @@ function Player() {
     }
   };
 
+  const toggleShuffle = async () => {
+    try {
+      await axios.put(
+        "https://api.spotify.com/v1/me/player/shuffle",
+        null,
+        {
+          params: { state: !isShuffling },
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setIsShuffling(!isShuffling);
+    } catch (error) {
+      console.error("Error toggling shuffle:", error);
+    }
+  };
+
+  const toggleRepeat = async () => {
+    try {
+      const newRepeatState = repeatState === "off" ? "context" : repeatState === "context" ? "track" : "off";
+      await axios.put(
+        "https://api.spotify.com/v1/me/player/repeat",
+        null,
+        {
+          params: { state: newRepeatState.toString() },
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setRepeatState(newRepeatState);
+    } catch (error) {
+      console.error("Error toggling repeat:", error);
+    }
+  };
+
+
+
   const togglePlayPause = () => {
     if (player) {
-      isPlaying ? player.pause() : player.resume();
+      if (isPlaying) {
+        player.pause();
+      } else {
+        player.resume();
+      }
     }
   };
 
@@ -169,7 +219,7 @@ function Player() {
         <div>
           <p className="font-semibold text-sm">{currentTrack?.name || "No track playing"}</p>
           <p className="text-xs text-gray-400">
-            {currentTrack?.artists?.map((artist: any) => artist.name).join(", ") || "Unknown Artist"}
+            {currentTrack?.artists?.map((artist: {name: string}) => artist.name).join(", ") || "Unknown Artist"}
           </p>
         </div>
       </div>
@@ -177,7 +227,16 @@ function Player() {
       {/* Center: Playback Controls */}
       <div className="flex flex-col items-center gap-2 w-1/3">
         <div className="flex items-center justify-center gap-4">
-          <Shuffle className="text-gray-400 hover:text-white hover:scale-[1.04] hover:fill-white  cursor-pointer" size={18} />
+          <div className="relative">
+            <Shuffle
+              className={`text-gray-400 hover:text-white hover:scale-[1.04] cursor-pointer ${isShuffling ? "text-textPositive" : ""}`}
+              size={18}
+              onClick={toggleShuffle}
+            />
+            {isShuffling && (
+              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+            )}
+          </div>
           <SkipBack className="text-gray-400 fill-gray-400 hover:text-white hover:fill-white hover:scale-[1.04] cursor-pointer" size={20} onClick={skipToPrevious} />
           <div
             onClick={togglePlayPause}
@@ -186,7 +245,31 @@ function Player() {
             {isPlaying ? <Pause size={20} className="fill-black  " /> : <Play className="fill-black " size={20} />}
           </div>
           <SkipForward className="text-gray-400 fill-gray-400 hover:scale-[1.04] hover:text-white hover:fill-white cursor-pointer" size={20} onClick={skipToNext} />
-          <Repeat className="text-gray-400 hover:text-white cursor-pointer hover:scale-[1.04]" size={18} />
+          {repeatState === "track" ? (
+            <div className="relative">
+              <RiRepeatOneLine
+          className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
+          size={20}
+          onClick={toggleRepeat}
+              />
+              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+            </div>
+          ) : repeatState === "context" ? (
+            <div className="relative">
+              <RiRepeat2Fill
+          className="text-textPositive hover:text-white cursor-pointer hover:scale-[1.04]"
+          size={20}
+          onClick={toggleRepeat}
+              />
+              <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+            </div>
+          ) : (
+            <RiRepeat2Fill
+              className="text-gray-400 hover:text-white cursor-pointer hover:scale-[1.04]"
+              size={20}
+              onClick={toggleRepeat}
+            />
+          )}
         </div>
         <div className="flex items-center gap-2 w-full">
           <span className="text-xs">{formatTime(progressMs)}</span>
@@ -201,13 +284,30 @@ function Player() {
           <span className="text-xs">{formatTime(durationMs)}</span>
         </div>
       </div>
-
       {/* Right: Volume Control */}
-      <div className="flex items-center justify-end gap-2 w-1/3">
+      <div className="flex items-center justify-end gap-2 w-1/3 cursor-pointer ">
+        <div className="relative">
+          <TbMicrophone2 
+        className={`text-gray-400 hover:text-white hover:scale-[1.04] ${window.location.pathname === "/lyrics" ? "text-textPositive hover:text-textPositive hover:scale-[1.04]" : ""}`}
+        size={20}
+        onClick={() => {
+          if (window.location.pathname === "/lyrics") {
+            navigate(-1);
+          } else {
+            navigate("/lyrics");
+          }
+        }}
+          />
+          {window.location.pathname === "/lyrics" && (
+        <div className="absolute bottom-[-8px] left-2 transform -translate-x-1/2 w-1 h-1 bg-textPositive rounded-full cursor-default"></div>
+          )}
+        </div>
+        <LucideMonitorSpeaker className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
+        <HiOutlineQueueList className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
         {isMuted ? (
-          <VolumeX className="text-gray-400 hover:text-white cursor-pointer" size={20} onClick={muteUnmute} />
+          <VolumeX className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} onClick={muteUnmute} />
         ) : (
-          <Volume2 className="text-gray-400 hover:text-white cursor-pointer" size={20} onClick={muteUnmute} />
+          <Volume2 className="text-gray-400 hover:text-white hover:scale-[1.04]" size={20} onClick={muteUnmute} />
         )}
         <input
           type="range"
@@ -218,6 +318,7 @@ function Player() {
           value={isMuted ? 0 : volume}
           onChange={(e) => changeVolume(Number(e.target.value))}
         />
+        <TbWindowMinimize className="-rotate-90 text-gray-400 hover:text-white hover:scale-[1.04]" size={20} />
       </div>
     </div>
   );
