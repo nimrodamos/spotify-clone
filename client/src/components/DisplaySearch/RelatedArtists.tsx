@@ -124,15 +124,15 @@ const RelatedArtists: React.FC<RelatedArtistsProps> = ({
                         {artists.map((artist) => (
                             <div
                                 key={artist.id}
-                                className="flex-none w-[150px] cursor-pointer"
+                                className="flex-none cursor-pointer"
                                 onClick={() => navigate(`/artist/${artist.id}`)}
                             >
                                 <div className="relative group rounded hover:bg-backgroundElevatedHighlight transition p-2">
-                                    <div className="w-full h-[150px] bg-gray-800 rounded-full overflow-hidden shadow-md transition">
+                                    <div className="w-full rounded-full overflow-hidden transition">
                                         <img
                                             src={artist.images?.[0]?.url || "/placeholder.jpg"}
                                             alt={artist.name || "Artist"}
-                                            className="w-full h-full object-cover"
+                                            className=" w-[150px] h-[150px] rounded-full object-cover"
                                         />
                                         {/* Play/Pause Button */}
                                         <div
