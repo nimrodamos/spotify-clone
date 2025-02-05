@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import { startTokenRefreshLoop } from "./spotifyController.js";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import { getSpotifyAuthorizationCode, exchangeAuthorizationCode, refreshSpotifyToken } from "./spotifyController.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -158,6 +159,7 @@ const loginUser = async (req, res) => {
     }
     // Generate a token and set it in a cookie
     generateTokenAndSetCookie(user._id, res);
+    startTokenRefreshLoop(user._id);
     
     res.status(200).json({
       _id: user._id,
@@ -208,10 +210,21 @@ const loginUser = async (req, res) => {
 //   }
 // };
 
-const logoutUser = (res) => {
+const logoutUser = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(400).json({ error: "User not authenticated" });
+    }
+
+    if (activeSessions.has(req.user._id)) {
+      clearInterval(activeSessions.get(req.user._id));
+      activeSessions.delete(req.user._id);
+      console.log(`Stopped token refresh for user: ${req.user._id}`);
+    }
+
     res.cookie("jwt", "", { maxAge: 1 });
     res.status(200).json({ message: "User logged out successfully" });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
     console.log("Error in logoutUser: ", err.message);

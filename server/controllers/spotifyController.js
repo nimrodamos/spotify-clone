@@ -95,23 +95,23 @@ const getSpotifyAuthorizationCode = async () => {
 
 
 const authenticateUser = async (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // Extract the Bearer token
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized. No token provided." });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(401).json({ error: "Unauthorized. User not found." });
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized. No token provided." });
     }
-    req.user = user; // Attach user to the request
-    next();
-  } catch (error) {
-    console.error("Error in authenticateUser middleware:", error.message);
-    res.status(401).json({ error: "Unauthorized. Invalid token." });
-  }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized. User not found." });
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        console.error("Error in authenticateUser middleware:", error.message);
+        res.status(401).json({ error: "Unauthorized. Invalid token." });
+    }
 };
 
 export default authenticateUser;
@@ -144,6 +144,49 @@ const refreshSpotifyToken = async (refreshToken) => {
         throw new Error("Failed to refresh Spotify token");
     }
 };
+
+const activeSessions = new Map();
+const startTokenRefreshLoop = (userId) => {
+    if (activeSessions.has(userId)) {
+        console.log(`Token refresh already running for user: ${userId}`);
+        return;
+    }
+
+    console.log("Token refresh loop function called for:", userId);
+
+    const refreshInterval = 50 * 60 * 1000; // 50 minutes
+
+    const refreshLoop = async () => {
+        try {
+            console.log("Executing refresh loop for:", userId);
+            const user = await User.findById(userId);
+            
+            if (!user) {
+                console.error("User not found, stopping token refresh.");
+                clearInterval(activeSessions.get(userId));
+                activeSessions.delete(userId);
+                return;
+            }
+
+            console.log("User refresh token:", user.refreshToken);
+
+            const { accessToken, expiresIn } = await refreshSpotifyToken(user.refreshToken);
+            user.accessToken = accessToken;
+            user.expiresIn = expiresIn;
+            await user.save();
+
+            console.log(`Token refreshed successfully for user: ${userId}`);
+        } catch (error) {
+            console.error("Error refreshing token:", error.message);
+        }
+    };
+
+    refreshLoop();
+    const intervalId = setInterval(refreshLoop, refreshInterval);
+    activeSessions.set(userId, intervalId);
+    console.log("Interval started with ID:", intervalId);
+};
+
 
 /**
  * Middleware to ensure valid Spotify access token.
@@ -320,4 +363,5 @@ export {
     exchangeAuthorizationCode,
     fetchSpotifyData,
     authenticateUser,
+    startTokenRefreshLoop,
 };
