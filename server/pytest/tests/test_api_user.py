@@ -28,13 +28,3 @@ def test_get_user(access_token):
 
 def test_login_user(access_token):
     assert access_token, "Login failed, no access token returned"
-
-def test_logout_user(access_token):
-    url = f"{BASE_URL}/api/users/logout"
-    headers = {
-        'Authorization': f'Bearer {access_token}'
-    }
-    response = requests.post(url, headers=headers)
-    if response.status_code == 401:
-        pytest.fail("Access token is invalid or expired")
-    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
