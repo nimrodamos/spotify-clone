@@ -15,11 +15,15 @@ def access_token():
     response_body = response.json()
     accessToken = response_body.get("accessToken")
     assert accessToken, "Login failed, no access token returned"
+    print(f"Access token: {accessToken}")  # Debugging line to check the access token
     return accessToken
 
-def test_get_user():
+def test_get_user(access_token):
     url = f"{BASE_URL}/api/users/Obby"
-    response = requests.get(url)
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    response = requests.get(url, headers=headers)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
 
 def test_login_user(access_token):
@@ -31,4 +35,6 @@ def test_logout_user(access_token):
         'Authorization': f'Bearer {access_token}'
     }
     response = requests.post(url, headers=headers)
+    if response.status_code == 401:
+        pytest.fail("Access token is invalid or expired")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"

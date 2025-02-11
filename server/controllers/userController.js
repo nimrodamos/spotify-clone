@@ -209,6 +209,7 @@ const loginUser = async (req, res) => {
 //     res.status(500).json({ error: error.message });
 //   }
 // };
+const activeSessions = new Map(); // Store active session intervals
 
 const logoutUser = async (req, res) => {
   try {
@@ -230,6 +231,7 @@ const logoutUser = async (req, res) => {
     console.log("Error in logoutUser: ", err.message);
   }
 };
+
 
 const followUnFollowUser = async (req, res) => {
   try {
