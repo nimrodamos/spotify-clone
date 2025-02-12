@@ -1,112 +1,169 @@
-import os
 import requests
 import pytest
-from dotenv import load_dotenv
-
-load_dotenv()
 
 BASE_URL = "http://localhost:5000"
-
-USER_EMAIL = "obby@test.com"
-USER_PASSWORD = "maman123456"
-
-SPOTIFY_TRACK_ID = "3di5hcvxxciiqwMH1jarhY"
+TEST_TRACK_ID = "3di5hcvxxciiqwMH1jarhY"
+TEST_QUEUE_TRACK_ID = "1Jx6aZyJR985kw8CWUZ15O" 
 
 @pytest.fixture(scope="session")
-def test_login_user():
-    """ Test user login and retrieve session with JWT cookie """
-    url = f"{BASE_URL}/api/users/login"
-    data = {
-        "email": "obby@test.com",
+def session_with_tokens():
+    """Logs in the user and retrieves both JWT and Spotify access token."""
+    login_url = f"{BASE_URL}/api/users/login"
+    login_data = {
+        "email": "obby@test.com", 
         "password": "maman123456"
     }
 
-    global session 
     session = requests.Session()
-    response = session.post(url, json=data)
+    response = session.post(login_url, json=login_data)
 
-    print(f"Login Response: {response.status_code}, {response.text}")
+    assert response.status_code == 200, f"Login failed: {response.text}"
+    
+    jwt_cookie = session.cookies.get("jwt")
+    assert jwt_cookie, "JWT token not found in cookies"
 
-    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
-    assert "Set-Cookie" in response.headers, "No Set-Cookie header received"
+    token_url = f"{BASE_URL}/api/users/UpdatedUser123"
+    headers = {"Cookie": f"jwt={jwt_cookie}"}
+    
+    response = session.get(token_url, headers=headers)
+    assert response.status_code == 200, f"Fetching user profile failed: {response.text}"
 
-    cookies = session.cookies.get_dict()
-    assert "jwt" in cookies, "JWT cookie not found in response"
+    access_token = response.json().get("accessToken")
+    assert access_token, "Spotify access token not found in response"
 
-    print(f"JWT Cookie Retrieved: {cookies['jwt']}")
-
-@pytest.fixture(scope="session")
-def jwt_token():
-    """ Extracts JWT from cookies after login and returns it """
-    return session.cookies.get("jwt")
-
-def get_headers(jwt_token, spotify_access_token):
     return {
-        "Authorization": f"Bearer {spotify_access_token}",
-        "User-Authorization": f"Bearer {jwt_token}",
-        "Content-Type": "application/json",
+        "session": session,
+        "jwt_token": jwt_cookie,
+        "access_token": access_token
     }
 
-def test_play_track(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/play/{SPOTIFY_TRACK_ID}"
-    headers = get_headers(jwt_token, spotify_access_token)
+def test_play_track(session_with_tokens):
+    """Tests playing a track using JWT and Spotify Access Token."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
 
-    response = requests.put(url, headers=headers)
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
 
-    print(f"Play Track Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Play track failed: {response.text}"
+    play_url = f"{BASE_URL}/api/spotify/play/{TEST_TRACK_ID}"
+    response = requests.put(play_url, headers=headers)
 
-def test_pause_track(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/pause"
-    headers = get_headers(jwt_token, spotify_access_token)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "Track is now playing.", "Track did not start playing"
 
-    response = requests.put(url, headers=headers)
+def test_pause_track(session_with_tokens):
+    """Tests pausing a currently playing track."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
 
-    print(f"Pause Track Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Pause failed: {response.text}"
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
 
-def test_next_track(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/next"
-    headers = get_headers(jwt_token, spotify_access_token)
+    pause_url = f"{BASE_URL}/api/spotify/pause"
+    response = requests.put(pause_url, headers=headers)
 
-    response = requests.post(url, headers=headers)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "Playback paused.", "Track did not pause"
 
-    print(f"Next Track Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Next track failed: {response.text}"
+def test_resume_track(session_with_tokens):
+    """Tests resuming playback of a paused track."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
 
-def test_previous_track(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/previous"
-    headers = get_headers(jwt_token, spotify_access_token)
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
 
-    response = requests.post(url, headers=headers)
+    resume_url = f"{BASE_URL}/api/spotify/resume"
+    response = requests.put(resume_url, headers=headers)
 
-    print(f"Previous Track Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Previous track failed: {response.text}"
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "Playback resumed.", "Track did not resume"
 
-def test_shuffle_tracks(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/shuffle"
-    headers = get_headers(jwt_token, spotify_access_token)
-    data = {"state": True} 
+def test_skip_to_next_track(session_with_tokens):
+    """Tests skipping to the next track."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
 
-    response = requests.put(url, json=data, headers=headers)
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
 
-    print(f"Shuffle Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Shuffle failed: {response.text}"
+    next_url = f"{BASE_URL}/api/spotify/next"
+    response = requests.post(next_url, headers=headers)
 
-def test_resume_track(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/resume"
-    headers = get_headers(jwt_token, spotify_access_token)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "Skipped to the next track.", "Track did not skip"
 
-    response = requests.put(url, headers=headers)
+def test_previous_track(session_with_tokens):
+    """Tests going back to the previous track."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
 
-    print(f"Resume Track Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Resume failed: {response.text}"
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
 
-def test_queue_track(jwt_token, spotify_access_token):
-    url = f"{BASE_URL}/api/spotify/queue/{SPOTIFY_TRACK_ID}"
-    headers = get_headers(jwt_token, spotify_access_token)
+    previous_url = f"{BASE_URL}/api/spotify/previous"
+    response = requests.post(previous_url, headers=headers)
 
-    response = requests.post(url, headers=headers)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "Rewound to the previous track.", "Track did not rewind"
 
-    print(f"Queue Track Response: {response.status_code}, {response.text}")
-    assert response.status_code == 200, f"Queue track failed: {response.text}"
+def test_shuffle_tracks(session_with_tokens):
+    """Tests enabling shuffle mode."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
+
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+
+    shuffle_url = f"{BASE_URL}/api/spotify/shuffle"
+    shuffle_data = {"state": True}
+
+    response = requests.put(shuffle_url, json=shuffle_data, headers=headers)
+
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message").lower() == "shuffle set to true.", "Shuffle mode did not activate"
+
+def test_queue_track(session_with_tokens):
+    """Tests adding a track to the queue."""
+    jwt_token = session_with_tokens["jwt_token"]
+    access_token = session_with_tokens["access_token"]
+
+    headers = {
+        "Cookie": f"jwt={jwt_token}",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+
+    queue_url = f"{BASE_URL}/api/spotify/queue/{TEST_QUEUE_TRACK_ID}"
+    response = requests.post(queue_url, headers=headers)
+
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "Track has been added to the queue.", "Track did not queue"
+
+def test_logout_user(session_with_tokens):
+    """Tests logging out the user and clearing JWT."""
+    session = session_with_tokens["session"]
+
+    logout_url = f"{BASE_URL}/api/users/logout"
+    response = session.post(logout_url)
+
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json().get("message") == "User logged out successfully", "Logout did not complete"

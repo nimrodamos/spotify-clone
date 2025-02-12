@@ -35,7 +35,7 @@ def jwt_token():
 
 def test_get_user(jwt_token):
     """ Test retrieving user profile using JWT in headers """
-    url = f"{BASE_URL}/api/users/Obby"
+    url = f"{BASE_URL}/api/users/UpdatedUser123"
     headers = {
         'Cookie': f'jwt={jwt_token}'
     }
