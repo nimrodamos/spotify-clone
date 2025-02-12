@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IAlbum } from "@/types/types";
 
-// פונקציה לשליפת האלבומים עם בדיקת מבנה הנתונים
 const fetchAlbums = async (): Promise<{
   data: IAlbum[];
   total: number;
@@ -15,7 +14,6 @@ const fetchAlbums = async (): Promise<{
 };
 
 const AllAlbums: React.FC = () => {
-  // שליפת נתונים באמצעות React Query עם מבנה מותאם
   const {
     data: albumsResponse = { data: [], total: 0, hasMore: false },
     isLoading,
@@ -25,7 +23,6 @@ const AllAlbums: React.FC = () => {
     queryFn: fetchAlbums,
   });
 
-  // חילוץ הנתונים מתוך האובייקט
   const albums = albumsResponse.data || [];
 
   useEffect(() => {

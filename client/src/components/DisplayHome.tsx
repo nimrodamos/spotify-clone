@@ -13,7 +13,10 @@ import CarouselTopTracks from "./CarouselTopTracks";
 import CarouselRecentlyPlayed from "./CarouselRecentlyPlayed";
 
 const ShowAllButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
-  <button onClick={onClick} className="hover:underline text-textSubdued text-sm ">
+  <button
+    onClick={onClick}
+    className="hover:underline text-textSubdued text-sm "
+  >
     Show All
   </button>
 );
@@ -93,20 +96,20 @@ const DisplayHome: React.FC = () => {
             </div>
           )}
 
-            {user && (
+          {user && (
             <>
               <div className="flex justify-between items-center pl-3 py-3">
-              <h1
-                className="font-bold text-2xl cursor-pointer hover:underline"
-                onClick={() => navigate("/whats-new")}
-              >
-                What's New
-              </h1>
-              <ShowAllButton onClick={() => navigate("/whats-new")} />
+                <h1
+                  className="font-bold text-2xl cursor-pointer hover:underline"
+                  onClick={() => navigate("/whats-new")}
+                >
+                  What's New
+                </h1>
+                <ShowAllButton onClick={() => navigate("/whats-new")} />
               </div>
               <CarouselWhatsNew />
             </>
-            )}
+          )}
 
           <div className="flex justify-between items-center pl-3 py-3">
             <h1
@@ -138,35 +141,35 @@ const DisplayHome: React.FC = () => {
             <p className="text-center text-gray-400">No albums available</p>
           )}
 
-            {user && (
+          {user && (
             <>
               <div className="flex justify-between items-center pl-3 py-3">
-              <h1
-                className="font-bold text-2xl cursor-pointer hover:underline"
-                onClick={() => navigate("/top-tracks")}
-              >
-                Top Tracks
-              </h1>
-              <ShowAllButton onClick={() => navigate("/top-tracks")} />
+                <h1
+                  className="font-bold text-2xl cursor-pointer hover:underline"
+                  onClick={() => navigate("/top-tracks")}
+                >
+                  Top Tracks
+                </h1>
+                <ShowAllButton onClick={() => navigate("/top-tracks")} />
               </div>
               <CarouselTopTracks />
             </>
-            )}
+          )}
 
-            {user && (
+          {user && (
             <>
               <div className="flex justify-between items-center pl-3 py-3">
-              <h1
-                className="font-bold text-2xl cursor-pointer hover:underline"
-                onClick={() => navigate("/recently-played")}
-              >
-                Recently Played
-              </h1>
-              <ShowAllButton onClick={() => navigate("/recently-played")} />
+                <h1
+                  className="font-bold text-2xl cursor-pointer hover:underline"
+                  onClick={() => navigate("/recently-played")}
+                >
+                  Recently Played
+                </h1>
+                <ShowAllButton onClick={() => navigate("/recently-played")} />
               </div>
               <CarouselRecentlyPlayed />
             </>
-            )}
+          )}
         </div>
       </div>
     </div>
