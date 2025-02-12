@@ -46,7 +46,7 @@ router.post('/spotify/exchange-token', async (req, res) => {
     }
 });
 
-router.get("/test-refresh" ,protectRoute, refreshTokenMiddleware, fetchSpotifyData);
+router.post("/refresh" ,protectRoute, refreshTokenMiddleware, fetchSpotifyData);
 
 
 router.put('/spotify/play/:spotifyTrackId', protectRoute, playTrack);
