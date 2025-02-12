@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { IPlaylist, ITrack } from "../../types/types";
 import { api } from "@/api";
 
-// פונקציה לשליפת פרטי הפלייליסט לפי ID
 const fetchPlaylistById = async (
   id: string
 ): Promise<IPlaylist & { tracks: ITrack[] }> => {
@@ -16,7 +15,6 @@ const DisplayPlaylist: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>(null);
 
-  // שליפת פרטי הפלייליסט באמצעות React Query
   const {
     data: playlist,
     isLoading,
