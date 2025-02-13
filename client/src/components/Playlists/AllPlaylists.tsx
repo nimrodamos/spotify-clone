@@ -4,14 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IPlaylist } from "@/types/types";
 
-// פונקציה לשליפת הפלייליסטים
 const fetchPlaylists = async (): Promise<IPlaylist[]> => {
   const response = await api.get("/api/playlists");
   return response.data;
 };
 
 const AllPlaylists: React.FC = () => {
-  // שליפת נתונים באמצעות React Query
   const {
     data: playlists,
     isLoading,

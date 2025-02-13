@@ -11,7 +11,6 @@ interface CarouselAlbumsProps {
 }
 
 const CarouselAlbums: React.FC<CarouselAlbumsProps> = ({ albums }) => {
-  // בדיקה אם הנתונים תקינים לפני השימוש בהם
   if (!albums || !Array.isArray(albums) || albums.length === 0) {
     console.error("Invalid albums data:", albums);
     return <p className="text-center text-gray-400">No albums available</p>;

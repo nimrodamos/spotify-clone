@@ -11,7 +11,6 @@ interface CarouselArtistsProps {
 }
 
 const CarouselArtists: React.FC<CarouselArtistsProps> = ({ artists }) => {
-  // בדיקה אם artists הוא מערך תקין
   if (!artists || !Array.isArray(artists) || artists.length === 0) {
     return <p className="text-center text-gray-400">No artists available</p>;
   }

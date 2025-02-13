@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { IArtist } from "@/types/types";
 
-// פונקציה לשליפת האמנים עם בדיקת מבנה הנתונים
 const fetchArtists = async (): Promise<{
   data: IArtist[];
   total: number;
@@ -15,7 +14,6 @@ const fetchArtists = async (): Promise<{
 };
 
 const AllArtists: React.FC = () => {
-  // שליפת נתונים באמצעות React Query עם מבנה מותאם
   const {
     data: artistsResponse = { data: [], total: 0, hasMore: false },
     isLoading,
@@ -25,7 +23,6 @@ const AllArtists: React.FC = () => {
     queryFn: fetchArtists,
   });
 
-  // חילוץ הנתונים מתוך האובייקט
   const artists = artistsResponse.data || [];
 
   useEffect(() => {

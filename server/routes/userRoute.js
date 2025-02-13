@@ -18,7 +18,7 @@ router.get('/validate-email', validateEmail);
 router.post('/signup', signupUser);
 router.post('/login', loginUser);
 router.post('/premium', upgradeToPremium);
-router.post('/logout', logoutUser);
+router.post('/logout', protectRoute,logoutUser);
 router.post('/:id/follow', protectRoute, followUnFollowUser);
 router.put('/:id', protectRoute, updateUser);
 
