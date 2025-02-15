@@ -1,17 +1,11 @@
-import {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-} from "react";
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { api } from "@/api"; // Import API instance
 
 interface User {
   id: string;
   displayName: string;
   email: string;
   accessToken: string;
-  [key: string]: string | string[];
   playlists: string[];
 }
 
@@ -26,18 +20,38 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem("user");
-    const parsedUser = savedUser ? JSON.parse(savedUser) : null;
-    if (parsedUser && !parsedUser.playlists) {
-      parsedUser.playlists = [];
-    }
-    return parsedUser;
+    return savedUser ? JSON.parse(savedUser) : null;
   });
+
+  // Function to fetch playlists for the user
+  const fetchUserPlaylists = async (userId: string) => {
+    console.log(userId);
+    
+    try {
+      const response = await api.get(`/api/playlists?owner=${userId}`);
+      return response.data.map((playlist: {_id: string}) => playlist._id); // Store playlist IDs
+    } catch (error) {
+      console.error("Error fetching user playlists:", error);
+      return [];
+    }
+  };
+
+  // Function to set user and ensure playlists are included
+  const setUserWithPlaylists = async (newUser: User | null) => {
+    if (newUser) {
+      const playlists = await fetchUserPlaylists(newUser.id);
+      const updatedUser = { ...newUser, playlists };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    } else {
+      setUser(null);
+      localStorage.removeItem("user");
+    }
+  };
 
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
     }
   }, [user]);
 
@@ -47,7 +61,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, setUser: setUserWithPlaylists, logout }}>
       {children}
     </UserContext.Provider>
   );
