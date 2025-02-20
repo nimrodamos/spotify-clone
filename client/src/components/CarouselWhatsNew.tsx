@@ -49,6 +49,9 @@ const CarouselWhatsNew: React.FC = () => {
           id={album.id}
           image={album.images[0]?.url || "/default-image.jpg"}
           type="album"
+          currentlyPlaying={"false"}
+          accessToken={user?.accessToken || ""}
+          handlePlayPause={() => {}}
         />
       ))}
     </div>
