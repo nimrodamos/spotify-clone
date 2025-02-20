@@ -52,6 +52,9 @@ const AllArtists: React.FC = () => {
                 id={artist._id}
                 image={artist.images?.[0]?.url || "/default-artist.jpg"}
                 type="artist"
+                currentlyPlaying={"false"}
+                accessToken=""
+                handlePlayPause={() => {}}
               />
             ) : null
           )

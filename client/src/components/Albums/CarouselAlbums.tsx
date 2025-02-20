@@ -26,6 +26,9 @@ const CarouselAlbums: React.FC<CarouselAlbumsProps> = ({ albums }) => {
           id={album.spotifyAlbumId}
           image={album.albumCoverUrl || "/default-album.jpg"}
           type="album"
+          currentlyPlaying={"false"}
+          accessToken=""
+          handlePlayPause={() => {}}
         />
       ))}
     </div>

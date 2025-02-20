@@ -22,6 +22,9 @@ const PersonalizedPlaylists: React.FC<PersonalizedPlaylistsProps> = ({
         id={playlist._id}
         image={playlist.customAlbumCover || ""}
         type="playlist"
+        currentlyPlaying={"false"}
+        accessToken=""
+        handlePlayPause={() => {}}
       />
     ))}
   </div>

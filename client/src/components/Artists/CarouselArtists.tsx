@@ -29,6 +29,9 @@ const CarouselArtists: React.FC<CarouselArtistsProps> = ({ artists }) => {
           id={artist.external_urls.spotify.split("/").pop() || "default-id"}
           image={artist.images?.[0]?.url || "/default-artist.jpg"}
           type="artist"
+          currentlyPlaying={"false"}
+          accessToken=""
+          handlePlayPause={() => {}}
         />
       ))}
     </div>

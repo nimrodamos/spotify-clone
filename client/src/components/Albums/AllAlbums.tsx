@@ -52,6 +52,9 @@ const AllAlbums: React.FC = () => {
                 id={album.spotifyAlbumId}
                 image={album.albumCoverUrl || "/default-album.jpg"}
                 type="album"
+                currentlyPlaying="false"
+                accessToken={""}
+                handlePlayPause={() => {}}
               />
             ) : null
           )

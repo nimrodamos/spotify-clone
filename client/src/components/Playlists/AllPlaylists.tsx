@@ -33,6 +33,9 @@ const AllPlaylists: React.FC = () => {
           id={playlist._id}
           image={playlist.customAlbumCover || "/default-playlist.jpg"}
           type="playlist"
+          currentlyPlaying={"false"}
+          accessToken={""}
+          handlePlayPause={() => {}}
         />
       ))}
     </div>
