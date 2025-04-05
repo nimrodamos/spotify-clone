@@ -57,7 +57,7 @@ function Player() {
     playerInstance.addListener("player_state_changed", (state) => {
       if (state) {
         setIsPlaying(!state.paused);
-        setCurrentTrack(state.track_window.current_track);
+        setCurrentTrackState(state.track_window.current_track);
         setCurrentTrack(state.track_window.current_track);
         setProgressMs(state.position);
         setDurationMs(state.duration);
