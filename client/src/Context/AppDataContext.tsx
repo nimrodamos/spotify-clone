@@ -12,6 +12,10 @@ interface AppDataContextType {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 
+  // Current track state
+  currentTrack: Spotify.Track | null;
+  setCurrentTrack: (track: Spotify.Track | null) => void;
+
   // LSB states
   isLsbOpen: boolean;
   lsbWidth: number;
@@ -49,6 +53,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
   const [tracks, setTracks] = useState<ITrack[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<Spotify.Track | null>(null);
 
   // LSB states
   const [isLsbOpen, setIsLsbOpen] = useState(true);
@@ -57,7 +62,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
 
   // RSB states
   const [isRsbOpen, setIsRsbOpen] = useState(false);
-  const [rsbWidth, setRsbWidth] = useState(SIDEBAR_CONSTRAINTS.RSB_COLLAPSED_WIDTH); // Default to collapsed width
+  const [rsbWidth, setRsbWidth] = useState(SIDEBAR_CONSTRAINTS.RSB_COLLAPSED_WIDTH);
   const [isResizingRsb, setIsResizingRsb] = useState(false);
   const [rsbMode, setRsbMode] = useState<RsbMode>("song");
 
@@ -74,11 +79,11 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
   const toggleRsb = (mode: RsbMode) => {
     if (isRsbOpen && rsbMode === mode) {
       setIsRsbOpen(false);
-      setRsbWidth(SIDEBAR_CONSTRAINTS.RSB_COLLAPSED_WIDTH); // Set to collapsed width when closing
+      setRsbWidth(SIDEBAR_CONSTRAINTS.RSB_COLLAPSED_WIDTH);
     } else {
       setRsbMode(mode);
       setIsRsbOpen(true);
-      setRsbWidth(SIDEBAR_CONSTRAINTS.MIN_WIDTH); // Set to min width when opening
+      setRsbWidth(SIDEBAR_CONSTRAINTS.MIN_WIDTH);
     }
   };
 
@@ -91,7 +96,8 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
         setTracks,
         setLoading,
         setError,
-
+        currentTrack,
+        setCurrentTrack,
         isLsbOpen,
         lsbWidth,
         setLsbWidth,
@@ -99,7 +105,6 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({
         isResizingLsb,
         setIsResizingLsb,
         setIsLsbOpen,
-
         isRsbOpen,
         rsbWidth,
         setRsbWidth,

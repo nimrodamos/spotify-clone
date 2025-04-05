@@ -11,6 +11,7 @@ import {
   LucideMonitorSpeaker,
 } from "lucide-react";
 import { useUserContext } from "@/Context/UserContext";
+import { useAppData } from "@/Context/AppDataContext";
 import { useNavigate } from "react-router-dom";
 // import { useAppData } from "@/Context/AppDataContext";
 import { TbMicrophone2, TbWindowMinimize } from "react-icons/tb";
@@ -25,6 +26,7 @@ import { HiOutlineQueueList } from "react-icons/hi2";
 
 function Player() {
   const { user } = useUserContext();
+  const { setCurrentTrack } = useAppData();
   const navigate = useNavigate();
   // const { toggleRsb } = useAppData();
   
@@ -32,7 +34,7 @@ function Player() {
   const [player, setPlayer] = useState<Spotify.Player | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState<Spotify.Track | null>(null);
+  const [currentTrack, setCurrentTrackState] = useState<Spotify.Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progressMs, setProgressMs] = useState(0);
   const [durationMs, setDurationMs] = useState(0);
@@ -55,6 +57,7 @@ function Player() {
     playerInstance.addListener("player_state_changed", (state) => {
       if (state) {
         setIsPlaying(!state.paused);
+        setCurrentTrack(state.track_window.current_track);
         setCurrentTrack(state.track_window.current_track);
         setProgressMs(state.position);
         setDurationMs(state.duration);
