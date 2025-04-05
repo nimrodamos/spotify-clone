@@ -1,7 +1,7 @@
 import requests
 import pytest
 
-BASE_URL = "http://localhost:5000" 
+BASE_URL = "https://localhost:5000" 
 NEW_DISPLAY_NAME = "UpdatedUser123"
 FOLLOW_USER_ID = "679cdd1cec56e9dfb60cbf99" 
 CHANGE_USER_DETAILS_ID = "678dc41f848f75bd2ed99408"

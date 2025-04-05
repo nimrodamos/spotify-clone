@@ -47,15 +47,13 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     const newPlaylistTitle = `My Playlist #${user.playlists?.length + 1 || 1}`;
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/playlists/",
+        "https://localhost:5000/api/playlists/",
         {
           PlaylistTitle: newPlaylistTitle,
-          owner: user._id,
+          owner: user.id,
         },
         {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`, // ודא שהטוקן נשלח נכון
-          },
+          withCredentials: true,
         }
       );
 
@@ -253,7 +251,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 //     const newPlaylistTitle = `My Playlist #${user.playlists?.length + 1 || 1}`;
 //     try {
 //       const response = await axios.post(
-//         "http://localhost:5000/api/playlists/",
+//         "https://localhost:5000/api/playlists/",
 //         {
 //           PlaylistTitle: newPlaylistTitle,
 //           owner: user._id,

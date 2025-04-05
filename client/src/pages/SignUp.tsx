@@ -47,7 +47,7 @@ const SignUpPage: React.FC = () => {
   
       // Proceed with server validation
       const response = await fetch(
-        `http://localhost:5000/api/users/validate-email?email=${encodeURIComponent(
+        `https://localhost:5000/api/users/validate-email?email=${encodeURIComponent(
           email
         )}`
       );
@@ -112,7 +112,7 @@ const SignUpPage: React.FC = () => {
     )}-${birthDay.padStart(2, "0")}`;
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/signup", {
+      const response = await fetch("https://localhost:5000/api/users/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

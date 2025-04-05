@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const baseURL =
-  process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000";
+  process.env.NODE_ENV === "production" ? "/" : "https://localhost:5000";
 
 console.log("API Base URL:", baseURL);
 

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "https://localhost:5000"
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 REDIRECT_URI = os.getenv("REDIRECT_URI")

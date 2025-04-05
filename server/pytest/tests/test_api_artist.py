@@ -1,7 +1,7 @@
 import requests
 import pytest
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "https://localhost:5000"
 TEST_ARTIST_ID = "677bc41236324425b93ad8c1" 
 TEST_ARTIST_NAME = "Drake" 
 TEST_SPOTIFY_URL = "5WUlDfRSoLAfcVSX1WnrxN" 

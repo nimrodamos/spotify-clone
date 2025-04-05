@@ -1,7 +1,7 @@
 import requests
 import pytest
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "https://localhost:5000"
 TEST_SPOTIFY_TRACK_ID = "3di5hcvxxciiqwMH1jarhY"
 
 @pytest.fixture(scope="session")

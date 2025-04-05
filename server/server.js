@@ -12,6 +12,10 @@ import dbArtistRoutes from "./routes/dbArtistRoute.js";
 import path from "path";
 import cloudinary from "cloudinary";
 import cors from "cors";
+import https from "https";
+import fs from "fs";
+
+
 
 dotenv.config();
 
@@ -29,6 +33,14 @@ cloudinary.config({
 
 const frontendPath = path.join(__dirname, "../../frontend/dist");
 
+const server = https.createServer({
+  key: fs.readFileSync("localhost-key.pem"),
+  cert: fs.readFileSync("localhost.pem"),
+}, app);
+
+server.listen(PORT, () => {
+  console.log(`Secure server running at https://localhost:${PORT}`);
+});
 // Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -51,9 +63,5 @@ app.use("/api/", apiCallsRoutes);
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
 

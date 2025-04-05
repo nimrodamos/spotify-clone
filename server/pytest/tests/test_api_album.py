@@ -1,7 +1,7 @@
 import requests
 import pytest
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "https://localhost:5000"
 TEST_ALBUM_ID = "5g0rUrIUZCeZ0CRviWXQf6"
 TEST_ALBUM_NAME = "Future Nostalgia" 
 @pytest.fixture(scope="session")
