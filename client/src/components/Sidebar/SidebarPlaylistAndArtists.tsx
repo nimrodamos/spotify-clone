@@ -43,6 +43,7 @@ interface SidebarPlaylistAndArtistsProps {
     setSidebarFilter: (filter: 'Recents' | 'Recently Added' | 'Alphabetical' | 'Creator') => void;
     setSearchQuery: (query: string) => void;
     clearFilter: () => void;
+    onPlaylistCountChange?: (count: number) => void;
 }
 
 const SidebarPlaylistAndArtists: React.FC<SidebarPlaylistAndArtistsProps> = ({
@@ -51,6 +52,7 @@ const SidebarPlaylistAndArtists: React.FC<SidebarPlaylistAndArtistsProps> = ({
     sidebarFilter,
     setSidebarFilter,
     setSearchQuery,
+    onPlaylistCountChange,
 }) => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [artists, setArtists] = useState<Artist[]>([]);
@@ -63,46 +65,52 @@ const SidebarPlaylistAndArtists: React.FC<SidebarPlaylistAndArtistsProps> = ({
 
     useEffect(() => {
         if (user) {
-            const fetchPlaylists = async () => {
-                try {
-                    setLoading(true);
-                    const response = await api.get('/api/playlists');
-                    if (Array.isArray(response.data)) {
-                        const userPlaylists = response.data.filter((playlist: Playlist) => playlist.owner === user._id);
-                        setPlaylists(userPlaylists);
-                        const artistNames = userPlaylists.flatMap((playlist: Playlist) => playlist.tracks.map(track => track.artist));
-                        await fetchArtists(artistNames);
-                    }
-                } catch (error) {
-                    console.error('Error fetching playlists', error);
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            const fetchArtists = async (artistNames: string[]) => {
-                try {
-                    const uniqueArtistNames = [...new Set(artistNames.flatMap(name => name.split(',').map(n => n.trim())))];
-                    const artistPromises = uniqueArtistNames.map(name =>
-                        api.get(`/api/artists/name/${name}`).catch(error => {
-                            if (error.response && error.response.status === 404) {
-                                console.warn(`Artist not found: ${name}`);
-                                return null;
-                            }
-                            throw error;
-                        })
-                    );
-                    const artistResponses = await Promise.all(artistPromises);
-                    const fetchedArtists = artistResponses.filter(response => response && response.data).map(response => response!.data);
-                    setArtists(fetchedArtists);
-                } catch (error) {
-                    console.error('Error fetching artists', error);
-                }
-            };
-
             fetchPlaylists();
         }
     }, [user]);
+
+    useEffect(() => {
+        const handler = () => fetchPlaylists();
+        window.addEventListener("createPlaylist", handler);
+        return () => window.removeEventListener("createPlaylist", handler);
+    }, []);
+
+    const fetchPlaylists = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/api/playlists/user', { withCredentials: true });
+            setPlaylists(response.data);
+            onPlaylistCountChange?.(response.data.length); // ✅ this is what updates Sidebar.tsx            
+            const artistNames = response.data.flatMap((playlist: Playlist) =>
+                playlist.tracks.map((track) => track.artist)
+            );
+            await fetchArtists(artistNames);
+        } catch (error) {
+            console.error('Error fetching playlists', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchArtists = async (artistNames: string[]) => {
+        try {
+            const uniqueArtistNames = [...new Set(artistNames.flatMap(name => name.split(',').map(n => n.trim())))];
+            const artistPromises = uniqueArtistNames.map(name =>
+                api.get(`/api/artists/name/${name}`).catch(error => {
+                    if (error.response && error.response.status === 404) {
+                        console.warn(`Artist not found: ${name}`);
+                        return null;
+                    }
+                    throw error;
+                })
+            );
+            const artistResponses = await Promise.all(artistPromises);
+            const fetchedArtists = artistResponses.filter(response => response && response.data).map(response => response!.data);
+            setArtists(fetchedArtists);
+        } catch (error) {
+            console.error('Error fetching artists', error);
+        }
+    };
 
     const handleAlbumClick = (_id: string) => {
         navigate(`/playlist/${_id}`);

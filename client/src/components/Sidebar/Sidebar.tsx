@@ -1,4 +1,3 @@
-// Sidebar.tsx
 import { SidebarHeader } from "./SidebarHeader";
 import SidebarPlaylistAndArtists from "./SidebarPlaylistAndArtists";
 import { SidebarPlaylistPrompt } from "./SidebarPlaylistPrompt";
@@ -11,18 +10,14 @@ import { useState, useEffect, useMemo } from "react";
 import { SIDEBAR_CONSTRAINTS } from "../../Context/AppDataContext.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
-import { ITrack } from "@/types/types";
 
-// Define query keys
 export const queryKeys = {
   randomArtists: "randomArtists",
 };
 
-// Fetch random artists function
 export const fetchRandomArtists = async () => {
   try {
     const response = await api.get("/api/artists/offset?offset=0&limit=30");
-    console.log("Random Artists API Response:", response);
     return response.data;
   } catch (error) {
     console.error("Random Artists API Error:", error);
@@ -32,8 +27,13 @@ export const fetchRandomArtists = async () => {
 
 const Sidebar: React.FC = () => {
   const { user } = useUserContext();
-  const { isLsbOpen, lsbWidth, setLsbWidth, isResizingLsb, setIsResizingLsb } =
-    useAppData();
+  const {
+    isLsbOpen,
+    lsbWidth,
+    setLsbWidth,
+    isResizingLsb,
+    setIsResizingLsb,
+  } = useAppData();
 
   const [filter, setFilter] = useState<"playlists" | "artists" | null>(null);
   const [sidebarFilter, setSidebarFilter] = useState<
@@ -42,12 +42,22 @@ const Sidebar: React.FC = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [playlistCount, setPlaylistCount] = useState(0);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [playlistReady, setPlaylistReady] = useState(false); // ✅ handles header updates
+
+  const hasPlaylists = playlistCount > 0;
+  const shouldShowPlaylistUI = user && (hasPlaylists || !hasLoadedOnce);
+
+  useEffect(() => {
+    setPlaylistReady(user ? playlistCount > 0 : false);
+  }, [playlistCount, user]);
+
   const clearFilter = () => {
     setFilter(null);
     setSearchQuery("");
   };
 
-  // Random Artists Query with memoized selection
   const { data: randomArtists = [] } = useQuery({
     queryKey: [queryKeys.randomArtists],
     queryFn: fetchRandomArtists,
@@ -62,7 +72,6 @@ const Sidebar: React.FC = () => {
     refetchOnMount: false,
   });
 
-  // Handle resize functionality
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isResizingLsb) {
@@ -70,14 +79,11 @@ const Sidebar: React.FC = () => {
           Math.min(e.clientX, SIDEBAR_CONSTRAINTS.MAX_WIDTH),
           SIDEBAR_CONSTRAINTS.MIN_WIDTH
         );
-
         setLsbWidth(newWidth);
       }
     };
 
-    const handleMouseUp = () => {
-      setIsResizingLsb(false);
-    };
+    const handleMouseUp = () => setIsResizingLsb(false);
 
     if (isResizingLsb) {
       document.addEventListener("mousemove", handleMouseMove);
@@ -90,24 +96,24 @@ const Sidebar: React.FC = () => {
     };
   }, [isResizingLsb, setIsResizingLsb, setLsbWidth]);
 
-  // Memoize the sidebar width
   const sidebarWidth = useMemo(() => {
     return isLsbOpen ? lsbWidth : SIDEBAR_CONSTRAINTS.COLLAPSED_WIDTH;
   }, [isLsbOpen, lsbWidth]);
 
-  
+  const handlePlaylistCountChange = (count: number) => {
+    setPlaylistCount(count);
+    setHasLoadedOnce(true);
+  };
+
   return (
-    <div 
-      className="flex h-full text-textBase transition-all duration-300" 
-      style={{ 
-        width: `${sidebarWidth}px`, 
-        height: '100%', 
-        overflow: 'hidden' 
-      }}
+    <div
+      className="flex h-full text-textBase transition-all duration-300"
+      style={{ width: `${sidebarWidth}px`, height: "100%", overflow: "hidden" }}
     >
       <div className="flex-grow h-full">
         <div className="bg-backgroundBase h-full rounded">
           <SidebarHeader
+            key={playlistReady ? "has-playlists" : "no-playlists"}
             filter={filter}
             setFilter={setFilter}
             sidebarFilter={sidebarFilter}
@@ -117,35 +123,37 @@ const Sidebar: React.FC = () => {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             clearFilter={clearFilter}
+            hasPlaylists={playlistReady} // ✅ use evaluated state
             isLsbOpen={isLsbOpen}
             toggleLsb={() => toggleLsb()}
           />
           <div
             className={`h-[calc(100%-67px)] overflow-y-auto no-scrollbar ${
-              !isLsbOpen ? 'overflow-x-hidden' : ''
+              !isLsbOpen ? "overflow-x-hidden" : ""
             }`}
           >
             {isLsbOpen ? (
-                <div className={`h-fit overflow-auto bg-backgroundBase transition-opacity duration-300`}>
-                {user?.playlists && user.playlists.length > 0 ? (
+              <div className="h-fit overflow-auto bg-backgroundBase transition-opacity duration-300">
+                {shouldShowPlaylistUI ? (
                   <SidebarPlaylistAndArtists
-                  filter={filter}
-                  searchQuery={searchQuery}
-                  sidebarFilter={sidebarFilter}
-                  setFilter={setFilter}
-                  setSidebarFilter={setSidebarFilter}
-                  setSearchQuery={setSearchQuery}
-                  clearFilter={clearFilter}
+                    filter={filter}
+                    searchQuery={searchQuery}
+                    sidebarFilter={sidebarFilter}
+                    setFilter={setFilter}
+                    setSidebarFilter={setSidebarFilter}
+                    setSearchQuery={setSearchQuery}
+                    clearFilter={clearFilter}
+                    onPlaylistCountChange={handlePlaylistCountChange}
                   />
                 ) : (
                   <>
-                  <SidebarPlaylistPrompt />
-                  <SidebarPodcastPrompt />
-                  <SidebarLinks />
-                  <SidebarLanguageSelector />
+                    <SidebarPlaylistPrompt />
+                    <SidebarPodcastPrompt />
+                    <SidebarLinks />
+                    <SidebarLanguageSelector />
                   </>
                 )}
-                </div>
+              </div>
             ) : (
               <div className="h-full overflow-y-auto no-scrollbar">
                 {randomArtists.map((artist, index) => (
