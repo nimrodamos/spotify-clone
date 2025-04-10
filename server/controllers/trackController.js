@@ -12,7 +12,7 @@ const getTracks = async (req, res) => {
 
 const getTracksWithOffset = async (req, res) => {
   try {
-    const { offset = 0, limit = 200 } = req.query;
+    const { offset = 0, limit = 1000 } = req.query;
 
     const tracks = await Track.find({})
       .skip(parseInt(offset))
