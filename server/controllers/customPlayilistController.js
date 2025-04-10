@@ -127,6 +127,18 @@ const deleteTrackFromPlaylist = async (req, res) => {
 	}
 };
 
+const getUserPlaylists = async (req, res) => {
+	try {
+		const ownerId = req.user._id;
+		const playlists = await Playlist.find({ owner: ownerId });
+		res.status(200).json(playlists);
+	} catch (err) {
+		console.error("Error in getUserPlaylists:", err.message);
+		res.status(500).json({ error: err.message });
+	}
+};
+
+
 const updatePlaylist = async (req, res) => {
 	try {
 		const { id } = req.params;
@@ -201,6 +213,7 @@ export {
 	getPlaylistById,
 	updatePlaylist,
 	addTrackToPlaylist,
+	getUserPlaylists,
 	deletePlaylist,
 	deleteTrackFromPlaylist,
 	getPublicPlaylists,

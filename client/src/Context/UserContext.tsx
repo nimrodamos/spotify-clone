@@ -2,7 +2,7 @@ import { createContext, useState, useContext, ReactNode, useEffect } from "react
 import { api } from "@/api"; // Import API instance
 
 interface User {
-  id: string;
+  _id: string;
   displayName: string;
   email: string;
   accessToken: string;
@@ -39,7 +39,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Function to set user and ensure playlists are included
   const setUserWithPlaylists = async (newUser: User | null) => {
     if (newUser) {
-      const playlists = await fetchUserPlaylists(newUser.id);
+      const playlists = await fetchUserPlaylists(newUser._id);
       const updatedUser = { ...newUser, playlists };
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
